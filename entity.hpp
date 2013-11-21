@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pathfind.hpp"
 #include "graphics.hpp"
 
 struct Entity {
@@ -75,14 +76,42 @@ struct SmartEntity : Entity {
 };
 
 struct Dwarf : SmartEntity {
-  Dwarf(int x_, int y_) : SmartEntity(x_, y_) { }
+  Dwarf(int x_, int y_, char pic_ = 'D') : SmartEntity(x_, y_), pic(pic_) { }
+
+  char pic;
+  int energy = 0;
+
+  Direction facing = EAST;
 
   static constexpr const char* RAWNAME = "dwarf";
   virtual const char* rawname() const { return RAWNAME; }
 
   virtual void render(Graphics& g) const {
     //cerr << "rendering dwarf @ " << x << "," << y << endl;
-    g.putChar(x, y, '@');
+    g.putChar(x, y, pic);
+  }
+
+  virtual void update();
+};
+
+struct Elf : SmartEntity {
+  Elf(int x_, int y_, char pic_ = 'E') : SmartEntity(x_, y_), pic(pic_) { }
+
+  char pic;
+  int energy = 0;
+
+  vector<point> path;
+  vector<point>::reverse_iterator pathp;
+
+  static constexpr const char* RAWNAME = "elf";
+  virtual const char* rawname() const { return RAWNAME; }
+
+  virtual void render(Graphics& g) const {
+    //cerr << "rendering elf @ " << x << "," << y << endl;
+    if (path.size() == 0)
+      g.putChar(x, y, '?');
+    else
+      g.putChar(x, y, pic);
   }
 
   virtual void update();

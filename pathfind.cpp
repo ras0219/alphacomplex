@@ -1,4 +1,5 @@
 #include "pathfind.hpp"
+#include "city.hpp"
 
 #include <algorithm>
 #include <iomanip>

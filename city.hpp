@@ -16,11 +16,9 @@ struct SentinelEntity : Entity {
 
   static constexpr const char* RAWNAME = "sentinel";
   virtual const char* rawname() const { return RAWNAME; }
-
-  virtual char render() const { return '\0'; }
 };
 
-struct City {
+struct City : Component {
   int xsz;
   int ysz;
   vector<Tile> tiles;
@@ -41,7 +39,7 @@ struct City {
 
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
 
-  inline void render(Graphics& g) {
+  void render(Graphics& g) {
     for (int y=0;y<12;++y)
       for (int x=0;x<12;++x) {
         assert(ent(x,y)->rawname() == SentinelEntity::RAWNAME);

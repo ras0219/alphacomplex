@@ -9,4 +9,7 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
 
+find_package(X11 REQUIRED)
+
 add_executable(citysim main.cpp entity.cpp city.cpp pathfind.cpp)
+target_link_libraries(citysim ${X11_LIBRARIES})
