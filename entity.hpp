@@ -75,6 +75,17 @@ struct SmartEntity : Entity {
   void set_loc(int x_, int y_) { x = x_; y = y_; }
 };
 
+struct Garbage : SmartEntity {
+  Garbage(int x_, int y_) : SmartEntity(x_, y_) { }
+
+  static const char* RAWNAME;
+  virtual const char* rawname() const { return RAWNAME; }
+
+  virtual void render(Graphics& g) const {
+    g.putChar(x, y, ';');
+  }
+};
+
 struct Dwarf : SmartEntity {
   Dwarf(int x_, int y_, char pic_ = 'D') : SmartEntity(x_, y_), pic(pic_) { }
 

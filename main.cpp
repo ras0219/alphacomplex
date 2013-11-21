@@ -28,19 +28,6 @@ int main() {
   Graphics g;
   g.clear();
 
-  for (int x=0;x<5;++x) {
-    cout << "----------- Step " << x << '\n';
-    city.render(g);
-
-    g.print();
-
-    Entity* e = Entity::GLOB_ENTLIST;
-    while (e != nullptr) {
-      e->update();
-      e = e->g_next;
-    }
-  }
-
   g.c = &city;
 
   while(!g.destroyed) {

@@ -43,11 +43,11 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
     }
   }
 
-  for (int y = 0; y < c.getYSize(); ++y) {
-    for (int x = 0; x < c.getXSize(); ++x)
-      cout << setw(2) << dist[y*ysz + x] << " ";
-    cout << endl;
-  }
+  // for (int y = 0; y < c.getYSize(); ++y) {
+  //   for (int x = 0; x < c.getXSize(); ++x)
+  //     cout << setw(2) << dist[y*ysz + x] << " ";
+  //   cout << endl;
+  // }
 
   int d = dist[y2 * ysz + x2];
 
