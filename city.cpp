@@ -1,5 +1,7 @@
 #include "city.hpp"
 
+const char* SentinelEntity::RAWNAME = "sentinel";
+
 City city(12,12);
 
 istream& operator>>(istream& is, City& city) {
@@ -9,7 +11,6 @@ istream& operator>>(istream& is, City& city) {
       is >> ch;
       if (ch == '@') {
         city.tile(c,r).type = (Tile::TileKind)'.';
-        
       } else {
         city.tile(c,r).type = (Tile::TileKind)ch;
       }

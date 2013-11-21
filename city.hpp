@@ -14,9 +14,11 @@ using namespace std;
 struct SentinelEntity : Entity {
   SentinelEntity() : Entity(0) { }
 
-  static constexpr const char* RAWNAME = "sentinel";
+  static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 };
+
+extern struct City city;
 
 struct City : Component {
   int xsz;
@@ -40,6 +42,7 @@ struct City : Component {
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
 
   void render(Graphics& g) {
+    assert(this == &city);
     for (int y=0;y<12;++y)
       for (int x=0;x<12;++x) {
         assert(ent(x,y)->rawname() == SentinelEntity::RAWNAME);
@@ -52,6 +55,5 @@ struct City : Component {
   }
 
 };
-extern City city;
 
 istream& operator>>(istream& is, City& city);
