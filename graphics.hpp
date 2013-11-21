@@ -33,7 +33,7 @@ struct Graphics {
   XColor white_col;
   Colormap colormap;
 
-  Graphics() {
+  Graphics() : debug(0) {
     /* open connection with the server */
     display = XOpenDisplay(NULL);
     assert(display != nullptr);
