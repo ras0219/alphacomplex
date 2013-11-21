@@ -34,6 +34,12 @@ struct Graphics {
   Colormap colormap;
 
   Graphics() {
+    #ifdef NDEBUG
+    debug = 0;
+    #else
+    debug = 1;
+    #endif
+
     /* open connection with the server */
     display = XOpenDisplay(NULL);
     assert(display != nullptr);
