@@ -83,7 +83,7 @@ struct Dwarf : SmartEntity {
 
   Direction facing = EAST;
 
-  static constexpr const char* RAWNAME = "dwarf";
+  static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
   virtual void render(Graphics& g) const {
@@ -103,7 +103,7 @@ struct Elf : SmartEntity {
   vector<point> path;
   vector<point>::reverse_iterator pathp;
 
-  static constexpr const char* RAWNAME = "elf";
+  static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
   virtual void render(Graphics& g) const {

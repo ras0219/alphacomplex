@@ -5,6 +5,8 @@
 
 Entity* Entity::GLOB_ENTLIST = nullptr;
 
+const char* Dwarf::RAWNAME = "dwarf";
+
 void Dwarf::update() {
   ++energy;
   if (energy >= 5) {
@@ -26,6 +28,8 @@ void Dwarf::update() {
     }
   }
 }
+
+const char* Elf::RAWNAME = "elf";
 
 void Elf::update() {
   ++energy;
