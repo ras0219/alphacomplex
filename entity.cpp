@@ -65,6 +65,7 @@ void Elf::update() {
       if (jobs.has_job()) {
         assert(job == nullptr);
         job = jobs.pop_job();
+        active_jobs.add_job(job);
         assert(job->rawname() == Garbage::RAWNAME);
         x2 = job->as<GarbageJob>().x;
         y2 = job->as<GarbageJob>().y;
@@ -113,6 +114,7 @@ void Elf::update() {
         cout << e->rawname() << endl;
         if (e->rawname() == Garbage::RAWNAME) {
           delete e;
+          active_jobs.remove_job(job);
           delete job;
           job = nullptr;
           state = CONFUSED;

@@ -33,7 +33,7 @@ void JobListing::render(Graphics& g) {
 
   XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
               x, y + 10,
-              "Jobs List", 9);
+              title.c_str(), title.size());
   XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
               x, y + 20,
               "---------", 9);
@@ -53,4 +53,4 @@ void JobListing::render(Graphics& g) {
   }
 }
 
-JobList jobs;
+JobList jobs, active_jobs;
