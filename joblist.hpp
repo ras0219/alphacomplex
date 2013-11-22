@@ -2,6 +2,10 @@
 
 #include "component.hpp"
 
+#include <string>
+
+using namespace std;
+
 // Job list requirements:
 //
 // Fast insert jobs
@@ -38,12 +42,15 @@ struct JobList {
 };
 
 extern JobList jobs;
+extern JobList active_jobs;
 
 struct JobListing : Component {
   JobList* jlist;
   int x, y;
+  string title;
 
-  JobListing(int x_, int y_, JobList* l) : jlist(l), x(x_), y(y_) { }
+  JobListing(int x_, int y_, JobList* l, const char* t)
+    : jlist(l), x(x_), y(y_), title(t) { }
 
   virtual void render(Graphics& g);
 };

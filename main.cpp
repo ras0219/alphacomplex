@@ -9,6 +9,8 @@
 #include "pathfind.hpp"
 #include "tile.hpp"
 #include "joblist.hpp"
+#include "entity.hpp"
+#include "elf.hpp"
 
 using namespace std;
 
@@ -24,14 +26,16 @@ int main() {
   Dwarf d(9,9);
   d.insert_after(city.ent(9,9));
 
-  Elf d2(5,5);
+  Elf d2(5,5), e(5,5);
   d2.insert_after(city.ent(5,5));
+  e.insert_after(city.ent(5,5));
 
   Graphics g;
   g.clear();
 
   g.c.push_back(&city);
-  g.c.push_back(new JobListing(200, 20, &jobs));
+  g.c.push_back(new JobListing(200, 20, &active_jobs, "Active Jobs"));
+  g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
 
   while(!g.destroyed) {
     auto t = steady_clock::now();

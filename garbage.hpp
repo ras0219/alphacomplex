@@ -5,10 +5,10 @@
 
 struct Garbage : SmartEntity {
   Garbage(int x_, int y_) : SmartEntity(x_, y_) {
-    cerr << "Created garbage " << (unsigned long)this << endl;
+    //cerr << "Created garbage " << (unsigned long)this << endl;
   }
   ~Garbage() {
-    cerr << "Deleted garbage " << (unsigned long)this << endl;
+    //cerr << "Deleted garbage " << (unsigned long)this << endl;
   }
 
   static const char* RAWNAME;

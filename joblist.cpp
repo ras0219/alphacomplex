@@ -3,7 +3,6 @@
 #include "garbage.hpp"
 
 void JobList::add_job(Job* j) {
-  cerr << "add_job(<job>)" << endl;
   j->next = head;
   j->prev = nullptr;
   if (head != nullptr)
@@ -12,7 +11,6 @@ void JobList::add_job(Job* j) {
 }
 
 void JobList::remove_job(Job* j) {
-  cerr << "remove_job(<job>)" << endl;
   if (j->next != nullptr)
     j->next->prev = j->prev;
   if (j->prev != nullptr)
@@ -22,7 +20,6 @@ void JobList::remove_job(Job* j) {
 }
 
 Job* JobList::pop_job() {
-  cerr << "pop_job(<job>)" << endl;
   Job* r = head;
   remove_job(r);
   return r;
@@ -33,7 +30,7 @@ void JobListing::render(Graphics& g) {
 
   XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
               x, y + 10,
-              "Jobs List", 9);
+              title.c_str(), title.size());
   XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
               x, y + 20,
               "---------", 9);
@@ -53,4 +50,4 @@ void JobListing::render(Graphics& g) {
   }
 }
 
-JobList jobs;
+JobList jobs, active_jobs;
