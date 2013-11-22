@@ -32,4 +32,5 @@ int FetchJob::description(char* buf, size_t n) const {
   if (part == 1)
     return snprintf(buf, n, "Return docs @ %d, %d", x2, y2);
   assert(part >= 0 && part < 2);
+  return -1;
 }
