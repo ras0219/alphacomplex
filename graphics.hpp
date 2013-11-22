@@ -30,7 +30,6 @@ struct Graphics {
   XColor white_col;
   Colormap colormap;
 
-<<<<<<< HEAD
   Graphics() {
     #ifdef NDEBUG
     debug = 0;
