@@ -24,6 +24,8 @@ struct GarbageJob : Job {
 
   virtual const char* rawname() const { return Garbage::RAWNAME; }
 
+  virtual int description(char* buf, size_t n) const;
+
   GarbageJob(Garbage* g_) : g(g_) { }
 };
 

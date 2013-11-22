@@ -31,7 +31,7 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
       int x = get<XCOORD>(p) + offs[i].first;
       int y = get<YCOORD>(p) + offs[i].second;
       if (x >= 0 && x < c.getXSize() && y >= 0 && y < c.getYSize()) {
-        if (c.tile(x,y).type != '.') continue;
+        if (!c.tile(x,y).walkable()) continue;
 
         int& d2 = dist[y * xsz + x];
         if (d2 > d + 1 || d2 == 0) {
@@ -43,11 +43,11 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
     }
   }
 
-  for (int y = 0; y < c.getYSize(); ++y) {
-    for (int x = 0; x < c.getXSize(); ++x)
-      cout << setw(2) << dist[y*xsz + x] << " ";
-    cout << endl;
-  }
+  // for (int y = 0; y < c.getYSize(); ++y) {
+  //   for (int x = 0; x < c.getXSize(); ++x)
+  //     cout << setw(2) << dist[y*xsz + x] << " ";
+  //   cout << endl;
+  // }
   
   int d = dist[y2 * xsz + x2];
 

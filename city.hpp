@@ -25,6 +25,7 @@ struct City : Component {
   int ysz;
   vector<Tile> tiles;
   vector<SentinelEntity> ents;
+  vector<struct Room*> rooms;
 
   int getXSize() const { return xsz; }
   int getYSize() const { return ysz; }

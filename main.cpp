@@ -11,6 +11,7 @@
 #include "joblist.hpp"
 #include "entity.hpp"
 #include "elf.hpp"
+#include "room.hpp"
 
 using namespace std;
 
@@ -23,12 +24,12 @@ int main() {
   cin >> city;
   cout << "Created city.\n";
 
-  Dwarf d(9,9);
-  d.insert_after(city.ent(9,9));
+  Dwarf d(1,1);
+  d.insert_after(city.ent(1,1));
 
-  Elf d2(5,5), e(5,5);
-  d2.insert_after(city.ent(5,5));
-  e.insert_after(city.ent(5,5));
+  Elf e1(1,1), e2(1,1);
+  e1.insert_after(city.ent(1,1));
+  e2.insert_after(city.ent(1,1));
 
   Graphics g(city.getXSize(), city.getYSize());
   g.clear();
@@ -45,6 +46,9 @@ int main() {
       e->update();
       e = e->g_next;
     }
+
+    for (auto r : city.rooms)
+      r->update();
 
     g.repaint();
 

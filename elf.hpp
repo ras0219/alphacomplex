@@ -2,6 +2,8 @@
 
 #include "entity.hpp"
 
+#include <list>
+
 struct Elf : SmartEntity {
   Elf(int x_, int y_, char pic_ = 'E')
     : SmartEntity(x_, y_),
@@ -20,6 +22,7 @@ struct Elf : SmartEntity {
   } state;
 
   struct Job* job;
+  list<struct Job*>::iterator job_it;
 
   vector<point> path;
   vector<point>::reverse_iterator pathp;
@@ -30,4 +33,6 @@ struct Elf : SmartEntity {
   virtual void render(Graphics& g) const;
 
   virtual void update();
+
+  void path_to(int, int);
 };

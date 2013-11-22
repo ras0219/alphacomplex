@@ -2,27 +2,19 @@
 #include "graphics.hpp"
 #include "garbage.hpp"
 
-void JobList::add_job(Job* j) {
-  j->next = head;
-  j->prev = nullptr;
-  if (head != nullptr)
-    head->prev = j;
-  head = j;
+JobList::iterator JobList::add_job(Job* j) {
+  jlist.push_front(j);
+  return jlist.begin();
 }
 
-void JobList::remove_job(Job* j) {
-  if (j->next != nullptr)
-    j->next->prev = j->prev;
-  if (j->prev != nullptr)
-    j->prev->next = j->next;
-  else
-    head = j->next;
+void JobList::remove_job(JobList::iterator it) {
+  jlist.erase(it);
 }
 
 Job* JobList::pop_job() {
-  Job* r = head;
-  remove_job(r);
-  return r;
+  Job* j = jlist.back();
+  jlist.pop_back();
+  return j;
 }
 
 void JobListing::render(Graphics& g) {
@@ -36,17 +28,13 @@ void JobListing::render(Graphics& g) {
               "---------", 9);
 
   int yoffset = y+30;
-  Job* j = jlist->head;
-  while (j != nullptr) {
+  for (auto j : jlist->jlist) {
     char buf[24];
-    int nchars = snprintf(buf, 24, "Clean Garbage @ %d, %d",
-                          j->as<GarbageJob>().g->x,
-                          j->as<GarbageJob>().g->y);
+    int nchars = j->description(buf, 24);
     XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
                 x, yoffset,
                 buf, nchars);
     yoffset += 10;
-    j = j->next;
   }
 }
 
