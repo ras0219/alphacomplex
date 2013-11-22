@@ -26,7 +26,7 @@ Job* JobList::pop_job() {
 }
 
 void JobListing::render(Graphics& g) {
-  XFillRectangle(g.display, g.window, g.white_gc, x, y, 200, 200);
+  //XFillRectangle(g.display, g.window, g.white_gc, x, y, 200, 200);
 
   XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
               x, y + 10,
@@ -40,8 +40,8 @@ void JobListing::render(Graphics& g) {
   while (j != nullptr) {
     char buf[24];
     int nchars = snprintf(buf, 24, "Clean Garbage @ %d, %d",
-                          j->as<GarbageJob>().x,
-                          j->as<GarbageJob>().y);
+                          j->as<GarbageJob>().g->x,
+                          j->as<GarbageJob>().g->y);
     XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
                 x, yoffset,
                 buf, nchars);

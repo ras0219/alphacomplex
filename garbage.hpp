@@ -20,10 +20,10 @@ struct Garbage : SmartEntity {
 };
 
 struct GarbageJob : Job {
-  int x, y;
+  Garbage* g;
 
   virtual const char* rawname() const { return Garbage::RAWNAME; }
 
-  GarbageJob(int x_, int y_) : x(x_), y(y_) { }
+  GarbageJob(Garbage* g_) : g(g_) { }
 };
 

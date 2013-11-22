@@ -30,7 +30,7 @@ int main() {
   d2.insert_after(city.ent(5,5));
   e.insert_after(city.ent(5,5));
 
-  Graphics g;
+  Graphics g(city.getXSize(), city.getYSize());
   g.clear();
 
   g.c.push_back(&city);

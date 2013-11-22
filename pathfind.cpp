@@ -11,9 +11,9 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
   vector<waypoint> pheap{ waypoint( -(abs(x1-x2) + abs(y1-y2) + 1), 1, x1, y1 ) };
 
   vector<int> dist(c.getXSize() * c.getYSize());
-  int ysz = c.getYSize();
+  int xsz = c.getXSize();
 
-  while (pheap.size() > 0 && dist[y2 * ysz + x2] == 0) {
+  while (pheap.size() > 0 && dist[y2 * xsz + x2] == 0) {
     pop_heap(pheap.begin(), pheap.end());
     tuple<int,int,int,int> p = pheap.back();
     pheap.pop_back();
@@ -22,7 +22,7 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
     //      << get<1>(p) << ","
     //      << get<2>(p) << ","
     //      << get<3>(p) << endl;
-    int& d = dist[get<YCOORD>(p) * ysz + get<XCOORD>(p)];
+    int& d = dist[get<YCOORD>(p) * xsz + get<XCOORD>(p)];
 
     if (d != 0) continue;
 
@@ -33,7 +33,7 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
       if (x >= 0 && x < c.getXSize() && y >= 0 && y < c.getYSize()) {
         if (c.tile(x,y).type != '.') continue;
 
-        int& d2 = dist[y * ysz + x];
+        int& d2 = dist[y * xsz + x];
         if (d2 > d + 1 || d2 == 0) {
           pheap.push_back(waypoint(-abs(x-x2) - abs(y-y2) - d - 1, d + 1, x, y));
           push_heap(pheap.begin(), pheap.end());
@@ -43,13 +43,13 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
     }
   }
 
-  // for (int y = 0; y < c.getYSize(); ++y) {
-  //   for (int x = 0; x < c.getXSize(); ++x)
-  //     cout << setw(2) << dist[y*ysz + x] << " ";
-  //   cout << endl;
-  // }
-
-  int d = dist[y2 * ysz + x2];
+  for (int y = 0; y < c.getYSize(); ++y) {
+    for (int x = 0; x < c.getXSize(); ++x)
+      cout << setw(2) << dist[y*xsz + x] << " ";
+    cout << endl;
+  }
+  
+  int d = dist[y2 * xsz + x2];
 
   vector<point> r;
   r.reserve(d);
@@ -60,7 +60,7 @@ vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
     while (x != x1 || y != y1) {
       for (int i=0;i<4;++i) {
         if (c.check(x+offs[i].first, y+offs[i].second))
-          if (dist[(y+offs[i].second)*ysz+x+offs[i].first] == d - 1) {
+          if (dist[(y + offs[i].second)*xsz + x + offs[i].first] == d - 1) {
             d = d - 1;
             r.push_back({x, y});
             x = x + offs[i].first;

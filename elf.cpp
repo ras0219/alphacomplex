@@ -27,40 +27,43 @@ void Elf::update() {
         job = jobs.pop_job();
         active_jobs.add_job(job);
         assert(job->rawname() == Garbage::RAWNAME);
-        x2 = job->as<GarbageJob>().x;
-        y2 = job->as<GarbageJob>().y;
+        x2 = job->as<GarbageJob>().g->x;
+        y2 = job->as<GarbageJob>().g->y;
         assert(city.tile(x2, y2).walkable());
         path = pathfind(city, x, y, x2, y2);
         pathp = path.rbegin();
         state = WALKINGTOJOB;
         return;
-      }
-      x2 = rand() % 12;
-      y2 = rand() % 12;
+      } else {
+        x2 = rand() % city.getXSize();
+        y2 = rand() % city.getYSize();
 
-      if (city.tile(x2, y2).walkable() && (x != x2 || y != y2)) {
-        path = pathfind(city, x, y, x2, y2);
-        pathp = path.rbegin();
-        //cerr << x2 << ", " << y2 << endl;
-        state = WANDERING;
-        return;
+        if (city.tile(x2, y2).walkable() && (x != x2 || y != y2)) {
+          path = pathfind(city, x, y, x2, y2);
+          pathp = path.rbegin();
+          //cerr << x2 << ", " << y2 << endl;
+          state = WANDERING;
+          return;
+        }
       }
     }
     return;
   case WALKINGTOJOB:
-    if (energy >= 3 && path.size() > 0) {
+    assert(job != nullptr);
+    if (energy >= 2) {
       energy = 0;
-
-      assert(city.tile(pathp->first, pathp->second).walkable());
-
-      remove();
-      insert_after(city.ent(pathp->first, pathp->second));
-      set_loc(pathp->first, pathp->second);
-
-      ++pathp;
+      if (pathp != path.rend()) {
+        assert(city.tile(pathp->first, pathp->second).walkable());
+        
+        remove();
+        insert_after(city.ent(pathp->first, pathp->second));
+        set_loc(pathp->first, pathp->second);
+        
+        ++pathp;
+      }
       if (pathp == path.rend()) {
         path.clear();
-        assert(job != nullptr);
+        pathp = path.rbegin();
         state = CLEANING;
       }
     }
@@ -69,11 +72,14 @@ void Elf::update() {
     if (energy >= 10) {
       energy = 0;
 
+      assert(job != nullptr);
+
       Entity* e = city.ent(x, y);
       while (e != nullptr) {
         //cout << e->rawname() << endl;
-        if (e->rawname() == Garbage::RAWNAME) {
+        if (e == job->as<GarbageJob>().g) {
           delete e;
+
           active_jobs.remove_job(job);
           delete job;
           job = nullptr;
@@ -86,18 +92,20 @@ void Elf::update() {
     }
     return;
   case WANDERING:
-    if (energy >= 5 && path.size() > 0) {
+    if (energy >= 5) {
       energy = 0;
+      if (pathp != path.rend()) {
+        assert(city.tile(pathp->first, pathp->second).walkable());
 
-      assert(city.tile(pathp->first, pathp->second).walkable());
+        remove();
+        insert_after(city.ent(pathp->first, pathp->second));
+        set_loc(pathp->first, pathp->second);
 
-      remove();
-      insert_after(city.ent(pathp->first, pathp->second));
-      set_loc(pathp->first, pathp->second);
-
-      ++pathp;
+        ++pathp;
+      }
       if (pathp == path.rend()) {
         path.clear();
+        pathp = path.rbegin();
         state = CONFUSED;
       }
     }
