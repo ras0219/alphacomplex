@@ -2,15 +2,16 @@
 #include "entity.hpp"
 #include "city.hpp"
 #include "pathfind.hpp"
+#include "joblist.hpp"
+
+#include "garbage.hpp"
 
 #include <algorithm>
 #include <vector>
 
-vector<Garbage*> garbage_list;
+JobList garbage_list;
 
 Entity* Entity::GLOB_ENTLIST = nullptr;
-
-const char* Garbage::RAWNAME = "garbage";
 
 const char* Dwarf::RAWNAME = "dwarf";
 
@@ -38,7 +39,7 @@ void Dwarf::update() {
   if (rand() % 100 == 0) {
     Garbage* g = new Garbage(x, y);
     g->insert_after(this);
-    garbage_list.push_back(g);
+    jobs.add_job(new GarbageJob(x, y));
   }
 }
 
@@ -62,10 +63,9 @@ void Elf::update() {
     Entity* e = city.ent(x, y);
     while (e != nullptr) {
       if (e->rawname() == Garbage::RAWNAME) {
-        auto it = find(garbage_list.begin(), garbage_list.end(), e);
-        if (it != garbage_list.end())
-          garbage_list.erase(it);
         delete e;
+        delete job;
+        job = nullptr;
         break;
       }
       e = e->next;
@@ -77,9 +77,13 @@ void Elf::update() {
 
     int x2;
     int y2;
-    if (garbage_list.size() > 0) {
-      x2 = garbage_list.back()->x;
-      y2 = garbage_list.back()->y;
+    if (jobs.has_job()) {
+      assert(job == nullptr);
+      job = jobs.pop_job();
+      assert(job->rawname() == Garbage::RAWNAME);
+      x2 = job->as<GarbageJob>().x;
+      y2 = job->as<GarbageJob>().y;
+      assert(city.tile(x2, y2).walkable());
     } else {
       x2 = rand() % 12;
       y2 = rand() % 12;

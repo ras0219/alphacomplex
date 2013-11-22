@@ -28,7 +28,7 @@ int main() {
   Graphics g;
   g.clear();
 
-  g.c = &city;
+  g.c.push_back(&city);
 
   while(!g.destroyed) {
     auto t = steady_clock::now();
