@@ -75,17 +75,6 @@ struct SmartEntity : Entity {
   void set_loc(int x_, int y_) { x = x_; y = y_; }
 };
 
-struct Garbage : SmartEntity {
-  Garbage(int x_, int y_) : SmartEntity(x_, y_) { }
-
-  static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
-  virtual void render(Graphics& g) const {
-    g.putChar(x, y, ';');
-  }
-};
-
 struct Dwarf : SmartEntity {
   Dwarf(int x_, int y_, char pic_ = 'D') : SmartEntity(x_, y_), pic(pic_) { }
 
@@ -106,10 +95,23 @@ struct Dwarf : SmartEntity {
 };
 
 struct Elf : SmartEntity {
-  Elf(int x_, int y_, char pic_ = 'E') : SmartEntity(x_, y_), pic(pic_) { }
+  Elf(int x_, int y_, char pic_ = 'E')
+    : SmartEntity(x_, y_),
+      pic(pic_),
+      state(CONFUSED),
+      job(nullptr) { }
 
   char pic;
   int energy = 0;
+
+  enum StateMachine {
+    CONFUSED,
+    WALKINGTOJOB,
+    WANDERING,
+    CLEANING
+  } state;
+
+  struct Job* job;
 
   vector<point> path;
   vector<point>::reverse_iterator pathp;
@@ -117,13 +119,7 @@ struct Elf : SmartEntity {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
-  virtual void render(Graphics& g) const {
-    //cerr << "rendering elf @ " << x << "," << y << endl;
-    if (path.size() == 0)
-      g.putChar(x, y, '?');
-    else
-      g.putChar(x, y, pic);
-  }
+  virtual void render(Graphics& g) const;
 
   virtual void update();
 };

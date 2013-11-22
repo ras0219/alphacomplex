@@ -5,15 +5,12 @@
 #include <X11/Xlib.h>
 #include <iostream>
 #include <chrono>
+#include <deque>
+
+#include "component.hpp"
 
 using namespace std;
 using namespace chrono;
-
-struct Graphics;
-
-struct Component {
-  virtual void render(Graphics&) = 0;
-};
 
 extern const char* white;
 
@@ -26,13 +23,14 @@ struct Graphics {
   XEvent event;
   int s;
 
-  Component* c;
+  deque<Component*> c;
 
 
   GC white_gc;
   XColor white_col;
   Colormap colormap;
 
+<<<<<<< HEAD
   Graphics() {
     #ifdef NDEBUG
     debug = 0;
@@ -47,7 +45,7 @@ struct Graphics {
     s = DefaultScreen(display);
 
     /* create window */
-    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 200, 200, 1,
+    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
                                  BlackPixel(display, s), WhitePixel(display, s));
  
     colormap = DefaultColormap(display, s);
@@ -86,8 +84,8 @@ struct Graphics {
   void repaint() {
     XFillRectangle(display, window, white_gc, 30, 30, 120, 120);
 
-    if (c != nullptr)
-      c->render(*this);
+    for (auto p : c)
+      p->render(*this);
 
     for (int y=0;y<12;++y)
       for (int x=0;x<12;++x)
