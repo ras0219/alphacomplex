@@ -9,6 +9,8 @@
 #include "pathfind.hpp"
 #include "tile.hpp"
 #include "joblist.hpp"
+#include "entity.hpp"
+#include "elf.hpp"
 
 using namespace std;
 
