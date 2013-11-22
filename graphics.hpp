@@ -38,7 +38,7 @@ struct Graphics {
     s = DefaultScreen(display);
 
     /* create window */
-    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 200, 200, 1,
+    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
                                  BlackPixel(display, s), WhitePixel(display, s));
  
     colormap = DefaultColormap(display, s);

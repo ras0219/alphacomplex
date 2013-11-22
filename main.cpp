@@ -8,6 +8,7 @@
 #include "city.hpp"
 #include "pathfind.hpp"
 #include "tile.hpp"
+#include "joblist.hpp"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ using namespace std;
 const char* white = "#FFFFFF";
 
 int main() {
+  srand(time(NULL));
   cin >> city;
   cout << "Created city.\n";
 
@@ -29,6 +31,7 @@ int main() {
   g.clear();
 
   g.c.push_back(&city);
+  g.c.push_back(new JobListing(200, 20, &jobs));
 
   while(!g.destroyed) {
     auto t = steady_clock::now();

@@ -1,8 +1,6 @@
 #pragma once
 
-struct Graphics;
-
 struct Component {
-  virtual void render(Graphics&) = 0;
+  virtual void render(struct Graphics&) = 0;
 };
 

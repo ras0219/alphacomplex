@@ -1,5 +1,7 @@
 #pragma once
 
+#include "component.hpp"
+
 // Job list requirements:
 //
 // Fast insert jobs
@@ -36,3 +38,12 @@ struct JobList {
 };
 
 extern JobList jobs;
+
+struct JobListing : Component {
+  JobList* jlist;
+  int x, y;
+
+  JobListing(int x_, int y_, JobList* l) : jlist(l), x(x_), y(y_) { }
+
+  virtual void render(Graphics& g);
+};
