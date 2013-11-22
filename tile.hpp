@@ -8,5 +8,5 @@ struct Tile {
 
   char render() { return type; }
 
-  bool walkable() { return type == ground; }
+  bool walkable() { return type != wall; }
 };

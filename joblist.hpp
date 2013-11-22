@@ -2,6 +2,7 @@
 
 #include "component.hpp"
 
+#include <list>
 #include <string>
 
 using namespace std;
@@ -17,8 +18,7 @@ using namespace std;
 struct Job {
   virtual const char* rawname() const = 0;
 
-  Job* next;
-  Job* prev;
+  virtual int description(char* buf, size_t n) const = 0;
 
   virtual ~Job() {}
 
@@ -29,16 +29,17 @@ struct Job {
 };
 
 struct JobList {
-  Job* head;
+  typedef list<Job*>::iterator iterator;
 
-  JobList() : head(nullptr) {}
+  list<Job*> jlist;
 
-  void add_job(Job*);
-  void remove_job(Job*);
+  JobList() {}
 
+  iterator add_job(Job*);
+  void remove_job(iterator);
   Job* pop_job();
 
-  inline bool has_job() { return head != nullptr; }
+  inline bool has_job() { return jlist.size() > 0; }
 };
 
 extern JobList jobs;

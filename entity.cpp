@@ -39,7 +39,7 @@ void Dwarf::update() {
   if (rand() % 100 == 0) {
     Garbage* g = new Garbage(x, y);
     g->insert_after(this);
-    jobs.add_job(new GarbageJob(x, y));
+    jobs.add_job(new GarbageJob(g));
   }
 }
 

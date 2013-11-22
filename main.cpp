@@ -11,10 +11,22 @@
 #include "joblist.hpp"
 #include "entity.hpp"
 #include "elf.hpp"
+#include "room.hpp"
 
 using namespace std;
 
 /*************************/
+int influence = 0;
+
+struct Influenceometer : Component {
+  virtual void render(Graphics& g) {
+    char buf[24];
+    int nchars = snprintf(buf, 24, "Influence: %d", influence);
+    XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
+                5, 200,
+                buf, nchars);
+  }
+};
 
 const char* white = "#FFFFFF";
 
@@ -23,19 +35,22 @@ int main() {
   cin >> city;
   cout << "Created city.\n";
 
-  Dwarf d(9,9);
-  d.insert_after(city.ent(9,9));
+  Dwarf d(1,1);
+  d.insert_after(city.ent(1,1));
 
-  Elf d2(5,5), e(5,5);
-  d2.insert_after(city.ent(5,5));
-  e.insert_after(city.ent(5,5));
+  Elf e1(1,1), e2(1,1);
+  e1.insert_after(city.ent(1,1));
+  e2.insert_after(city.ent(1,1));
 
-  Graphics g;
+  Graphics g(city.getXSize(), city.getYSize());
   g.clear();
+
+  Influenceometer imeter;
 
   g.c.push_back(&city);
   g.c.push_back(new JobListing(200, 20, &active_jobs, "Active Jobs"));
   g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
+  g.c.push_back(&imeter);
 
   while(!g.destroyed) {
     auto t = steady_clock::now();
@@ -45,6 +60,9 @@ int main() {
       e->update();
       e = e->g_next;
     }
+
+    for (auto r : city.rooms)
+      r->update();
 
     g.repaint();
 

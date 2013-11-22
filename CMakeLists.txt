@@ -11,5 +11,14 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
 
 find_package(X11 REQUIRED)
 
-add_executable(citysim main.cpp entity.cpp city.cpp pathfind.cpp garbage.cpp joblist.cpp elf.cpp)
+add_executable(citysim
+  main.cpp
+  entity.cpp
+  city.cpp
+  pathfind.cpp
+  garbage.cpp
+  joblist.cpp
+  elf.cpp
+  room.cpp
+  workroom.cpp)
 target_link_libraries(citysim ${X11_LIBRARIES})

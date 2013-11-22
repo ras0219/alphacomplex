@@ -4,6 +4,7 @@
 #include <cassert>
 #include <X11/Xlib.h>
 #include <iostream>
+#include <vector>
 #include <chrono>
 #include <deque>
 
@@ -30,7 +31,7 @@ struct Graphics {
   XColor white_col;
   Colormap colormap;
 
-  Graphics() {
+  Graphics(int x = 12, int y = 12) : xsz(x), ysz(y), buf(x*y) {
     #ifdef NDEBUG
     debug = 0;
     #else
@@ -62,6 +63,7 @@ struct Graphics {
 
   void handle_events() {
     int events = XPending(display);
+
     while (events > 0) {
       cerr << events << " Events." << endl;
       XNextEvent(display, &event);
@@ -81,16 +83,16 @@ struct Graphics {
   }
 
   void repaint() {
-    XFillRectangle(display, window, white_gc, 30, 30, 120, 120);
+    XFillRectangle(display, window, white_gc, 0, 0, 400, 200);
 
     for (auto p : c)
       p->render(*this);
 
-    for (int y=0;y<12;++y)
-      for (int x=0;x<12;++x)
+    for (int y=0;y<ysz;++y)
+      for (int x=0;x<xsz;++x)
         XDrawString(display, window, DefaultGC(display, s),
-                    30 + x*10, 30 + y*10,
-                    &buf[y][x], 1);
+                    5 + x*10, 15 + y*10,
+                    &buf[y * xsz + x], 1);
   }
 
   bool destroyed = false;
@@ -100,30 +102,31 @@ struct Graphics {
     destroyed = true;
   }
 
-  ~Graphics() { destroy(); }
+  ~Graphics() { destroy(); }                                                                                                                     
 
   int debug;
-  char buf[12][12];
+  int xsz, ysz;
+  vector<char> buf;
 
   void putChar(int x, int y, char c) {
     if (debug > 0)
       cerr << "putChar(" << x << ", " << y << ", '" << c << "')" << endl;
 
-    if (x >= 0 && x < 12 && y >= 0 && y < 12)
-      buf[y][x] = c;
+    if (x >= 0 && x < xsz && y >= 0 && y < ysz)
+      buf[y*xsz + x] = c;
   }
 
   void print() {
-    for (int y=0;y<12;++y) {
-      for (int x=0;x<12;++x)
-        cout << buf[y][x];
+    for (int y=0;y<ysz;++y) {
+      for (int x=0;x<xsz;++x)
+        cout << buf[y*xsz + x];
       cout << '\n';
     }
   }
   void clear() {
-    for (int y=0;y<12;++y)
-      for (int x=0;x<12;++x)
-        buf[y][x] = '\0';
+    for (int y=0;y<ysz;++y)
+      for (int x=0;x<xsz;++x)
+        buf[y*xsz + x] = '\0';
   }
 
   void beginDebug() {
