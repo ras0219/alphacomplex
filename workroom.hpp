@@ -17,6 +17,7 @@ struct WorkRoom : Room {
   int work_counter;
   struct Job* current_work;
 
+  void complete_job();
   virtual void update();
 };
 

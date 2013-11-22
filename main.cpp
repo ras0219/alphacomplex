@@ -16,6 +16,17 @@
 using namespace std;
 
 /*************************/
+int influence = 0;
+
+struct Influenceometer : Component {
+  virtual void render(Graphics& g) {
+    char buf[24];
+    int nchars = snprintf(buf, 24, "Influence: %d", influence);
+    XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
+                5, 200,
+                buf, nchars);
+  }
+};
 
 const char* white = "#FFFFFF";
 
@@ -34,9 +45,12 @@ int main() {
   Graphics g(city.getXSize(), city.getYSize());
   g.clear();
 
+  Influenceometer imeter;
+
   g.c.push_back(&city);
   g.c.push_back(new JobListing(200, 20, &active_jobs, "Active Jobs"));
   g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
+  g.c.push_back(&imeter);
 
   while(!g.destroyed) {
     auto t = steady_clock::now();

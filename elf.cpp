@@ -110,7 +110,7 @@ void Elf::update() {
             job->as<FetchJob>().part = 1;
             path_to(job->as<FetchJob>().x2, job->as<FetchJob>().y2);
           } else {
-            job->as<FetchJob>().parent->current_work = nullptr;
+            job->as<FetchJob>().parent->complete_job();
 
             path.clear();
             pathp = path.rbegin();

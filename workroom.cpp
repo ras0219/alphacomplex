@@ -3,6 +3,8 @@
 
 const char* WorkRoom::RAWNAME = "workroom";
 
+extern int influence;
+
 void WorkRoom::update() {
   if (current_work == nullptr) {
     ++work_counter;
@@ -15,6 +17,11 @@ void WorkRoom::update() {
       work_counter = 0;
     }
   }
+}
+
+void WorkRoom::complete_job() {
+  current_work = nullptr;
+  influence += 1;
 }
 
 const char* FetchJob::RAWNAME = "fetch";
