@@ -8,7 +8,7 @@
 #include "graphics.hpp"
 #include "tile.hpp"
 #include "entity.hpp"
-
+#include "component.hpp"
 using namespace std;
 
 struct SentinelEntity : Entity {
@@ -46,7 +46,6 @@ struct City : Component {
   virtual void render(Graphics&);
 
   struct Room* find_room(const char*);
-
 };
 
 istream& operator>>(istream& is, City& city);
