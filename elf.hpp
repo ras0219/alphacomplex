@@ -13,6 +13,7 @@ struct Elf : SmartEntity {
 
   char pic;
   int energy = 0;
+  int clean_supplies = 0;
 
   enum StateMachine {
     CONFUSED,
@@ -35,4 +36,6 @@ struct Elf : SmartEntity {
   virtual void update();
 
   void path_to(int, int);
+
+  void complete_job_step();
 };

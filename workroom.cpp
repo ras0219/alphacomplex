@@ -12,7 +12,7 @@ void WorkRoom::update() {
     int work_countdown = 400 - work_counter;
     if (rand() % work_countdown == 0) {
       // Congratulations! Mandatory bonus work!
-      current_work = new FetchJob(1, 1, x, y, this);
+      current_work = make_fetch_job(1, 1, x, y, this);
       jobs.add_job(current_work);
       work_counter = 0;
     }
@@ -24,13 +24,16 @@ void WorkRoom::complete_job() {
   influence += 1;
 }
 
-const char* FetchJob::RAWNAME = "fetch";
+const char* FetchJobStep1::RAWNAME = "fetch1";
+const char* FetchJobStep2::RAWNAME = "fetch2";
 
-int FetchJob::description(char* buf, size_t n) const {
-  if (part == 0)
-    return snprintf(buf, n, "Fetch docs @ %d, %d", x1, y1);
-  if (part == 1)
-    return snprintf(buf, n, "Return docs @ %d, %d", x2, y2);
-  assert(part >= 0 && part < 2);
-  return -1;
+int FetchJobStep1::description(char* buf, size_t n) const {
+  return snprintf(buf, n, "Fetch docs at %d, %d", x, y);
+}
+int FetchJobStep2::description(char* buf, size_t n) const {
+  return snprintf(buf, n, "Return docs to %d, %d", x, y);
+}
+
+FetchJobStep1* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p) {
+  return new FetchJobStep1(x1, y1, new FetchJobStep2(x2, y2, p));
 }

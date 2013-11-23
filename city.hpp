@@ -27,14 +27,14 @@ struct City : Component {
   vector<SentinelEntity> ents;
   vector<struct Room*> rooms;
 
-  int getXSize() const { return xsz; }
-  int getYSize() const { return ysz; }
+  inline int getXSize() const { return xsz; }
+  inline int getYSize() const { return ysz; }
 
-  Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
-  Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
+  inline Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
+  inline Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
 
-  const SentinelEntity* ent(int x, int y) const { return &ents[xsz*y + x]; }
-  SentinelEntity* ent(int x, int y) { return &ents[xsz*y + x]; }
+  inline const SentinelEntity* ent(int x, int y) const { return &ents[xsz*y + x]; }
+  inline SentinelEntity* ent(int x, int y) { return &ents[xsz*y + x]; }
 
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
@@ -43,7 +43,9 @@ struct City : Component {
   City() : xsz(0), ysz(0), tiles(), ents() {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
 
-  void render(Graphics& g);
+  virtual void render(Graphics&);
+
+  struct Room* find_room(const char*);
 };
 
 istream& operator>>(istream& is, City& city);

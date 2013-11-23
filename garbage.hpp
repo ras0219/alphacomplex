@@ -1,7 +1,17 @@
 #pragma once
 
+#include "room.hpp"
 #include "joblist.hpp"
 #include "entity.hpp"
+
+struct CleaningRoom : Room {
+  CleaningRoom(int x_, int y_, int w_, int h_)
+    : Room(x_,y_,w_,h_) { }
+
+  virtual const char* rawname() { return RAWNAME; }
+
+  static const char* RAWNAME;
+};
 
 struct Garbage : SmartEntity {
   Garbage(int x_, int y_) : SmartEntity(x_, y_) {
@@ -20,12 +30,21 @@ struct Garbage : SmartEntity {
 };
 
 struct GarbageJob : Job {
-  Garbage* g;
+  GarbageJob(Garbage* g_) : g(g_) { }
 
   virtual const char* rawname() const { return Garbage::RAWNAME; }
-
   virtual int description(char* buf, size_t n) const;
 
-  GarbageJob(Garbage* g_) : g(g_) { }
+  Garbage* g;
 };
 
+struct SupplyJob : JobStep {
+  SupplyJob(int x_, int y_, Job* j)
+    : JobStep(j), x(x_), y(y_) { }
+
+  virtual const char* rawname() const { return RAWNAME; }
+  virtual int description(char* buf, size_t n) const;
+
+  static const char* RAWNAME;
+  int x, y;
+};

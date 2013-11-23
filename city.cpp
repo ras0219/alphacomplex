@@ -2,6 +2,7 @@
 #include "city.hpp"
 #include "room.hpp"
 #include "workroom.hpp"
+#include "garbage.hpp"
 
 #include <stdexcept>
 
@@ -15,13 +16,20 @@ void City::render(Graphics& g) {
     for (int x=0;x<xsz;++x) {
       assert(ent(x,y)->rawname() == SentinelEntity::RAWNAME);
       if (ent(x,y)->next != nullptr) {
-	ent(x,y)->next->render(g);
+        ent(x,y)->next->render(g);
       } else {
-	g.putChar(x, y, tile(x,y).type);
+        g.putChar(x, y, tile(x,y).type);
       }
     }
 }
 
+Room* City::find_room(const char* rawname) {
+  for (auto r : rooms) {
+    if (r->rawname() == rawname)
+      return r;
+  }
+  return nullptr;
+}
 
 istream& operator>>(istream& is, City& c) {
   c.tiles.clear();
@@ -91,7 +99,10 @@ istream& operator>>(istream& is, City& c) {
         int h = k-j;
 
         // room's top-left is i,j and dimensions are w x h
-        c.rooms.push_back(new WorkRoom(i,j,w,h,ch));
+        if (ch == 'C')
+          c.rooms.push_back(new CleaningRoom(i,j,w,h));
+        else
+          c.rooms.push_back(new WorkRoom(i,j,w,h,ch));
       }
     }
   }
