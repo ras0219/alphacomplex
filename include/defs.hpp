@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include "debug_policy.hpp"
 
 using namespace std;
 
@@ -15,3 +16,5 @@ enum Direction {
   WEST,
   NORTH
 };
+
+typedef DebugPolicy<true> debug_policy_t;

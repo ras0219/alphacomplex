@@ -2,7 +2,8 @@
 #include <deque>
 #include <vector>
 #include <string>
-#include "debug_policy.hpp"
+#include "defs.hpp"
+
 using namespace std;
 
 extern const char* white;
@@ -26,7 +27,7 @@ struct _XDisplay;
 typedef struct _XDisplay Display;
 struct GraphicsInternal;
 
-struct Graphics : Debug<false> {
+struct Graphics : debug_policy_t {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
   Graphics();

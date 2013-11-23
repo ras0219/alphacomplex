@@ -1,7 +1,8 @@
 #pragma once
 template <bool b>
-struct Debug {
+struct DebugPolicy {
+public:
   enum {
-    value = b,
+    debugging = b,
   };
 };
