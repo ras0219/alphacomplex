@@ -13,14 +13,14 @@ set(CMAKE_CXX_FLAGS_RELEASESTATIC "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG -stat
 find_package(X11 REQUIRED)
 
 add_executable(citysim
-  main.cpp
-  entity.cpp
-  city.cpp
-  pathfind.cpp
-  garbage.cpp
-  joblist.cpp
-  graphics.cpp
-  elf.cpp
-  room.cpp
-  workroom.cpp)
+  src/main.cpp
+  src/entity.cpp
+  src/city.cpp
+  src/pathfind.cpp
+  src/garbage.cpp
+  src/joblist.cpp
+  src/graphics.cpp
+  src/elf.cpp
+  src/room.cpp
+  src/workroom.cpp)
 target_link_libraries(citysim ${X11_LIBRARIES})
