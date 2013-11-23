@@ -2,7 +2,7 @@
 #include <deque>
 #include <vector>
 #include <string>
-
+#include "debug_policy.hpp"
 using namespace std;
 
 extern const char* white;
@@ -12,7 +12,7 @@ struct _XDisplay;
 typedef struct _XDisplay Display;
 struct GraphicsInternal;
 
-struct Graphics {
+struct Graphics : Debug<false> {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
   Graphics(int x = 12, int y = 12);
