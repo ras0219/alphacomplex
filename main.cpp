@@ -4,9 +4,15 @@
 #include <iostream>
 #include <tuple>
 #include <vector>
+#include <sstream>
+#include <string>
 
+#include <unistd.h>
+
+#include "component.hpp"
 #include "city.hpp"
 #include "pathfind.hpp"
+#include "graphics.hpp"
 #include "tile.hpp"
 #include "joblist.hpp"
 #include "entity.hpp"
@@ -14,17 +20,15 @@
 #include "room.hpp"
 
 using namespace std;
-
+using namespace chrono;
 /*************************/
 int influence = 0;
 
 struct Influenceometer : Component {
   virtual void render(Graphics& g) {
-    char buf[24];
-    int nchars = snprintf(buf, 24, "Influence: %d", influence);
-    XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
-                5, 200,
-                buf, nchars);
+    stringstream out;
+    out << "Influence: " << influence << ends;
+    g.drawString(5, 200, out.str(), Graphics::WHITE);
   }
 };
 

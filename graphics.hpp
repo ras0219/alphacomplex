@@ -1,132 +1,51 @@
 #pragma once
-
-#include <unistd.h>
-#include <cassert>
-#include <X11/Xlib.h>
-#include <iostream>
-#include <vector>
-#include <chrono>
 #include <deque>
-
-#include "component.hpp"
+#include <vector>
+#include <string>
 
 using namespace std;
-using namespace chrono;
 
 extern const char* white;
+
+struct Component;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+struct GraphicsInternal;
 
 struct Graphics {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
+  Graphics(int x = 12, int y = 12);
+  ~Graphics();
+
+  enum Context {
+    WHITE,
+    DEFAULT
+  };
+  void drawString(int x, int y, const std::string & str, Context gc = DEFAULT);
 
   Display *display;
-  Window window;
-  XEvent event;
   int s;
 
   deque<Component*> c;
 
-
-  GC white_gc;
-  XColor white_col;
-  Colormap colormap;
-
-  Graphics(int x = 12, int y = 12) : debug(0), xsz(x), ysz(y), buf(x*y) {
-    /* open connection with the server */
-    display = XOpenDisplay(NULL);
-    assert(display != nullptr);
- 
-    s = DefaultScreen(display);
-
-    /* create window */
-    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
-                                 BlackPixel(display, s), WhitePixel(display, s));
- 
-    colormap = DefaultColormap(display, s);
-    white_gc = XCreateGC(display, window, 0, 0);
-    XParseColor(display, colormap, white, &white_col);
-    XAllocColor(display, colormap, &white_col);
-    XSetForeground(display, white_gc, white_col.pixel);
-
-    /* select kind of events we are interested in */
-    XSelectInput(display, window, ExposureMask | KeyPressMask);
- 
-    /* map (show) the window */
-    XMapWindow(display, window);
-  }
-
-  void handle_events() {
-    int events = XPending(display);
-
-    while (events > 0) {
-      cerr << events << " Events." << endl;
-      XNextEvent(display, &event);
- 
-      /* draw or redraw the window */
-      if (event.type == Expose)
-        repaint();
-
-      /* exit on key press */
-      if (event.type == KeyPress) {
-        destroy();
-        return;
-      }
-
-      events = XPending(display);
-    }
-  }
-
-  void repaint() {
-    XFillRectangle(display, window, white_gc, 0, 0, 400, 200);
-
-    for (auto p : c)
-      p->render(*this);
-
-    for (int y=0;y<ysz;++y)
-      for (int x=0;x<xsz;++x)
-        XDrawString(display, window, DefaultGC(display, s),
-                    5 + x*10, 15 + y*10,
-                    &buf[y * xsz + x], 1);
-  }
-
+  void handle_events();
   bool destroyed = false;
-  void destroy() {
-    if (destroyed) return;
-    XCloseDisplay(display);
-    destroyed = true;
-  }
 
-  ~Graphics() { destroy(); }                                                                                                                     
+  void repaint();
+  void destroy();
+
 
   int debug;
   int xsz, ysz;
   vector<char> buf;
 
-  void putChar(int x, int y, char c) {
-    if (debug > 0)
-      cerr << "putChar(" << x << ", " << y << ", '" << c << "')" << endl;
+  void putChar(int x, int y, char c);
+  void print();
+  void clear();
 
-    if (x >= 0 && x < xsz && y >= 0 && y < ysz)
-      buf[y*xsz + x] = c;
-  }
-
-  void print() {
-    for (int y=0;y<ysz;++y) {
-      for (int x=0;x<xsz;++x)
-        cout << buf[y*xsz + x];
-      cout << '\n';
-    }
-  }
-  void clear() {
-    for (int y=0;y<ysz;++y)
-      for (int x=0;x<xsz;++x)
-        buf[y*xsz + x] = '\0';
-  }
-
-  void beginDebug() {
-    ++debug;
-  }
-  void endDebug() {
-    --debug;
-  }
+  void beginDebug();
+  void endDebug();
+  
+  GraphicsInternal* pImpl;
 };
