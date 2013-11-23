@@ -22,11 +22,7 @@ struct GraphicsInternal {
 };
 
 Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsInternal()) {
-#ifdef NDEBUG
   debug = 0;
-#else
-  debug = 1;
-#endif
 
   /* open connection with the server */
   display = XOpenDisplay(NULL);

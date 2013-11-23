@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <tuple>
@@ -28,7 +29,7 @@ struct Influenceometer : Component {
   virtual void render(Graphics& g) {
     stringstream out;
     out << "Influence: " << influence << ends;
-    g.drawString(5, 200, out.str(), Graphics::WHITE);
+    g.drawString(5, 200, out.str(), Graphics::DEFAULT);
   }
 };
 
