@@ -9,6 +9,20 @@ const char* SentinelEntity::RAWNAME = "sentinel";
 
 City city;
 
+void City::render(Graphics& g) {
+  assert(this == &city);
+  for (int y=0;y<ysz;++y)
+    for (int x=0;x<xsz;++x) {
+      assert(ent(x,y)->rawname() == SentinelEntity::RAWNAME);
+      if (ent(x,y)->next != nullptr) {
+	ent(x,y)->next->render(g);
+      } else {
+	g.putChar(x, y, tile(x,y).type);
+      }
+    }
+}
+
+
 istream& operator>>(istream& is, City& c) {
   c.tiles.clear();
   c.ents.clear();

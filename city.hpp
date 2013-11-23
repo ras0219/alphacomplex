@@ -8,7 +8,7 @@
 #include "graphics.hpp"
 #include "tile.hpp"
 #include "entity.hpp"
-
+#include "component.hpp"
 using namespace std;
 
 struct SentinelEntity : Entity {
@@ -43,19 +43,7 @@ struct City : Component {
   City() : xsz(0), ysz(0), tiles(), ents() {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
 
-  void render(Graphics& g) {
-    assert(this == &city);
-    for (int y=0;y<ysz;++y)
-      for (int x=0;x<xsz;++x) {
-        assert(ent(x,y)->rawname() == SentinelEntity::RAWNAME);
-        if (ent(x,y)->next != nullptr) {
-          ent(x,y)->next->render(g);
-        } else {
-          g.putChar(x, y, tile(x,y).type);
-        }
-      }
-  }
-
+  void render(Graphics& g);
 };
 
 istream& operator>>(istream& is, City& city);
