@@ -45,6 +45,8 @@ struct City : Component {
 
   virtual void render(Graphics&);
 
+  struct Room* find_room(const char*);
+
 };
 
 istream& operator>>(istream& is, City& city);

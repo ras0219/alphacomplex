@@ -61,12 +61,26 @@ void Elf::update() {
         assert(job == nullptr);
 
         job = jobs.pop_job();
+
+        if (clean_supplies == 0 && job->rawname() == Garbage::RAWNAME) {
+          // Must fetch cleaning supplies
+          Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+          if (cleaning == nullptr) {
+            // Magic some supplies
+            clean_supplies = 3;
+          } else {
+            job = new SupplyJob(cleaning->x, cleaning->y, job);
+          }
+        }
+
         job_it = active_jobs.add_job(job);
 
         if (job->rawname() == Garbage::RAWNAME) {
           path_to(job->as<GarbageJob>().g->x, job->as<GarbageJob>().g->y);
-        } else if (job->rawname() == FetchJob::RAWNAME) {
-          path_to(job->as<FetchJob>().x1, job->as<FetchJob>().y1);
+        } else if (job->rawname() == SupplyJob::RAWNAME) {
+          path_to(job->as<SupplyJob>().x, job->as<SupplyJob>().y);
+        } else if (job->rawname() == FetchJobStep1::RAWNAME) {
+          path_to(job->as<FetchJobStep1>().x, job->as<FetchJobStep1>().y);
         } else {
           assert(false);
         }
@@ -105,21 +119,26 @@ void Elf::update() {
           path.clear();
           pathp = path.rbegin();
           state = CLEANING;
-        } else if (job->rawname() == FetchJob::RAWNAME) {
-          if (job->as<FetchJob>().part == 0) {
-            job->as<FetchJob>().part = 1;
-            path_to(job->as<FetchJob>().x2, job->as<FetchJob>().y2);
-          } else {
-            job->as<FetchJob>().parent->complete_job();
+        } else if (job->rawname() == SupplyJob::RAWNAME) {
+          clean_supplies = 3;
 
-            path.clear();
-            pathp = path.rbegin();
+          complete_job_step();
 
-            active_jobs.remove_job(job_it);
-            delete job;
-            job = nullptr;
-            state = CONFUSED;
-          }
+          path_to(job->as<GarbageJob>().g->x, job->as<GarbageJob>().g->y);
+        } else if (job->rawname() == FetchJobStep1::RAWNAME) {
+          complete_job_step();
+
+          path_to(job->as<FetchJobStep2>().x, job->as<FetchJobStep2>().y);
+        } else if (job->rawname() == FetchJobStep2::RAWNAME) {
+          job->as<FetchJobStep2>().parent->complete_job();
+
+          path.clear();
+          pathp = path.rbegin();
+
+          active_jobs.remove_job(job_it);
+          delete job;
+          job = nullptr;
+          state = CONFUSED;
         }
       }
     }
@@ -129,11 +148,15 @@ void Elf::update() {
       energy = 0;
 
       assert(job != nullptr);
+      assert(job->rawname() == Garbage::RAWNAME);
+      assert(clean_supplies > 0);
 
       Entity* e = city.ent(x, y);
       while (e != nullptr) {
         //cout << e->rawname() << endl;
         if (e == job->as<GarbageJob>().g) {
+          --clean_supplies;
+
           delete e;
 
           active_jobs.remove_job(job_it);
@@ -171,4 +194,13 @@ void Elf::update() {
     }
     return;
   }
+}
+
+void Elf::complete_job_step() {
+  Job* j = job->as<JobStep>().complete_step();
+
+  active_jobs.remove_job(job_it);
+  delete job;
+  job = j;
+  job_it = active_jobs.add_job(job);
 }

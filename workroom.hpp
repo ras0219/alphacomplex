@@ -3,7 +3,6 @@
 #include "room.hpp"
 #include "joblist.hpp"
 
-
 struct WorkRoom : Room {
   static const char* RAWNAME;
 
@@ -21,20 +20,30 @@ struct WorkRoom : Room {
   virtual void update();
 };
 
-struct FetchJob : Job {
+struct FetchJobStep1 : JobStep {
+  static const char* RAWNAME;
+  virtual const char* rawname() const { return RAWNAME; }
+
+  virtual int description(char* buf, size_t n) const;
+  
+  FetchJobStep1(int x_, int y_, Job* part2)
+    :  JobStep(part2), x(x_), y(y_) { }
+
+  int x, y;
+};
+
+struct FetchJobStep2 : Job {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
   virtual int description(char* buf, size_t n) const;
 
-  FetchJob(int x1_, int y1_, int x2_, int y2_, WorkRoom* p)
-    : part(0), x1(x1_), y1(y1_), x2(x2_), y2(y2_), parent(p)
-    { }
+  FetchJobStep2(int x_, int y_, WorkRoom* p)
+    : x(x_), y(y_), parent(p) { }
 
-  int part;
-
-  int x1, y1;
-  int x2, y2;
+  int x, y;
 
   WorkRoom* parent;
 };
+
+FetchJobStep1* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p);

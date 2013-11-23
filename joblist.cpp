@@ -38,4 +38,10 @@ void JobListing::render(Graphics& g) {
   }
 }
 
+Job* JobStep::complete_step() {
+  Job* j = next_step;
+  next_step = nullptr;
+  return j;
+}
+
 JobList jobs, active_jobs;
