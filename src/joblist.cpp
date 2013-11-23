@@ -26,7 +26,7 @@ void JobListing::render(Graphics& g) {
   int yoffset = y+30;
   for (auto j : jlist->jlist) {
     char buf[24];
-    int nchars = j->description(buf, 24);
+    j->description(buf, 24);
     g.drawString(x, yoffset, string(buf));
     yoffset += 10;
   }

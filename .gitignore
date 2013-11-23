@@ -1,6 +1,2 @@
 build/
-Makefile
-CMakeFiles
-CMakeCache.txt
-cmake_install.cmake
-citysim
+debug/

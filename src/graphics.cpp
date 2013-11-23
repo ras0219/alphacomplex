@@ -23,6 +23,7 @@ struct GraphicsInternal {
 
 Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsInternal()) {
   debug = Debug::value;
+
   /* open connection with the server */
   display = XOpenDisplay(NULL);
   assert(display != nullptr);
