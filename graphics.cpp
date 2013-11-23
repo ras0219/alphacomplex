@@ -1,6 +1,27 @@
 #include "graphics.hpp"
+#include "component.hpp"
 
-Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y) {
+#include <unistd.h>
+#include <cassert>
+#include <X11/Xlib.h>
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <deque>
+
+using namespace std;
+using namespace chrono;
+
+struct GraphicsInternal {
+  Window window;
+  XEvent event;
+
+  GC white_gc;
+  XColor white_col;
+  Colormap colormap;
+};
+
+Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsInternal()) {
 #ifdef NDEBUG
   debug = 0;
 #else
@@ -14,20 +35,20 @@ Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y) {
   s = DefaultScreen(display);
 
   /* create window */
-  window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
+  pImpl->window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
     BlackPixel(display, s), WhitePixel(display, s));
  
-  colormap = DefaultColormap(display, s);
-  white_gc = XCreateGC(display, window, 0, 0);
-  XParseColor(display, colormap, white, &white_col);
-  XAllocColor(display, colormap, &white_col);
-  XSetForeground(display, white_gc, white_col.pixel);
+  pImpl->colormap = DefaultColormap(display, s);
+  pImpl->white_gc = XCreateGC(display, pImpl->window, 0, 0);
+  XParseColor(display, pImpl->colormap, white, &pImpl->white_col);
+  XAllocColor(display, pImpl->colormap, &pImpl->white_col);
+  XSetForeground(display, pImpl->white_gc, pImpl->white_col.pixel);
 
   /* select kind of events we are interested in */
-  XSelectInput(display, window, ExposureMask | KeyPressMask);
+  XSelectInput(display, pImpl->window, ExposureMask | KeyPressMask);
  
   /* map (show) the window */
-  XMapWindow(display, window);
+  XMapWindow(display, pImpl->window);
 }
 
 void Graphics::handle_events() {
@@ -35,14 +56,14 @@ void Graphics::handle_events() {
 
   while (events > 0) {
     cerr << events << " Events." << endl;
-    XNextEvent(display, &event);
+    XNextEvent(display, &pImpl->event);
  
     /* draw or redraw the window */
-    if (event.type == Expose)
+    if (pImpl->event.type == Expose)
       repaint();
 
     /* exit on key press */
-    if (event.type == KeyPress) {
+    if (pImpl->event.type == KeyPress) {
       destroy();
       return;
     }
@@ -50,16 +71,33 @@ void Graphics::handle_events() {
     events = XPending(display);
   }
 }
+void Graphics::drawString(int x, int y, const string & str, const Graphics::Context gc) {
+  GC* t;
+  switch (gc) {
+  case WHITE:
+    t = &pImpl->white_gc;
+    break;
+  default:
+    t = &DefaultGC(display, s);
+    break;
+  }
+  XDrawString(display,
+	      pImpl->window,
+	      *t,
+	      x, y,
+	      str.c_str(),
+	      str.length());
+}
 
 void Graphics::repaint() {
-  XFillRectangle(display, window, white_gc, 0, 0, 400, 200);
+  XFillRectangle(display, pImpl->window, pImpl->white_gc, 0, 0, 400, 200);
   
   for (auto p : c)
     p->render(*this);
 
   for (int y=0;y<ysz;++y)
     for (int x=0;x<xsz;++x)
-      XDrawString(display, window, DefaultGC(display, s),
+      XDrawString(display, pImpl->window, DefaultGC(display, s),
 		  5 + x*10, 15 + y*10,
 		  &buf[y * xsz + x], 1);
 }
@@ -70,7 +108,11 @@ void Graphics::destroy() {
     destroyed = true;
   }
 
-Graphics::~Graphics() { destroy(); }                                                                                                                     
+Graphics::~Graphics() { 
+  destroy();
+  delete pImpl;
+  pImpl = 0;
+}                                                                                                                     
 void Graphics::putChar(int x, int y, char c) {
   if (debug > 0)
     cerr << "putChar(" << x << ", " << y << ", '" << c << "')" << endl;

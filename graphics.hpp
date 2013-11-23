@@ -1,19 +1,16 @@
 #pragma once
-
-#include <unistd.h>
-#include <cassert>
-#include <X11/Xlib.h>
-#include <iostream>
-#include <vector>
-#include <chrono>
 #include <deque>
-
-#include "component.hpp"
+#include <vector>
+#include <string>
 
 using namespace std;
-using namespace chrono;
 
 extern const char* white;
+
+struct Component;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+struct GraphicsInternal;
 
 struct Graphics {
   Graphics(const Graphics&) = delete;
@@ -21,16 +18,16 @@ struct Graphics {
   Graphics(int x = 12, int y = 12);
   ~Graphics();
 
+  enum Context {
+    WHITE,
+    DEFAULT
+  };
+  void drawString(int x, int y, const std::string & str, Context gc = DEFAULT);
+
   Display *display;
-  Window window;
-  XEvent event;
   int s;
 
   deque<Component*> c;
-
-  GC white_gc;
-  XColor white_col;
-  Colormap colormap;
 
   void handle_events();
   bool destroyed = false;
@@ -49,4 +46,6 @@ struct Graphics {
 
   void beginDebug();
   void endDebug();
+  
+  GraphicsInternal* pImpl;
 };

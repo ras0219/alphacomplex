@@ -20,20 +20,14 @@ Job* JobList::pop_job() {
 void JobListing::render(Graphics& g) {
   //XFillRectangle(g.display, g.window, g.white_gc, x, y, 200, 200);
 
-  XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
-              x, y + 10,
-              title.c_str(), title.size());
-  XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
-              x, y + 20,
-              "---------", 9);
+  g.drawString(x, y+10, title, Graphics::DEFAULT);
+  g.drawString(x, y+20, "---------", Graphics::DEFAULT);
 
   int yoffset = y+30;
   for (auto j : jlist->jlist) {
     char buf[24];
     int nchars = j->description(buf, 24);
-    XDrawString(g.display, g.window, DefaultGC(g.display, g.s),
-                x, yoffset,
-                buf, nchars);
+    g.drawString(x, yoffset, string(buf));
     yoffset += 10;
   }
 }
