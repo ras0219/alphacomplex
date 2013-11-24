@@ -1,5 +1,7 @@
 #pragma once
 
+#include "defs.hpp"
+
 struct Job {
   virtual const char* rawname() const = 0;
 
