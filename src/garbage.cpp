@@ -1,3 +1,4 @@
+#include "city.hpp"
 #include "garbage.hpp"
 
 const char* CleaningRoom::RAWNAME = "cleaningroom";
@@ -17,25 +18,41 @@ struct CleaningJob : ActivityJob<CleaningJob> {
   Garbage* g;
 };
 
-struct GarbageJob : WalkToJob<GarbageJob> {
-  GarbageJob(Garbage* g_)
-    : WalkToJob(g_->x, g_->y), g(g_) { }
-
-  virtual int description(char* buf, size_t n) const;
-
-  static const char* RAWNAME;
-  Garbage* g;
-};
-
 struct SupplyJob : WalkToJob<SupplyJob> {
   SupplyJob(int x_, int y_)
     : WalkToJob(x_, y_) { }
 
   virtual int description(char* buf, size_t n) const;
 
+  virtual bool complete_walk(Elf* e) {
+    e->clean_supplies = 3;
+    return true;
+  }
+
   static const char* RAWNAME;
   Job* g;
   int x, y;
+};
+
+struct GarbageJob : WalkToJob<GarbageJob> {
+  GarbageJob(Garbage* g_)
+    : WalkToJob(g_->x, g_->y), g(g_) { }
+
+  virtual int description(char* buf, size_t n) const;
+
+  virtual void assign_task(Elf* e) {
+    if (e->clean_supplies > 0) {
+      --e->clean_supplies;
+      return WalkToJob<GarbageJob>::assign_task(e);
+    } else {
+      Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+      e->job->as<MultiJob>().subjobs.push_front(new SupplyJob(cleaning->x, cleaning->y));
+      e->job->assign_task(e);
+    }
+  }
+
+  static const char* RAWNAME;
+  Garbage* g;
 };
 
 const char* Garbage::RAWNAME = "garbage";
