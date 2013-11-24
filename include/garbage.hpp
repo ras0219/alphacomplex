@@ -1,7 +1,7 @@
 #pragma once
 
 #include "room.hpp"
-#include "joblist.hpp"
+#include "job.hpp"
 #include "entity.hpp"
 
 struct CleaningRoom : Room {
