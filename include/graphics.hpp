@@ -44,6 +44,9 @@ struct Graphics {
   void print();
   void clear();
 
+  int getWidth();
+  int getHeight();
+
   void beginDebug();
   void endDebug();
   

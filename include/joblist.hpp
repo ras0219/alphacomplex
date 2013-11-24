@@ -32,11 +32,11 @@ struct JobList {
 
 struct JobListing : Component {
   JobList* jlist;
-  int x, y;
+  int y;
   string title;
 
-  JobListing(int x_, int y_, JobList* l, const char* t)
-    : jlist(l), x(x_), y(y_), title(t) { }
+  JobListing(int y_, JobList* l, const char* t)
+    : jlist(l), y(y_), title(t) { }
 
   virtual void render(Graphics& g);
 };

@@ -18,20 +18,11 @@
 #include "joblist.hpp"
 #include "entity.hpp"
 #include "room.hpp"
+#include "hud.hpp"
 
 using namespace std;
 using namespace chrono;
 /*************************/
-int influence = 0;
-
-struct Influenceometer : Component {
-  virtual void render(Graphics& g) {
-    stringstream out;
-    out << "Influence: " << influence;
-    g.drawString(5, 200, out.str(), Graphics::DEFAULT);
-  }
-};
-
 const char* white = "#FFFFFF";
 
 int main() {
@@ -42,11 +33,11 @@ int main() {
   Graphics g(city.getXSize(), city.getYSize());
   g.clear();
 
-  Influenceometer imeter;
+  Hud imeter;
 
   g.c.push_back(&city);
-  g.c.push_back(new JobListing(200, 20, &active_jobs, "Active Jobs"));
-  g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
+  g.c.push_back(new JobListing(20, &active_jobs, "Active Jobs"));
+  g.c.push_back(new JobListing(80, &jobs, "Pending Jobs"));
   g.c.push_back(&imeter);
 
   cout << city.ent(4,4) << " " << city.ent(4,4)->next << endl;
@@ -57,7 +48,6 @@ int main() {
     Entity* e = Entity::GLOB_ENTLIST;
     while (e != nullptr) {
       e->update();
-      cout << e->rawname() << "\n";
       e = e->g_next;
     }
 

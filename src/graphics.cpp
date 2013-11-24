@@ -19,6 +19,8 @@ struct GraphicsInternal {
   GC white_gc;
   XColor white_col;
   Colormap colormap;
+
+  int width, height;
 };
 
 Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsInternal()) {
@@ -32,7 +34,10 @@ Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsI
 
   /* create window */
   pImpl->window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
-    BlackPixel(display, s), WhitePixel(display, s));
+                                      BlackPixel(display, s), WhitePixel(display, s));
+
+  pImpl->width = 400;
+  pImpl->height = 200;
  
   pImpl->colormap = DefaultColormap(display, s);
   pImpl->white_gc = XCreateGC(display, pImpl->window, 0, 0);
@@ -41,7 +46,7 @@ Graphics::Graphics(int x, int y) : xsz(x), ysz(y), buf(x*y), pImpl(new GraphicsI
   XSetForeground(display, pImpl->white_gc, pImpl->white_col.pixel);
 
   /* select kind of events we are interested in */
-  XSelectInput(display, pImpl->window, ExposureMask | KeyPressMask);
+  XSelectInput(display, pImpl->window, ExposureMask | KeyPressMask | StructureNotifyMask);
  
   /* map (show) the window */
   XMapWindow(display, pImpl->window);
@@ -51,17 +56,23 @@ void Graphics::handle_events() {
   int events = XPending(display);
 
   while (events > 0) {
-    cerr << events << " Events." << endl;
+    //cerr << events << " Events." << endl;
     XNextEvent(display, &pImpl->event);
  
-    /* draw or redraw the window */
-    if (pImpl->event.type == Expose)
-      repaint();
-
-    /* exit on key press */
-    if (pImpl->event.type == KeyPress) {
+    switch (pImpl->event.type) {
+    case Expose:
+      if (pImpl->event.xexpose.count == 0)
+        repaint();
+      break;
+    case KeyPress:
       destroy();
       return;
+    case ConfigureNotify:
+      pImpl->width = pImpl->event.xconfigure.width;
+      pImpl->height = pImpl->event.xconfigure.height;
+      break;
+    default:
+      break;
     }
 
     events = XPending(display);
@@ -78,15 +89,15 @@ void Graphics::drawString(int x, int y, const string & str, const Graphics::Cont
     break;
   }
   XDrawString(display,
-	      pImpl->window,
-	      *t,
-	      x, y,
-	      str.c_str(),
-	      str.length());
+              pImpl->window,
+              *t,
+              x, y,
+              str.c_str(),
+              str.length());
 }
 
 void Graphics::repaint() {
-  XFillRectangle(display, pImpl->window, pImpl->white_gc, 0, 0, 400, 200);
+  XFillRectangle(display, pImpl->window, pImpl->white_gc, 0, 0, getWidth(), getHeight());
   
   for (auto p : c)
     p->render(*this);
@@ -94,15 +105,15 @@ void Graphics::repaint() {
   for (int y=0;y<ysz;++y)
     for (int x=0;x<xsz;++x)
       XDrawString(display, pImpl->window, DefaultGC(display, s),
-		  5 + x*10, 15 + y*10,
-		  &buf[y * xsz + x], 1);
+                  5 + x*10, 15 + y*10,
+                  &buf[y * xsz + x], 1);
 }
 
 void Graphics::destroy() {
-    if (destroyed) return;
-    XCloseDisplay(display);
-    destroyed = true;
-  }
+  if (destroyed) return;
+  XCloseDisplay(display);
+  destroyed = true;
+}
 
 Graphics::~Graphics() { 
   destroy();
@@ -138,3 +149,6 @@ void Graphics::beginDebug() {
 void Graphics::endDebug() {
   --debug;
 }
+
+int Graphics::getWidth() { return pImpl->width; }
+int Graphics::getHeight() { return pImpl->height; }

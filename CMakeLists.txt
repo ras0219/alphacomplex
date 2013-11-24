@@ -23,5 +23,6 @@ add_executable(alphacomplex
   src/graphics.cpp
   src/citizen.cpp
   src/room.cpp
+  src/hud.cpp
   src/workroom.cpp)
 target_link_libraries(alphacomplex ${X11_LIBRARIES})
