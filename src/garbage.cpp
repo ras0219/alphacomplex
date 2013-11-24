@@ -46,6 +46,9 @@ struct GarbageJob : WalkToJob<GarbageJob> {
       return WalkToJob<GarbageJob>::assign_task(e);
     } else {
       Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+      if (cleaning == nullptr)
+        return WalkToJob<GarbageJob>::assign_task(e);
+      
       e->job->as<MultiJob>().subjobs.push_front(new SupplyJob(cleaning->x, cleaning->y));
       e->job->assign_task(e);
     }
