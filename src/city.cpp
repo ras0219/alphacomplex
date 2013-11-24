@@ -47,25 +47,16 @@ istream& operator>>(istream& is, City& c) {
       continue;
     if (y == 0)
       x = s.size();
-    ++y;
 
     if (s.size() != (uint)x)
       throw runtime_error("invalid c format");
 
     for (int i=0; i < x; ++i) {
-      switch (s[i]) {
-      case '+':
-        c.tiles.push_back( {Tile::wall} );
-        break;
-      case '.':
-        c.tiles.push_back( {Tile::ground} );
-        break;
-      default:
-        c.tiles.push_back( {(Tile::TileKind)s[i]} );
-        break;
-      }
+      c.tiles.push_back( {(Tile::TileKind)s[i]} );
       c.ents.emplace_back();
     }
+
+    ++y;
   }
 
   if (y == 0)
@@ -80,7 +71,16 @@ istream& operator>>(istream& is, City& c) {
   for (int j=0; j<c.getYSize();++j) {
     for (int i=0; i<c.getXSize();++i) {
       char ch = c.tile(i,j).type;
-      if (ch != Tile::wall && ch != Tile::ground) {
+      if (ch == Tile::wall || ch == Tile::ground) {
+      } else if (ch == 'E') {
+        Elf* e = new Elf(i,j);
+        e->insert_after(c.ent(i,j));
+        c.tile(i,j).type = Tile::ground;
+      } else if (ch == 'D') {
+        Dwarf* e = new Dwarf(i,j);
+        e->insert_after(c.ent(i,j));
+        c.tile(i,j).type = Tile::ground;
+      } else {
         if (i > 0 && c.tile(i-1,j).type == ch)
           continue;
         if (j > 0 && c.tile(i,j-1).type == ch)

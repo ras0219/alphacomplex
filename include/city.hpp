@@ -40,7 +40,7 @@ struct City : Component {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
   }
 
-  City() : xsz(0), ysz(0), tiles(), ents() {}
+  City() : xsz(0), ysz(0) {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
 
   virtual void render(Graphics&);

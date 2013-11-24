@@ -40,12 +40,12 @@ int main() {
   cin >> city;
   cout << "Created city.\n";
 
-  Dwarf d(1,1);
-  d.insert_after(city.ent(1,1));
+  // Dwarf d(1,1);
+  // d.insert_after(city.ent(1,1));
 
-  Elf e1(1,1), e2(1,1);
-  e1.insert_after(city.ent(1,1));
-  e2.insert_after(city.ent(1,1));
+  // Elf e1(1,1), e2(1,1);
+  // e1.insert_after(city.ent(1,1));
+  // e2.insert_after(city.ent(1,1));
 
   Graphics g(city.getXSize(), city.getYSize());
   g.clear();
@@ -57,12 +57,15 @@ int main() {
   g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
   g.c.push_back(&imeter);
 
+  cout << city.ent(4,4) << " " << city.ent(4,4)->next << endl;
+
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
     Entity* e = Entity::GLOB_ENTLIST;
     while (e != nullptr) {
       e->update();
+      cout << e->rawname() << "\n";
       e = e->g_next;
     }
 
