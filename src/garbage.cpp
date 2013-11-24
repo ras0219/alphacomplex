@@ -9,7 +9,7 @@ struct CleaningJob : ActivityJob<CleaningJob> {
   virtual int description(char* buf, size_t n) const;
   virtual int duration() { return 20; }
 
-  virtual bool complete_activity(Elf*) {
+  virtual bool complete_activity(Citizen*) {
     delete g;
     return true;
   }
@@ -24,7 +24,7 @@ struct SupplyJob : WalkToJob<SupplyJob> {
 
   virtual int description(char* buf, size_t n) const;
 
-  virtual bool complete_walk(Elf* e) {
+  virtual bool complete_walk(Citizen* e) {
     e->clean_supplies = 3;
     return true;
   }
@@ -40,7 +40,7 @@ struct GarbageJob : WalkToJob<GarbageJob> {
 
   virtual int description(char* buf, size_t n) const;
 
-  virtual void assign_task(Elf* e) {
+  virtual void assign_task(Citizen* e) {
     if (e->clean_supplies > 0) {
       --e->clean_supplies;
       return WalkToJob<GarbageJob>::assign_task(e);

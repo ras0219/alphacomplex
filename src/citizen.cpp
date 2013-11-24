@@ -1,4 +1,4 @@
-#include "elf.hpp"
+#include "citizen.hpp"
 #include "joblist.hpp"
 #include "garbage.hpp"
 #include "city.hpp"
@@ -6,9 +6,9 @@
 
 #include <cassert>
 
-const char* Elf::RAWNAME = "elf";
+const char* Citizen::RAWNAME = "citizen";
 
-void Elf::render(Graphics& g) const {
+void Citizen::render(Graphics& g) const {
   //cerr << "rendering elf @ " << x << "," << y << endl;
   if (state == CONFUSED)
     g.putChar(x, y, '?');
@@ -20,9 +20,9 @@ struct WanderingJob : Job {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
-  virtual void assign_task(Elf*) { }
-  virtual bool complete_walk(Elf*) { return true; }
-  virtual bool complete_activity(Elf*) { assert(false); return true; }
+  virtual void assign_task(Citizen*) { }
+  virtual bool complete_walk(Citizen*) { return true; }
+  virtual bool complete_activity(Citizen*) { assert(false); return true; }
 
   const char* msg;
 
@@ -48,13 +48,13 @@ const array<const char*, 4> WanderingJob::msgs =
 
 const char* WanderingJob::RAWNAME = "wandering";
 
-void Elf::path_to(int x2, int y2) {
+void Citizen::path_to(int x2, int y2) {
   assert(city.tile(x2, y2).walkable());
   path = pathfind(city, x, y, x2, y2);
   pathp = path.rbegin();
 }
 
-void Elf::update() {
+void Citizen::update() {
   ++energy;
   switch (state) {
   case CONFUSED:

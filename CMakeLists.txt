@@ -21,7 +21,7 @@ add_executable(alphacomplex
   src/joblist.cpp
   src/job.cpp
   src/graphics.cpp
-  src/elf.cpp
+  src/citizen.cpp
   src/room.cpp
   src/workroom.cpp)
 target_link_libraries(alphacomplex ${X11_LIBRARIES})

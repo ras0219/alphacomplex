@@ -1,5 +1,5 @@
 #include "job.hpp"
-#include "elf.hpp"
+#include "citizen.hpp"
 
 #include <cassert>
 
@@ -10,12 +10,12 @@ int MultiJob::description(char* m, size_t n) const {
   return subjobs.front()->description(m, n);
 }
 
-void MultiJob::assign_task(Elf* e) {
+void MultiJob::assign_task(Citizen* e) {
   assert(!subjobs.empty());
   subjobs.front()->assign_task(e);
 }
 
-bool MultiJob::complete_walk(Elf* e) {
+bool MultiJob::complete_walk(Citizen* e) {
   if (!subjobs.front()->complete_walk(e))
     return false;
 
@@ -28,7 +28,7 @@ bool MultiJob::complete_walk(Elf* e) {
   return false;
 }
 
-bool MultiJob::complete_activity(Elf* e) {
+bool MultiJob::complete_activity(Citizen* e) {
   if (!subjobs.front()->complete_activity(e))
     return false;
 

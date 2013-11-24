@@ -10,9 +10,9 @@ struct Job {
   virtual int description(char* buf, size_t n) const = 0;
   virtual ~Job() { }
 
-  virtual void assign_task(struct Elf*) = 0;
-  virtual bool complete_walk(struct Elf*) = 0;
-  virtual bool complete_activity(struct Elf*) = 0;
+  virtual void assign_task(struct Citizen*) = 0;
+  virtual bool complete_walk(struct Citizen*) = 0;
+  virtual bool complete_activity(struct Citizen*) = 0;
 
   template<class T>
   T& as() { return (T&)(*this); }
@@ -29,28 +29,28 @@ struct MultiJob : Job {
   MultiJob() {}
   MultiJob(const initializer_list<Job*>& il) : subjobs(il) { }
 
-  virtual void assign_task(struct Elf*);
-  virtual bool complete_walk(struct Elf*);
-  virtual bool complete_activity(struct Elf*);
+  virtual void assign_task(struct Citizen*);
+  virtual bool complete_walk(struct Citizen*);
+  virtual bool complete_activity(struct Citizen*);
 
   list<Job*> subjobs;
 };
 
-#include "elf.hpp"
+#include "citizen.hpp"
 
 template<class Derived>
 struct WalkToJob : Job {
   virtual const char* rawname() const { return Derived::RAWNAME; }
   WalkToJob(int x_, int y_) : x(x_), y(y_) { }
 
-  virtual void assign_task(Elf* e) {
+  virtual void assign_task(Citizen* e) {
     e->path_to(x, y);
-    e->state = Elf::WALKINGTOJOB;
+    e->state = Citizen::WALKINGTOJOB;
   }
-  virtual bool complete_walk(Elf* e) {
+  virtual bool complete_walk(Citizen* e) {
     return true;
   }
-  virtual bool complete_activity(Elf* e) { assert(false); return true; }
+  virtual bool complete_activity(Citizen* e) { assert(false); return true; }
 
   int x, y;
 };
@@ -60,12 +60,12 @@ struct ActivityJob : Job {
   virtual const char* rawname() const { return Derived::RAWNAME; }
   ActivityJob() { }
 
-  virtual void assign_task(Elf* e) {
+  virtual void assign_task(Citizen* e) {
     e->energy = -duration();
-    e->state = Elf::ACTIVITY;
+    e->state = Citizen::ACTIVITY;
   }
-  virtual bool complete_walk(Elf* e) { assert(false); return true; }
-  virtual bool complete_activity(Elf* e) { return true; }
+  virtual bool complete_walk(Citizen* e) { assert(false); return true; }
+  virtual bool complete_activity(Citizen* e) { return true; }
 
   virtual int duration() = 0;
 };

@@ -24,6 +24,26 @@ void WorkRoom::complete_job() {
   influence += 1;
 }
 
+struct FetchJobStep1 : WalkToJob<FetchJobStep1> {
+  static const char* RAWNAME;
+  virtual int description(char* buf, size_t n) const;
+  
+  FetchJobStep1(int x_, int y_)
+    :  WalkToJob(x_, y_) { }
+};
+
+struct FetchJobStep2 : WalkToJob<FetchJobStep2> {
+  static const char* RAWNAME;
+  virtual int description(char* buf, size_t n) const;
+
+  FetchJobStep2(int x_, int y_, WorkRoom* p)
+    : WalkToJob(x_, y_), parent(p) { }
+
+  virtual bool complete_walk(struct Citizen*);
+
+  WorkRoom* parent;
+};
+
 const char* FetchJobStep1::RAWNAME = "fetch1";
 const char* FetchJobStep2::RAWNAME = "fetch2";
 
@@ -34,7 +54,7 @@ int FetchJobStep2::description(char* buf, size_t n) const {
   return snprintf(buf, n, "Return docs to %d, %d", x, y);
 }
 
-bool FetchJobStep2::complete_walk(struct Elf* e) {
+bool FetchJobStep2::complete_walk(struct Citizen* e) {
   parent->complete_job();
   return true;
 }

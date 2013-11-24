@@ -4,8 +4,8 @@
 
 #include <list>
 
-struct Elf : SmartEntity {
-  Elf(int x_, int y_, char pic_ = 'E')
+struct Citizen : SmartEntity {
+  Citizen(int x_, int y_, char pic_ = 'E')
     : SmartEntity(x_, y_),
       pic(pic_),
       state(CONFUSED),

@@ -17,7 +17,6 @@
 #include "tile.hpp"
 #include "joblist.hpp"
 #include "entity.hpp"
-#include "elf.hpp"
 #include "room.hpp"
 
 using namespace std;
@@ -39,13 +38,6 @@ int main() {
   srand(time(NULL));
   cin >> city;
   cout << "Created city.\n";
-
-  // Dwarf d(1,1);
-  // d.insert_after(city.ent(1,1));
-
-  // Elf e1(1,1), e2(1,1);
-  // e1.insert_after(city.ent(1,1));
-  // e2.insert_after(city.ent(1,1));
 
   Graphics g(city.getXSize(), city.getYSize());
   g.clear();
