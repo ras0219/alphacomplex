@@ -12,15 +12,17 @@
 using namespace std;
 
 struct SentinelEntity : Entity {
-  SentinelEntity() : Entity(0) { }
+  SentinelEntity() { }
 
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
+
+  virtual char render() const { assert(false); return '\0'; }
 };
 
 extern struct City city;
 
-struct City : Component {
+struct City {
   int xsz;
   int ysz;
   vector<Tile> tiles;
@@ -42,8 +44,6 @@ struct City : Component {
 
   City() : xsz(0), ysz(0) {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
-
-  virtual void render(Graphics&);
 
   struct Room* find_room(const char*);
 };

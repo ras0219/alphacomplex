@@ -8,12 +8,12 @@
 
 const char* Citizen::RAWNAME = "citizen";
 
-void Citizen::render(Graphics& g) const {
+char Citizen::render() const {
   //cerr << "rendering elf @ " << x << "," << y << endl;
   if (state == CONFUSED)
-    g.putChar(x, y, '?');
+    return '?';
   else
-    g.putChar(x, y, pic);
+    return pic;
 }
 
 struct WanderingJob : Job {
@@ -58,7 +58,7 @@ void Citizen::update() {
   ++energy;
   switch (state) {
   case CONFUSED:
-    if (energy >= 20) {
+    if (energy >= 10) {
       energy = 0;
 
       if (jobs.has_job()) {

@@ -9,9 +9,24 @@
 #include <algorithm>
 #include <vector>
 
-JobList garbage_list;
+list<AIEntity*> AIEntity::ai_list;
 
-Entity* Entity::GLOB_ENTLIST = nullptr;
+void Entity::insert_after(Entity* e) {
+  next = e->next;
+  prev = e;
+  e->next = this;
+  if (next != nullptr)
+    next->prev = this;
+}
+
+void Entity::remove() {
+  if (next != nullptr)
+    next->prev = prev;
+  if (prev != nullptr)
+    prev->next = next;
+}
+
+
 
 const char* Dwarf::RAWNAME = "dwarf";
 
@@ -43,3 +58,4 @@ void Dwarf::update() {
   }
 }
 
+char Dwarf::render() const { return pic; }

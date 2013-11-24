@@ -4,9 +4,9 @@
 
 #include <list>
 
-struct Citizen : SmartEntity {
+struct Citizen : AIEntity {
   Citizen(int x_, int y_, char pic_ = 'E')
-    : SmartEntity(x_, y_),
+    : AIEntity(x_, y_),
       pic(pic_),
       state(CONFUSED),
       job(nullptr) { }
@@ -31,7 +31,7 @@ struct Citizen : SmartEntity {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
-  virtual void render(Graphics& g) const;
+  virtual char render() const;
 
   virtual void update();
 

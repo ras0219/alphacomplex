@@ -13,20 +13,13 @@ struct CleaningRoom : Room {
   static const char* RAWNAME;
 };
 
-struct Garbage : SmartEntity {
-  Garbage(int x_, int y_) : SmartEntity(x_, y_) {
-    //cerr << "Created garbage " << (unsigned long)this << endl;
-  }
-  ~Garbage() {
-    //cerr << "Deleted garbage " << (unsigned long)this << endl;
-  }
+struct Garbage : LocEntity {
+  Garbage(int x_, int y_) : LocEntity(x_, y_) { }
 
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
-  virtual void render(Graphics& g) const {
-    g.putChar(x, y, ';');
-  }
+  virtual char render() const { return ';'; }
 };
 
 Job* make_garbage_job(Garbage* g);

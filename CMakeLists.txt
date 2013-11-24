@@ -24,5 +24,6 @@ add_executable(alphacomplex
   src/citizen.cpp
   src/room.cpp
   src/hud.cpp
-  src/workroom.cpp)
+  src/workroom.cpp
+  src/mapview.cpp)
 target_link_libraries(alphacomplex ${X11_LIBRARIES})
