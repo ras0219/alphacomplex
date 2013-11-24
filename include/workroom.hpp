@@ -20,30 +20,24 @@ struct WorkRoom : Room {
   virtual void update();
 };
 
-struct FetchJobStep1 : JobStep {
+struct FetchJobStep1 : WalkToJob<FetchJobStep1> {
   static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
   virtual int description(char* buf, size_t n) const;
   
-  FetchJobStep1(int x_, int y_, Job* part2)
-    :  JobStep(part2), x(x_), y(y_) { }
-
-  int x, y;
+  FetchJobStep1(int x_, int y_)
+    :  WalkToJob(x_, y_) { }
 };
 
-struct FetchJobStep2 : Job {
+struct FetchJobStep2 : WalkToJob<FetchJobStep2> {
   static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
   virtual int description(char* buf, size_t n) const;
 
   FetchJobStep2(int x_, int y_, WorkRoom* p)
-    : x(x_), y(y_), parent(p) { }
+    : WalkToJob(x_, y_), parent(p) { }
 
-  int x, y;
+  virtual bool complete_walk(struct Elf*);
 
   WorkRoom* parent;
 };
 
-FetchJobStep1* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p);
+Job* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p);

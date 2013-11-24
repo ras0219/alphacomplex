@@ -29,22 +29,4 @@ struct Garbage : SmartEntity {
   }
 };
 
-struct GarbageJob : Job {
-  GarbageJob(Garbage* g_) : g(g_) { }
-
-  virtual const char* rawname() const { return Garbage::RAWNAME; }
-  virtual int description(char* buf, size_t n) const;
-
-  Garbage* g;
-};
-
-struct SupplyJob : JobStep {
-  SupplyJob(int x_, int y_, Job* j)
-    : JobStep(j), x(x_), y(y_) { }
-
-  virtual const char* rawname() const { return RAWNAME; }
-  virtual int description(char* buf, size_t n) const;
-
-  static const char* RAWNAME;
-  int x, y;
-};
+Job* make_garbage_job(Garbage* g);

@@ -34,6 +34,11 @@ int FetchJobStep2::description(char* buf, size_t n) const {
   return snprintf(buf, n, "Return docs to %d, %d", x, y);
 }
 
-FetchJobStep1* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p) {
-  return new FetchJobStep1(x1, y1, new FetchJobStep2(x2, y2, p));
+bool FetchJobStep2::complete_walk(struct Elf* e) {
+  parent->complete_job();
+  return true;
+}
+
+Job* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p) {
+  return new MultiJob{ new FetchJobStep1(x1, y1), new FetchJobStep2(x2, y2, p) };
 }

@@ -4,6 +4,8 @@
 #include "city.hpp"
 #include "workroom.hpp"
 
+#include <cassert>
+
 const char* Elf::RAWNAME = "elf";
 
 void Elf::render(Graphics& g) const {
@@ -17,6 +19,10 @@ void Elf::render(Graphics& g) const {
 struct WanderingJob : Job {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
+
+  virtual void assign_task(Elf*) { }
+  virtual bool complete_walk(Elf*) { return true; }
+  virtual bool complete_activity(Elf*) { assert(false); return true; }
 
   const char* msg;
 
@@ -55,40 +61,30 @@ void Elf::update() {
     if (energy >= 20) {
       energy = 0;
 
-      int x2;
-      int y2;
       if (jobs.has_job()) {
         assert(job == nullptr);
 
         job = jobs.pop_job();
 
-        if (clean_supplies == 0 && job->rawname() == Garbage::RAWNAME) {
-          // Must fetch cleaning supplies
-          Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
-          if (cleaning == nullptr) {
-            // Magic some supplies
-            clean_supplies = 3;
-          } else {
-            job = new SupplyJob(cleaning->x, cleaning->y, job);
-          }
-        }
+        // if (clean_supplies == 0 && job->rawname() == Garbage::RAWNAME) {
+        //   // Must fetch cleaning supplies
+        //   Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+        //   if (cleaning == nullptr) {
+        //     // Magic some supplies
+        //     clean_supplies = 3;
+        //   } else {
+        //     clean_supplies = 3;
+        //     //job = new SupplyJob(cleaning->x, cleaning->y, job);
+        //   }
+        // }
 
         job_it = active_jobs.add_job(job);
 
-        if (job->rawname() == Garbage::RAWNAME) {
-          path_to(job->as<GarbageJob>().g->x, job->as<GarbageJob>().g->y);
-        } else if (job->rawname() == SupplyJob::RAWNAME) {
-          path_to(job->as<SupplyJob>().x, job->as<SupplyJob>().y);
-        } else if (job->rawname() == FetchJobStep1::RAWNAME) {
-          path_to(job->as<FetchJobStep1>().x, job->as<FetchJobStep1>().y);
-        } else {
-          assert(false);
-        }
-        state = WALKINGTOJOB;
+        job->assign_task(this);
         return;
       } else {
-        x2 = rand() % city.getXSize();
-        y2 = rand() % city.getYSize();
+        int x2 = rand() % city.getXSize();
+        int y2 = rand() % city.getYSize();
 
         if (city.tile(x2, y2).walkable()) {
           path_to(x2, y2);
@@ -115,59 +111,15 @@ void Elf::update() {
         ++pathp;
       }
       if (pathp == path.rend()) {
-        if (job->rawname() == Garbage::RAWNAME) {
-          path.clear();
-          pathp = path.rbegin();
-          state = CLEANING;
-        } else if (job->rawname() == SupplyJob::RAWNAME) {
-          clean_supplies = 3;
-
-          complete_job_step();
-
-          path_to(job->as<GarbageJob>().g->x, job->as<GarbageJob>().g->y);
-        } else if (job->rawname() == FetchJobStep1::RAWNAME) {
-          complete_job_step();
-
-          path_to(job->as<FetchJobStep2>().x, job->as<FetchJobStep2>().y);
-        } else if (job->rawname() == FetchJobStep2::RAWNAME) {
-          job->as<FetchJobStep2>().parent->complete_job();
-
-          path.clear();
-          pathp = path.rbegin();
-
+        if (job->complete_walk(this)) {
           active_jobs.remove_job(job_it);
           delete job;
-          job = nullptr;
-          state = CONFUSED;
-        }
-      }
-    }
-    return;
-  case CLEANING:
-    if (energy >= 10) {
-      energy = 0;
-
-      assert(job != nullptr);
-      assert(job->rawname() == Garbage::RAWNAME);
-      assert(clean_supplies > 0);
-
-      Entity* e = city.ent(x, y);
-      while (e != nullptr) {
-        //cout << e->rawname() << endl;
-        if (e == job->as<GarbageJob>().g) {
-          --clean_supplies;
-
-          delete e;
-
-          active_jobs.remove_job(job_it);
-          delete job;
+            
           job = nullptr;
           state = CONFUSED;
           return;
         }
-        e = e->next;
       }
-      assert(false /* no garbage? */);
     }
     return;
   case WANDERING:
@@ -193,14 +145,17 @@ void Elf::update() {
       }
     }
     return;
+  case ACTIVITY:
+    if (energy >= 0) {
+      energy = 0;
+      if (job->complete_activity(this)) {
+        active_jobs.remove_job(job_it);
+        delete job;
+            
+        job = nullptr;
+        state = CONFUSED;
+        return;
+      }
+    }
   }
-}
-
-void Elf::complete_job_step() {
-  Job* j = job->as<JobStep>().complete_step();
-
-  active_jobs.remove_job(job_it);
-  delete job;
-  job = j;
-  job_it = active_jobs.add_job(job);
 }

@@ -19,7 +19,7 @@ struct Elf : SmartEntity {
     CONFUSED,
     WALKINGTOJOB,
     WANDERING,
-    CLEANING
+    ACTIVITY
   } state;
 
   struct Job* job;
@@ -36,6 +36,4 @@ struct Elf : SmartEntity {
   virtual void update();
 
   void path_to(int, int);
-
-  void complete_job_step();
 };

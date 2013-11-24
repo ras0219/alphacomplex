@@ -19,6 +19,7 @@ add_executable(alphacomplex
   src/pathfind.cpp
   src/garbage.cpp
   src/joblist.cpp
+  src/job.cpp
   src/graphics.cpp
   src/elf.cpp
   src/room.cpp
