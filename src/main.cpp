@@ -28,7 +28,7 @@ int influence = 0;
 struct Influenceometer : Component {
   virtual void render(Graphics& g) {
     stringstream out;
-    out << "Influence: " << influence << ends;
+    out << "Influence: " << influence;
     g.drawString(5, 200, out.str(), Graphics::DEFAULT);
   }
 };
