@@ -31,6 +31,7 @@ struct Citizen : AIEntity {
 
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
+  virtual int description(char* buf, size_t n) const;
 
   virtual char render() const;
   virtual void update();

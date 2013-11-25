@@ -30,6 +30,26 @@ namespace Security {
       GAMMA = 512,
       ALL = (uint)(-1)
   };
+
+  inline const char* mask_to_dcode(Mask m) {
+    switch (m) {
+    case INFRARED:
+      return "IR";
+    case RED:
+      return "RD";
+    case ORANGE:
+      return "OR";
+    case YELLOW:
+      return "YL";
+    case GREEN:
+      return "GN";
+      // Got bored here.
+    case ULTRAVIOLET:
+      return "UV";
+    default:
+      return "??";
+    }
+  }
 }
 
 namespace Department {

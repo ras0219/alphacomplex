@@ -11,6 +11,10 @@
 
 list<AIEntity*> AIEntity::ai_list;
 
+int Entity::description(char* buf, size_t n) const {
+  return snprintf(buf, n, "%s", rawname());
+}
+
 void Entity::insert_after(Entity* e) {
   next = e->next;
   prev = e;
@@ -59,3 +63,7 @@ void Dwarf::update() {
 }
 
 char Dwarf::render() const { return pic; }
+
+int Dwarf::description(char* buf, size_t n) const {
+  return snprintf(buf, n, "[IR] %s-01", "Zappa");
+}

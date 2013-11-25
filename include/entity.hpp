@@ -17,6 +17,7 @@ struct Entity {
   }
 
   virtual const char* rawname() const = 0;
+  virtual int description(char*, size_t) const;
   virtual char render() const = 0;
 
   void insert_after(Entity* e);
@@ -55,9 +56,10 @@ struct AIEntity : LocEntity {
 };
 
 struct Dwarf : AIEntity {
-  Dwarf(int x_, int y_, char pic_ = 'D') : AIEntity(x_, y_), pic(pic_) { }
+  Dwarf(int x_, int y_, char pic_ = 'N') : AIEntity(x_, y_), pic(pic_) { }
 
   virtual const char* rawname() const { return RAWNAME; }
+  virtual int description(char* buf, size_t n) const;
   virtual char render() const;
   virtual void update();
 

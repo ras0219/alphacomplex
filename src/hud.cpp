@@ -26,8 +26,10 @@ void Hud::render(Graphics& g) {
 
 void UnitListing::render(Graphics& g) {
   int row = 1;
+  char buf[60];
   for (auto e : AIEntity::ai_list) {
-    g.drawString(5, 5+10*row, e->rawname(), Graphics::DEFAULT);
+    e->description(buf, 60);
+    g.drawString(5, 5+10*row, buf, Graphics::DEFAULT);
     ++row;
   }
 }

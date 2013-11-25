@@ -209,3 +209,8 @@ void Citizen::finalize_job() {
   delete job;
   job = nullptr;
 }
+
+int Citizen::description(char* buf, size_t n) const {
+  const char* dcode = Security::mask_to_dcode(pic == 'O' ? Security::ORANGE : Security::RED);
+  return snprintf(buf, n, "[%s] %s-01", dcode, "Ziggy");
+}
