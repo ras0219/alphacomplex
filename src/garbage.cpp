@@ -8,6 +8,8 @@ struct CleaningJob : ActivityJob<CleaningJob> {
 
   virtual int description(char* buf, size_t n) const;
   virtual int duration() { return 20; }
+  virtual Department::Mask department() { return Department::FACILITIES; }
+  virtual Security::Mask security() { return Security::INFRARED | Security::RED; }
 
   virtual bool complete_activity(Citizen*) {
     delete g;
@@ -23,6 +25,8 @@ struct SupplyJob : WalkToJob<SupplyJob> {
     : WalkToJob(x_, y_) { }
 
   virtual int description(char* buf, size_t n) const;
+  virtual Department::Mask department() { return Department::FACILITIES; }
+  virtual Security::Mask security() { return Security::INFRARED | Security::RED; }
 
   virtual bool complete_walk(Citizen* e) {
     e->clean_supplies = 3;
@@ -39,6 +43,8 @@ struct GarbageJob : WalkToJob<GarbageJob> {
     : WalkToJob(g_->x, g_->y), g(g_) { }
 
   virtual int description(char* buf, size_t n) const;
+  virtual Department::Mask department() { return Department::FACILITIES; }
+  virtual Security::Mask security() { return Security::INFRARED | Security::RED; }
 
   virtual void assign_task(Citizen* e) {
     if (e->clean_supplies > 0) {

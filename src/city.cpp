@@ -63,6 +63,10 @@ istream& operator>>(istream& is, City& c) {
         Citizen* e = new Citizen(i,j);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
+      } else if (ch == 'O') {
+        Citizen* e = new Citizen(i,j,'O');
+        e->insert_after(c.ent(i,j));
+        c.tile(i,j).type = Tile::ground;
       } else if (ch == 'D') {
         Dwarf* e = new Dwarf(i,j);
         e->insert_after(c.ent(i,j));

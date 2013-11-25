@@ -30,6 +30,10 @@ using namespace chrono;
 /*************************/
 const char* white = "#FFFFFF";
 
+bool paused = false;
+
+Graphics *gfx;
+
 struct ComponentList : Component {
   virtual void render(Graphics& g) {
     for (auto c : comps)
@@ -65,6 +69,12 @@ struct ViewStack : Controller, Component {
       case XK_U:
         cur_page = &unitpage;
         break;
+      case XK_space:
+        paused = !paused;
+        break;
+      case XK_q:
+        if (gfx) gfx->destroy();
+        break;
       default:
         break;
       }
@@ -72,6 +82,9 @@ struct ViewStack : Controller, Component {
       switch (ks) {
       case XK_Escape:
         cur_page = &mainpage;
+        break;
+      case XK_space:
+        paused = !paused;
         break;
       default:
         break;
@@ -101,6 +114,7 @@ int main(int argc, char** argv) {
     fstream(argv[1]) >> city;
 
   Graphics g;
+  gfx = &g;
   ViewStack vs(&city);
 
   g.c.push_back(&vs);
@@ -108,11 +122,13 @@ int main(int argc, char** argv) {
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
-    for (auto e : AIEntity::ai_list)
-      e->update();
+    if (!paused) {
+      for (auto e : AIEntity::ai_list)
+        e->update();
 
-    for (auto r : city.rooms)
-      r->update();
+      for (auto r : city.rooms)
+        r->update();
+    }
 
     g.repaint();
 

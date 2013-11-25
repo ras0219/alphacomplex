@@ -1,5 +1,6 @@
 #pragma once
 
+#include "defs.hpp"
 #include "component.hpp"
 #include "job.hpp"
 
@@ -25,9 +26,8 @@ struct JobList {
 
   iterator add_job(Job*);
   void remove_job(iterator);
-  Job* pop_job();
-
-  inline bool has_job() { return jlist.size() > 0; }
+  Job* pop_job(Security::Mask = Security::RED,
+               Department::Mask = Department::ALL);
 };
 
 struct JobListing : Component {
