@@ -27,7 +27,7 @@ set(SOURCES
   "src/mapview.cpp")
 
 
-
+##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
 if(GRAPHICS STREQUAL "X11")
   find_package(X11 REQUIRED)
   set(SOURCES ${SOURCES} "src/graphicsX.cpp")
