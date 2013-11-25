@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+#include "defs.hpp"
 #include "graphics.hpp"
 #include "tile.hpp"
 #include "entity.hpp"
