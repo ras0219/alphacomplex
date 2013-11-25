@@ -38,9 +38,10 @@ if(GRAPHICS STREQUAL "SDL2")
   PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
   INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
   set(SOURCES ${SOURCES} "src/graphicsSDL.cpp")
+  set(SDL2_LIBRARIES ${SDL2_LIBRARIES} "-lSDL2_ttf")
 endif ()
 
 add_executable(alphacomplex ${SOURCES})
 
 
-target_link_libraries(alphacomplex ${X11_LIBRARIES} ${SDL2_LIBRARIES} "-lSDL2_ttf")
+target_link_libraries(alphacomplex ${X11_LIBRARIES} ${SDL2_LIBRARIES})
