@@ -13,15 +13,18 @@ set(CMAKE_CXX_FLAGS_RELEASESTATIC "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG -stat
 
 find_package(X11 REQUIRED)
 
-add_executable(citysim
+add_executable(alphacomplex
   src/main.cpp
   src/entity.cpp
   src/city.cpp
   src/pathfind.cpp
   src/garbage.cpp
   src/joblist.cpp
+  src/job.cpp
   src/graphics.cpp
-  src/elf.cpp
+  src/citizen.cpp
   src/room.cpp
-  src/workroom.cpp)
-target_link_libraries(citysim ${X11_LIBRARIES})
+  src/hud.cpp
+  src/workroom.cpp
+  src/mapview.cpp)
+target_link_libraries(alphacomplex ${X11_LIBRARIES})

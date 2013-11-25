@@ -14,4 +14,4 @@ Compile in a separate directory.
 
 Currently, cities are read from stdin.
 
-    $ ./citysim < ../cities/city02.txt
+    $ ./alphacomplex < ../cities/city02.txt

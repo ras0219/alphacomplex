@@ -4,9 +4,9 @@
 
 #include <list>
 
-struct Elf : SmartEntity {
-  Elf(int x_, int y_, char pic_ = 'E')
-    : SmartEntity(x_, y_),
+struct Citizen : AIEntity {
+  Citizen(int x_, int y_, char pic_ = 'E')
+    : AIEntity(x_, y_),
       pic(pic_),
       state(CONFUSED),
       job(nullptr) { }
@@ -19,7 +19,7 @@ struct Elf : SmartEntity {
     CONFUSED,
     WALKINGTOJOB,
     WANDERING,
-    CLEANING
+    ACTIVITY
   } state;
 
   struct Job* job;
@@ -31,11 +31,9 @@ struct Elf : SmartEntity {
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
-  virtual void render(Graphics& g) const;
+  virtual char render() const;
 
   virtual void update();
 
   void path_to(int, int);
-
-  void complete_job_step();
 };

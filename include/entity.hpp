@@ -3,93 +3,66 @@
 #include "pathfind.hpp"
 #include "graphics.hpp"
 
+#include <list>
+
+using std::list;
+
 struct Entity {
-  virtual const char* rawname() const = 0;
-  virtual void render(Graphics& g) const { }
-
-  virtual void update() { }
-  
-  Entity* prev;
-  Entity* next;
-
-  Entity* g_prev;
-  Entity* g_next;
-
-  Entity(int) : prev(nullptr),
-                next(nullptr),
-                g_prev(nullptr),
-                g_next(nullptr)
-    { }
   Entity() : prev(nullptr),
-             next(nullptr),
-             g_prev(nullptr),
-             g_next(GLOB_ENTLIST)
-    {
-      GLOB_ENTLIST = this;
-      if (g_next != nullptr)
-        g_next->g_prev = this;
-    }
+             next(nullptr)
+    { }
 
   virtual ~Entity() {
     remove();
-    global_remove();
   }
 
-  void insert_after(Entity* e) {
-    next = e->next;
-    prev = e;
-    e->next = this;
-    if (next != nullptr)
-      next->prev = this;
-  }
+  virtual const char* rawname() const = 0;
+  virtual char render() const = 0;
 
-  void remove() {
-    if (next != nullptr)
-      next->prev = prev;
-    if (prev != nullptr)
-      prev->next = next;
-  }
-
-  void global_remove() {
-    if (GLOB_ENTLIST == this)
-      GLOB_ENTLIST = g_next;
-    if (g_next != nullptr)
-      g_next->g_prev = g_prev;
-    if (g_prev != nullptr)
-      g_prev->g_next = g_next;
-  }
+  void insert_after(Entity* e);
+  void remove();
 
   template<class T>
   T& as() { return (T&)(*this); }
   template<class T>
   const T& as() const { return (T&)(*this); }
 
-  static Entity* GLOB_ENTLIST;
+  Entity* prev;
+  Entity* next;
 };
 
-struct SmartEntity : Entity {
-  SmartEntity(int x_, int y_) : Entity(), x(x_), y(y_) { }
+struct LocEntity : Entity {
+  LocEntity(int x_, int y_) : x(x_), y(y_) { }
 
   int x, y;
 
   void set_loc(int x_, int y_) { x = x_; y = y_; }
 };
 
-struct Dwarf : SmartEntity {
-  Dwarf(int x_, int y_, char pic_ = 'D') : SmartEntity(x_, y_), pic(pic_) { }
+struct AIEntity : LocEntity {
+  AIEntity(int x_, int y_)
+    : LocEntity(x_, y_)
+    {
+      ai_list.push_back(this);
+      ai_it = --ai_list.end();
+    }
+  virtual ~AIEntity() { ai_list.erase(ai_it); }
+
+  virtual void update() = 0;
+
+  static list<AIEntity*> ai_list;
+  list<AIEntity*>::iterator ai_it;
+};
+
+struct Dwarf : AIEntity {
+  Dwarf(int x_, int y_, char pic_ = 'D') : AIEntity(x_, y_), pic(pic_) { }
+
+  virtual const char* rawname() const { return RAWNAME; }
+  virtual char render() const;
+  virtual void update();
 
   char pic;
   int energy = 0;
-
   Direction facing = EAST;
-
   static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
-  virtual void render(Graphics& g) const {
-    //cerr << "rendering dwarf @ " << x << "," << y << endl;
-    g.putChar(x, y, pic);
-  }
-
-  virtual void update();
 };

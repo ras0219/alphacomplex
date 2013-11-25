@@ -6,8 +6,9 @@
 #include <tuple>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <string>
-
+#include <X11/keysym.h>
 #include <unistd.h>
 
 #include "component.hpp"
@@ -17,61 +18,105 @@
 #include "tile.hpp"
 #include "joblist.hpp"
 #include "entity.hpp"
-#include "elf.hpp"
 #include "room.hpp"
+#include "hud.hpp"
+#include "input.hpp"
+#include "mapview.hpp"
+
+#include <map>
 
 using namespace std;
 using namespace chrono;
 /*************************/
-int influence = 0;
-
-struct Influenceometer : Component {
-  virtual void render(Graphics& g) {
-    stringstream out;
-    out << "Influence: " << influence << ends;
-    g.drawString(5, 200, out.str(), Graphics::DEFAULT);
-  }
-};
-
 const char* white = "#FFFFFF";
 
-int main() {
+struct ComponentList : Component {
+  virtual void render(Graphics& g) {
+    for (auto c : comps)
+      c->render(g);
+  }
+
+  ComponentList() {}
+  ComponentList(const initializer_list<Component*>& il) : comps(il) { }
+
+  vector<Component*> comps;
+};
+
+struct ViewStack : Controller, Component {
+  ViewStack(City* c)
+    : mv(c->getXSize(), c->getYSize(), c),
+      activelist(20, &active_jobs, "Active Jobs"),
+      pendinglist(80, &jobs, "Pending Jobs"),
+      mainpage({ &mv, &activelist, &pendinglist, &hud }),
+      unitpage({ &hud, &unitlist }),
+      cur_page(&mainpage)
+    { }
+  ViewStack(const ViewStack&) = delete;
+  ViewStack& operator=(const ViewStack&) = delete;
+
+  virtual void render(Graphics& g) {
+    cur_page->render(g);
+  }
+
+  virtual void handle_keypress(KeySym ks) {
+    if (cur_page == &mainpage) {
+      switch (ks) {
+      case XK_u:
+      case XK_U:
+        cur_page = &unitpage;
+        break;
+      default:
+        break;
+      }
+    } else if (cur_page == &unitpage) {
+      switch (ks) {
+      case XK_Escape:
+        cur_page = &mainpage;
+        break;
+      default:
+        break;
+      }
+    } else {
+      assert(false);
+    }
+  }
+
+  MapView mv;
+  Hud hud;
+  JobListing activelist;
+  JobListing pendinglist;
+  UnitListing unitlist;
+
+  ComponentList mainpage;
+  ComponentList unitpage;
+
+  Component* cur_page;
+};
+
+int main(int argc, char** argv) {
   srand(time(NULL));
-  cin >> city;
-  cout << "Created city.\n";
+  if (argc < 2)
+    cin >> city;
+  else
+    fstream(argv[1]) >> city;
 
-  Dwarf d(1,1);
-  d.insert_after(city.ent(1,1));
+  Graphics g;
+  ViewStack vs(&city);
 
-  Elf e1(1,1), e2(1,1);
-  e1.insert_after(city.ent(1,1));
-  e2.insert_after(city.ent(1,1));
-
-  Graphics g(city.getXSize(), city.getYSize());
-  g.clear();
-
-  Influenceometer imeter;
-
-  g.c.push_back(&city);
-  g.c.push_back(new JobListing(200, 20, &active_jobs, "Active Jobs"));
-  g.c.push_back(new JobListing(200, 80, &jobs, "Pending Jobs"));
-  g.c.push_back(&imeter);
+  g.c.push_back(&vs);
 
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
-    Entity* e = Entity::GLOB_ENTLIST;
-    while (e != nullptr) {
+    for (auto e : AIEntity::ai_list)
       e->update();
-      e = e->g_next;
-    }
 
     for (auto r : city.rooms)
       r->update();
 
     g.repaint();
 
-    g.handle_events();
+    g.handle_events(&vs);
 
     auto sleep_till = t + milliseconds(50);
     t = steady_clock::now();
@@ -80,9 +125,4 @@ int main() {
       usleep(ticks);
     }
   }
-
-  // vector<point> path = pathfind(city, 0, 0, 10, 10);
-
-  // for (auto p : path)
-  //   cout << p.first << ", " << p.second << endl;
 }
