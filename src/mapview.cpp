@@ -3,9 +3,9 @@
 #include "city.hpp"
 
 const char prettywalls[16] = {
-  'O', 'O', 'O', CORNER_SE,
-  'O', HBAR, CORNER_SW, TEE_N,
-  'O', CORNER_NE, VBAR, TEE_W,
+  '+', HBAR, VBAR, CORNER_SE,
+  HBAR, HBAR, CORNER_SW, TEE_N,
+  VBAR, CORNER_NE, VBAR, TEE_W,
   CORNER_NW, TEE_S, TEE_E, CROSS
 };
 
