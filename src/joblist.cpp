@@ -17,11 +17,8 @@ Job* JobList::pop_job(Security::Mask secmask,
                       Department::Mask deptmask) {
   for (auto it = jlist.begin(); it != jlist.end(); ++it) {
     Job *j = *it;
-    cerr << j->rawname() << endl;
     if (j->security() & secmask && j->department() & deptmask) {
-      cerr << "Found job" << endl;
       jlist.erase(it);
-      cerr << "Returning" << endl;
       return j;
     }
   }

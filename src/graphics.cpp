@@ -33,11 +33,12 @@ Graphics::Graphics() : pImpl(new GraphicsInternal()) {
   s = DefaultScreen(display);
 
   /* create window */
-  pImpl->window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 400, 200, 1,
-                                      BlackPixel(display, s), WhitePixel(display, s));
+  pImpl->width = 800;
+  pImpl->height = 600;
 
-  pImpl->width = 400;
-  pImpl->height = 200;
+  pImpl->window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10,
+                                      pImpl->width, pImpl->height, 1,
+                                      BlackPixel(display, s), WhitePixel(display, s));
 
   pImpl->colormap = DefaultColormap(display, s);
   pImpl->white_gc = XCreateGC(display, pImpl->window, 0, 0);
