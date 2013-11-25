@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <X11/keysym.h>
 #include <unistd.h>
@@ -29,31 +30,6 @@ using namespace chrono;
 /*************************/
 const char* white = "#FFFFFF";
 
-struct MyController : Controller {
-  MyController(Graphics& g_) : g(g_) { }
-
-  virtual void handle_keypress(KeySym ks) {
-    if (viewmap.find(ks) != viewmap.end()) {
-      g.c.back() = viewmap[ks];
-      return;
-    }
-
-    switch (ks) {
-    case XK_Escape:
-      g.c.back() = main;
-      return;
-    default:
-      g.destroy();
-      return;
-    }
-  }
-
-  Graphics& g;
-
-  Component* main;
-  map<KeySym, Component*> viewmap;
-};
-
 struct ComponentList : Component {
   virtual void render(Graphics& g) {
     for (auto c : comps)
@@ -66,33 +42,68 @@ struct ComponentList : Component {
   vector<Component*> comps;
 };
 
-int main() {
+struct ViewStack : Controller, Component {
+  ViewStack(City* c)
+    : mv(c->getXSize(), c->getYSize(), c),
+      activelist(20, &active_jobs, "Active Jobs"),
+      pendinglist(80, &jobs, "Pending Jobs"),
+      mainpage({ &mv, &activelist, &pendinglist, &hud }),
+      unitpage({ &hud, &unitlist }),
+      cur_page(&mainpage)
+    { }
+  ViewStack(const ViewStack&) = delete;
+  ViewStack& operator=(const ViewStack&) = delete;
+
+  virtual void render(Graphics& g) {
+    cur_page->render(g);
+  }
+
+  virtual void handle_keypress(KeySym ks) {
+    if (cur_page == &mainpage) {
+      switch (ks) {
+      case XK_u:
+      case XK_U:
+        cur_page = &unitpage;
+        break;
+      default:
+        break;
+      }
+    } else if (cur_page == &unitpage) {
+      switch (ks) {
+      case XK_Escape:
+        cur_page = &mainpage;
+        break;
+      default:
+        break;
+      }
+    } else {
+      assert(false);
+    }
+  }
+
+  MapView mv;
+  Hud hud;
+  JobListing activelist;
+  JobListing pendinglist;
+  UnitListing unitlist;
+
+  ComponentList mainpage;
+  ComponentList unitpage;
+
+  Component* cur_page;
+};
+
+int main(int argc, char** argv) {
   srand(time(NULL));
-  cin >> city;
-  cout << "Created city.\n";
+  if (argc < 2)
+    cin >> city;
+  else
+    fstream(argv[1]) >> city;
 
   Graphics g;
+  ViewStack vs(&city);
 
-  MyController mc(g);
-
-  MapView mv(city.getXSize(), city.getYSize(), &city);
-
-  Hud imeter;
-
-  JobListing activelist(20, &active_jobs, "Active Jobs");
-  JobListing pendinglist(80, &jobs, "Pending Jobs");
-
-  ComponentList clist = { &mv, &activelist, &pendinglist, &imeter };
-
-  UnitListing ulist;
-  ComponentList uscreen = { &imeter, &ulist };
-
-  mc.main = &clist;
-  mc.viewmap[XK_u] = &ulist;
-
-  g.c.push_back(&clist);
-
-  cout << city.ent(4,4) << " " << city.ent(4,4)->next << endl;
+  g.c.push_back(&vs);
 
   while(!g.destroyed) {
     auto t = steady_clock::now();
@@ -105,7 +116,7 @@ int main() {
 
     g.repaint();
 
-    g.handle_events(&mc);
+    g.handle_events(&vs);
 
     auto sleep_till = t + milliseconds(50);
     t = steady_clock::now();

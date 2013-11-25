@@ -17,7 +17,6 @@ using namespace chrono;
 
 struct GraphicsInternal {
   Window window;
-  XEvent event;
 
   GC white_gc;
   XColor white_col;
@@ -47,36 +46,42 @@ Graphics::Graphics() : pImpl(new GraphicsInternal()) {
   XSetForeground(display, pImpl->white_gc, pImpl->white_col.pixel);
 
   /* select kind of events we are interested in */
-  XSelectInput(display, pImpl->window, ExposureMask | KeyPressMask | StructureNotifyMask);
+  XSelectInput(display, pImpl->window,
+               ExposureMask
+               | KeyPressMask
+               | StructureNotifyMask);
  
   /* map (show) the window */
   XMapWindow(display, pImpl->window);
 }
 
 void Graphics::handle_events(Controller* c) {
+  XEvent event;
+
   int events = XPending(display);
 
   while (events > 0) {
     //cerr << events << " Events." << endl;
-    XNextEvent(display, &pImpl->event);
+    XNextEvent(display, &event);
  
-    switch (pImpl->event.type) {
+    switch (event.type) {
     case Expose:
-      if (pImpl->event.xexpose.count == 0)
+      if (event.xexpose.count == 0)
         repaint();
       break;
     case KeyPress: {
-      auto keycode = pImpl->event.xkey.keycode;
+      auto keycode = event.xkey.keycode;
       auto keysym = XKeycodeToKeysym(display, keycode, 0);
       c->handle_keypress(keysym);
       if (destroyed) return;
       break;
     }
     case ConfigureNotify:
-      pImpl->width = pImpl->event.xconfigure.width;
-      pImpl->height = pImpl->event.xconfigure.height;
+      pImpl->width = event.xconfigure.width;
+      pImpl->height = event.xconfigure.height;
       break;
     default:
+      cerr << "Unhandled event: " << event.type << endl;
       break;
     }
 
