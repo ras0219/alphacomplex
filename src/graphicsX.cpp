@@ -2,9 +2,8 @@
 #include "component.hpp"
 #include "input.hpp"
 
-#include <unistd.h>
+#include <unistd.h> //let mingw handle it if needed
 #include <cassert>
-#include <X11/Xlib.h>
 #include <iostream>
 #include <vector>
 #include <chrono>
