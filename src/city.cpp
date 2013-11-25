@@ -60,7 +60,7 @@ istream& operator>>(istream& is, City& c) {
       char ch = c.tile(i,j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
       } else if (ch == 'E') {
-        Citizen* e = new Citizen(i,j);
+        Citizen* e = new Citizen(i,j,'R');
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'O') {

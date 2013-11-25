@@ -69,6 +69,24 @@ struct ViewStack : Controller, Component {
       case XK_U:
         cur_page = &unitpage;
         break;
+      case XK_r:
+        if (influence > 15) {
+          influence -= 15;
+          Citizen* e = new Citizen(1,1,'R');
+          e->insert_after(city.ent(1,1));
+        } else {
+          announce("You must have 15 influence to recruit new troubleshooters.");
+        }
+        break;
+      case XK_a:
+        if (influence > 5) {
+          influence -= 5;
+          Dwarf* e = new Dwarf(1,1,'D');
+          e->insert_after(city.ent(1,1));
+        } else {
+          announce("You must have 5 influence to recruit new infrareds.");
+        }
+        break;
       case XK_space:
         paused = !paused;
         break;
