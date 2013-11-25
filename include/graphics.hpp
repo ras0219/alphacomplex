@@ -47,6 +47,7 @@ struct Graphics {
   void handle_events(struct Controller*);
   bool destroyed = false;
 
+  void LoadText(const std::string msg, const std::string font_file, int font_size);
   void repaint();
   void destroy();
 

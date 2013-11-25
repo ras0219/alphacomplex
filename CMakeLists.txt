@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (citysim)
 
-set (GRAPHICS "SDL2")
+set (GRAPHICS "X11")
 
 include_directories(include)
 
@@ -43,4 +43,4 @@ endif ()
 add_executable(alphacomplex ${SOURCES})
 
 
-target_link_libraries(alphacomplex ${X11_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(alphacomplex ${X11_LIBRARIES} ${SDL2_LIBRARIES} "-lSDL2_ttf")
