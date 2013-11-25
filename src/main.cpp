@@ -73,7 +73,7 @@ struct ViewStack : Controller, Component {
   ViewStack(City* c)
     : mv(c->getXSize(), c->getYSize(), c),
       activelist(20, &active_jobs, "Active Jobs"),
-      pendinglist(80, &jobs, "Pending Jobs"),
+      pendinglist(200, &jobs, "Pending Jobs"),
       mainpage({ &mv, &activelist, &pendinglist, &hud, &helptext }),
       unitpage({ &hud, &unitlist }),
       helppage({ &hud, &helpinfo }),
