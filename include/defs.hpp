@@ -43,8 +43,6 @@ namespace Department {
   };
 }
 
-#include <iostream>
-
 constexpr inline Department::Mask operator|(Department::Mask m1, Department::Mask m2) {
   return (Department::Mask)((uint)m1 | (uint)m2);
 }
