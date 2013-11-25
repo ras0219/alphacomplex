@@ -2,9 +2,8 @@
 #include "component.hpp"
 #include "input.hpp"
 
-#include <unistd.h>
+#include <unistd.h> //let mingw handle it if needed
 #include <cassert>
-#include <X11/Xlib.h>
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -55,7 +54,10 @@ Graphics::Graphics() : pImpl(new GraphicsInternal()) {
   /* map (show) the window */
   XMapWindow(display, pImpl->window);
 }
-
+void Graphics::LoadText(const std::string msg, const std::string font_file, int font_size)
+{
+  return;
+}
 void Graphics::handle_events(Controller* c) {
   XEvent event;
 
