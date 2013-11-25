@@ -28,6 +28,9 @@ struct FetchJobStep1 : WalkToJob<FetchJobStep1> {
   static const char* RAWNAME;
   virtual int description(char* buf, size_t n) const;
   
+  virtual Department::Mask department() { return Department::RESEARCH; }
+  virtual Security::Mask security() { return Security::ALL; }
+
   FetchJobStep1(int x_, int y_)
     :  WalkToJob(x_, y_) { }
 };
@@ -35,6 +38,9 @@ struct FetchJobStep1 : WalkToJob<FetchJobStep1> {
 struct FetchJobStep2 : WalkToJob<FetchJobStep2> {
   static const char* RAWNAME;
   virtual int description(char* buf, size_t n) const;
+
+  virtual Department::Mask department() { return Department::RESEARCH; }
+  virtual Security::Mask security() { return Security::ALL; }
 
   FetchJobStep2(int x_, int y_, WorkRoom* p)
     : WalkToJob(x_, y_), parent(p) { }

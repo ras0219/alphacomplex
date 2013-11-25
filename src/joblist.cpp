@@ -2,19 +2,27 @@
 #include "graphics.hpp"
 #include "garbage.hpp"
 
+#include <iostream>
+
 JobList::iterator JobList::add_job(Job* j) {
-  jlist.push_front(j);
-  return jlist.begin();
+  jlist.push_back(j);
+  return --jlist.end();
 }
 
 void JobList::remove_job(JobList::iterator it) {
   jlist.erase(it);
 }
 
-Job* JobList::pop_job() {
-  Job* j = jlist.back();
-  jlist.pop_back();
-  return j;
+Job* JobList::pop_job(Security::Mask secmask,
+                      Department::Mask deptmask) {
+  for (auto it = jlist.begin(); it != jlist.end(); ++it) {
+    Job *j = *it;
+    if (j->security() & secmask && j->department() & deptmask) {
+      jlist.erase(it);
+      return j;
+    }
+  }
+  return nullptr;
 }
 
 void JobListing::render(Graphics& g) {

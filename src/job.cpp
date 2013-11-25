@@ -10,6 +10,15 @@ int MultiJob::description(char* m, size_t n) const {
   return subjobs.front()->description(m, n);
 }
 
+Department::Mask MultiJob::department() {
+  assert(!subjobs.empty());
+  return subjobs.front()->department();
+}
+Security::Mask MultiJob::security() {
+  assert(!subjobs.empty());
+  return subjobs.front()->security();
+}
+
 void MultiJob::assign_task(Citizen* e) {
   assert(!subjobs.empty());
   subjobs.front()->assign_task(e);
