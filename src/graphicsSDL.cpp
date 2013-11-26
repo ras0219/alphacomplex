@@ -32,7 +32,7 @@ struct GraphicsInternal {
 
   GraphicsInternal()
     : win(nullptr), ren(nullptr), main_texture(nullptr),
-      ttf_texture(nullptr), font_color(0),
+      ttf_texture(nullptr), font_color({0,0,0}),
       sdl_last_call(0), width(0), height(0)
     { }
 };
