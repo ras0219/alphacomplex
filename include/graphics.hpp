@@ -8,6 +8,7 @@ using namespace std;
 
 extern const char* white;
 
+#ifdef GRAPHICS_X11
 enum : char {
   CORNER_SE = 11,
   CORNER_NE = 12,
@@ -21,6 +22,21 @@ enum : char {
   TEE_S = 24,
   VBAR = 25
 };
+#else
+enum : char {
+  CORNER_SE = '#',
+  CORNER_NE = '#',
+  CORNER_NW = '#',
+  CORNER_SW = '#',
+  CROSS = '#',
+  HBAR = '#',
+  TEE_E = '#',
+  TEE_W = '#',
+  TEE_N = '#',
+  TEE_S = '#',
+  VBAR = '#'
+};
+#endif
 
 struct Component;
 struct _XDisplay;
@@ -48,7 +64,7 @@ struct Graphics : debug_policy_t {
   void handle_events(struct Controller*);
   bool destroyed = false;
 
-  void LoadText(const std::string msg, const std::string font_file, int font_size);
+  void LoadText(const std::string msg, const std::string font_file);
   void repaint();
   void destroy();
 
