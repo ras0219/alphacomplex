@@ -98,7 +98,7 @@ void Citizen::update() {
       energy = 0;
 
       assert(job == nullptr);
-      Job* j = jobs.pop_job();
+      Job* j = jobs.pop_job(security(), department());
       if (j) {
         return set_job(j);
       } else {
@@ -146,12 +146,12 @@ void Citizen::update() {
 
         ++pathp;
 
-        if (pic == 'O') {
+        if (security() == Security::ORANGE) {
           Entity* e = city.ent(x,y)->next;
           while (e != nullptr) {
             if (e != this && e->rawname() == Citizen::RAWNAME) {
               Citizen& c = e->as<Citizen>();
-              if (c.pic != 'O') {
+              if (c.security() < Security::ORANGE) {
                 // Oh boy, a subordinate!
 
                 interrupt(new TellOffJob());
@@ -211,6 +211,17 @@ void Citizen::finalize_job() {
 }
 
 int Citizen::description(char* buf, size_t n) const {
-  const char* dcode = Security::mask_to_dcode(pic == 'O' ? Security::ORANGE : Security::RED);
+  const char* dcode = Security::mask_to_dcode(security());
   return snprintf(buf, n, "[%s] %s-01", dcode, "Ziggy");
+}
+
+Security::Mask Citizen::security() const {
+  switch (pic) {
+  case 'N': return Security::INFRARED;
+  case 'R': return Security::RED;
+  case 'O': return Security::ORANGE;
+  case 'Y': return Security::YELLOW;
+
+  default: return Security::GAMMA;
+  }
 }
