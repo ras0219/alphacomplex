@@ -55,7 +55,7 @@ Graphics::Graphics() : pImpl(new GraphicsInternal()) {
   /* map (show) the window */
   XMapWindow(display, pImpl->window);
 }
-void Graphics::LoadText(const std::string msg, const std::string font_file, int font_size)
+void Graphics::LoadText(const std::string msg, const std::string font_file)
 {
   return;
 }
