@@ -24,7 +24,11 @@ set(SOURCES
   "src/room.cpp"
   "src/hud.cpp"
   "src/workroom.cpp"
-  "src/mapview.cpp")
+  "src/mapview.cpp"
+  "src/viewstack.cpp"
+  "src/mainview.cpp"
+  "src/helpview.cpp"
+  "src/unitview.cpp")
 
 
 ##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
