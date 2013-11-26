@@ -64,13 +64,13 @@ struct UnitListing : Component {
 void UnitListing::render(Graphics& g) {
   g.drawString(5, 17, "Citizen Roster", Graphics::DEFAULT);
 
-  int c = 0;
+  uint c = 0;
   for (auto d : Department::List) {
     g.drawString(133 + c*24, 29, Department::mask_to_dcode(d), Graphics::DEFAULT);
     ++c;
   }
 
-  int r = 0;
+  uint r = 0;
   char buf[60];
 
   for (auto e : AIEntity::ai_list) {
