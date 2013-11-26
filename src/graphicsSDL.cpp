@@ -13,9 +13,10 @@
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
 
-#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
+//#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
+#define TEMP_FONT_PATH "../resources/font/Anonymous_Pro.ttf"
 int FONT_HEIGHT = 12; //notice how this is NOT a define. hacky hacky.
-int FONT_WIDTH= 6;
+int FONT_WIDTH = 6;
 
 using namespace std;
 using namespace chrono;
@@ -73,7 +74,7 @@ Graphics::Graphics() : pImpl(nullptr) {
   }
 
   //to-do: load the file
-  pImpl->best_font = TTF_OpenFont(TEMP_FONT_PATH, FONT_WIDTH);
+  pImpl->best_font = TTF_OpenFont(TEMP_FONT_PATH, FONT_HEIGHT);
   if(pImpl->best_font==NULL)
   {
     std::cout << "Failed to load ttf from  . " << TEMP_FONT_PATH << " : " <<TTF_GetError() << std::endl;
@@ -82,7 +83,7 @@ Graphics::Graphics() : pImpl(nullptr) {
   SDL_RenderClear(pImpl->ren);
 }
 
-void Graphics::LoadText(const std::string msg, const std::string font_file, int font_size)
+void Graphics::LoadText(const std::string msg, const std::string font_file)
 {
   if(pImpl->ttf_texture!=NULL)
    {
@@ -124,17 +125,19 @@ void Graphics::handle_events(Controller* c) {
 }
 
 void Graphics::drawString(int x, int y, const string & str, const Graphics::Context gc) {
-  LoadText(str, TEMP_FONT_PATH, FONT_WIDTH);
-  SDL_Rect dstRect = {x,y, (int)(str.length() * FONT_WIDTH), FONT_HEIGHT};
+  LoadText(str, TEMP_FONT_PATH);
+  int w = 0, h = 0;
+  assert(TTF_SizeText(pImpl->best_font, str.c_str(), &w, &h) != -1);
+  SDL_Rect dstRect = {x, y - 12, w, h};
   pImpl->sdl_last_call = SDL_RenderCopy(pImpl->ren,pImpl->ttf_texture, NULL, &dstRect);
 //  pImpl->main_texture
 }
 
 void Graphics::drawChar(int x, int y, char ch, const Graphics::Context gc) {
   //ugh. XXX
-  char buff[3];
-  buff[1]=ch;
-  buff[2]=0;
+  char buff[2];
+  buff[0]=ch;
+  buff[1]=0;
   drawString(x,y,buff,gc);
 
 }
