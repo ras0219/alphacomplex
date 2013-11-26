@@ -27,50 +27,49 @@ struct GraphicsInternal {
   SDL_Color font_color;
   int sdl_last_call;
   int width, height;
+
+  GraphicsInternal()
+    : win(nullptr), ren(nullptr), main_texture(nullptr),
+      ttf_texture(nullptr), font_color(0),
+      sdl_last_call(0), width(0), height(0)
+    { }
 };
 
-Graphics::Graphics() : pImpl(new GraphicsInternal()) {
-  //best constructor NA
-  pImpl->win=NULL;
-  pImpl->ren=NULL;
-  pImpl->main_texture=NULL;
-  pImpl->sdl_last_call=pImpl->width=pImpl->height=0;
-  //constructor ends
-  pImpl->sdl_last_call = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS); 
-  if(pImpl->sdl_last_call == -1)
-  {
+Graphics::Graphics() : pImpl(nullptr) {
+  int slc = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS); 
+
+  if(slc == -1) {
     //to-do: use a better funciton for this
     std::cout << "Failed to start SDL. "<<SDL_GetError() << std::endl;
     exit(-1); //to-do: use a logger.
   }
-  pImpl->sdl_last_call= TTF_Init(); //not use for long
-  pImpl->font_color={0,255,0,0};
-
-  if(pImpl->sdl_last_call ==-1)
-  {
+  slc = TTF_Init(); //not use for long
+  if(slc == -1) {
     std::cout << "Failed to start TTF. "<<TTF_GetError() << std::endl;
     exit(-1); //to-do: use a logger.
   }
 
+  pImpl = new GraphicsInternal();
+  pImpl->font_color = {0,255,0,0};
   pImpl->width = 80*FONT_SIZE; //to-do
   pImpl->height= 40*FONT_SIZE;
 
   //to-do: center on screen
-  pImpl->win = SDL_CreateWindow("", 100,100,pImpl->width, pImpl->height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-  if(pImpl->win == NULL)
-  {
+  pImpl->win = SDL_CreateWindow("", 100, 100, pImpl->width, pImpl->height,
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+  if(pImpl->win == nullptr) {
     std::cout << "Failed to make window. "<<SDL_GetError() << std::endl;
     exit(-1); //to-do: use a logger.
   }
-  pImpl->ren = SDL_CreateRenderer(pImpl->win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if(pImpl->ren == NULL)
-  {
+  pImpl->ren = SDL_CreateRenderer(pImpl->win, -1,
+                                  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if(pImpl->ren == nullptr) {
     std::cout << "Failed to make renderer. "<<SDL_GetError() << std::endl;
     exit(-1); //to-do: use a logger.
   }
+
   //to-do: load the file
   SDL_RenderClear(pImpl->ren);
-
 }
 
 void Graphics::LoadText(const std::string msg, const std::string font_file, int font_size)
