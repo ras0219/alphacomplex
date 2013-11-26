@@ -27,11 +27,18 @@ Hud hud;
 JobListing activelist(20, &active_jobs, "Active Jobs");
 JobListing pendinglist(200, &jobs, "Pending Jobs");
 
+struct HelpText : Component {
+  virtual void render(Graphics& g);
+};
+
+extern HelpText helptext;
+
 void MainView::render(Graphics& g) {
   mv->render(g);
   hud.render(g);
   activelist.render(g);
   pendinglist.render(g);
+  helptext.render(g);
 }
 
 void MainView::handle_keypress(KeySym ks) {
