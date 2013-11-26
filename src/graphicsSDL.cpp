@@ -101,24 +101,24 @@ void Graphics::handle_events(Controller* c) {
   while (SDL_PollEvent(&event)) {
     switch(event.type){
       case SDL_KEYDOWN:
-              c->handle_keypress(event.key.keysym.sym); //not going to work on windows
-              break;
-      case SDL_WINDOWEVENT: //window moved, max,min, etc
-              if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-              {
-                int old_size = (0xffff &event.window.data1);
-                int new_size = (0xffff &event.window.data2);
-                //disregard horizontal for now
-                //FONT_SIZE = new_size/old_size * FONT_SIZE;
-                //FONT_SIZE++;
-              }
-              break;
-      case SDL_QUIT: //send q to controller
-              c->handle_keypress((KeySym)XK_Escape);
-              destroy();
-              return;
-              break;
-      default: break; // dog
+        c->handle_keypress(event.key.keysym.sym);
+        break;
+    case SDL_WINDOWEVENT: //window moved, max,min, etc
+      if(event.window.event == SDL_WINDOWEVENT_RESIZED)
+      {
+        int old_size = (0xffff &event.window.data1);
+        int new_size = (0xffff &event.window.data2);
+        //disregard horizontal for now
+        //FONT_SIZE = new_size/old_size * FONT_SIZE;
+        //FONT_SIZE++;
+      }
+      break;
+    case SDL_QUIT: //send q to controller
+      c->handle_keypress((KeySym)XK_Escape);
+      destroy();
+      return;
+      break;
+    default: break; // dog
     }
   }
   //all done with events! :)

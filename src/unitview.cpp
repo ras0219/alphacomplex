@@ -115,8 +115,6 @@ void UnitView::handle_keypress(KeySym ks) {
   case KEY_Up: return ulist.up();
   case KEY_Down: return ulist.down();
 
-  case KEY_Execute:
-  case KEY_KP_Enter:
   case KEY_Return: return ulist.toggle();
 
   default: return; // maybe play an alert here?

@@ -138,7 +138,7 @@ typedef DebugPolicy<true> debug_policy_t;
 
 void announce(const string&);
 
-#ifndef __MINGW32__
+#ifdef GRAPHICS_X11
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #define KEY_Escape XK_Escape
@@ -147,8 +147,7 @@ void announce(const string&);
 #define KEY_Right XK_Right
 #define KEY_Up XK_Up
 #define KEY_Down XK_Down
-#define KEY_Execute XK_Execute
-#define KEY_KP_Enter XK_KP_Enter
+//#define KEY_KP_Enter XK_KP_Enter
 #define KEY_Return XK_Return
 
 #define KEY_h XK_h
@@ -158,20 +157,17 @@ void announce(const string&);
 #define KEY_q XK_q
 
 #else
-
 #include "SDL.h"
 
 typedef unsigned long KeySym;
 
-#define KEY_Escape SDLK_Escape
-#define KEY_space SDLK_space
-#define KEY_Left SDLK_Left
-#define KEY_Right SDLK_Right
-#define KEY_Up SDLK_Up
-#define KEY_Down SDLK_Down
-#define KEY_Execute SDLK_Execute
-#define KEY_KP_Enter SDLK_KP_Enter
-#define KEY_Return SDLK_Return
+#define KEY_Escape SDLK_ESCAPE
+#define KEY_space SDLK_SPACE
+#define KEY_Left SDLK_LEFT
+#define KEY_Right SDLK_RIGHT
+#define KEY_Up SDLK_UP
+#define KEY_Down SDLK_DOWN
+#define KEY_Return SDLK_RETURN
 
 #define KEY_h SDLK_h
 #define KEY_u SDLK_u
