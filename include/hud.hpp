@@ -12,8 +12,4 @@ struct Hud : Component {
   virtual void render(struct Graphics& g);
 };
 
-struct UnitListing : Component {
-  virtual void render(struct Graphics& g);
-};
-
 void announce(const string&);

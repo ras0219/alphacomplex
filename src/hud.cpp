@@ -22,18 +22,6 @@ void Hud::render(Graphics& g) {
 
 }
 
-#include "entity.hpp"
-
-void UnitListing::render(Graphics& g) {
-  int row = 1;
-  char buf[60];
-  for (auto e : AIEntity::ai_list) {
-    e->description(buf, 60);
-    g.drawString(5, 5+10*row, buf, Graphics::DEFAULT);
-    ++row;
-  }
-}
-
 void announce(const string& s) {
   msglog.push_back(s);
 }
