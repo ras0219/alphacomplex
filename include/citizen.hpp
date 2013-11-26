@@ -2,6 +2,7 @@
 
 #include "entity.hpp"
 #include "defs.hpp"
+#include "joblist.hpp"
 
 #include <list>
 
@@ -41,8 +42,8 @@ struct Citizen : AIEntity {
     ACTIVITY
   } state;
 
-  struct Job* job;
-  list<struct Job*>::iterator job_it;
+  Job* job;
+  JobList::iterator job_it;
   vector<Job*> suspended_jobs;
 
   vector<point> path;

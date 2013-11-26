@@ -1,6 +1,7 @@
 #include "joblist.hpp"
 #include "graphics.hpp"
 #include "garbage.hpp"
+#include "job.hpp"
 
 #include <iostream>
 

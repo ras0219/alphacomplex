@@ -2,20 +2,13 @@
 
 #include "defs.hpp"
 #include "component.hpp"
-#include "job.hpp"
 
 #include <list>
 #include <string>
 
 using namespace std;
 
-// Job list requirements:
-//
-// Fast insert jobs
-// Fast reserve job (given ptr to job)
-// Fast release job
-// Fast remove job
-// Fast retrieval of specific job type
+struct Job;
 
 struct JobList {
   typedef list<Job*>::iterator iterator;

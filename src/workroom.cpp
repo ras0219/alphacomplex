@@ -1,5 +1,6 @@
 #include "workroom.hpp"
 #include "city.hpp"
+#include "job.hpp"
 
 const char* WorkRoom::RAWNAME = "workroom";
 
