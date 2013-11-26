@@ -2,6 +2,9 @@
 #include "city.hpp"
 #include "job.hpp"
 
+#include <cstdlib>
+#include <cstdio>
+
 const char* WorkRoom::RAWNAME = "workroom";
 
 extern int influence;

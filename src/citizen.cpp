@@ -4,6 +4,8 @@
 #include "city.hpp"
 #include "workroom.hpp"
 
+#include <cstdlib>
+#include <cstdio>
 #include <cassert>
 
 const char* Citizen::RAWNAME = "citizen";

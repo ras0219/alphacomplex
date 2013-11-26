@@ -8,7 +8,6 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <X11/keysym.h>
 #include <unistd.h>
 
 #include "city.hpp"

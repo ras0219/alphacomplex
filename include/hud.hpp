@@ -12,4 +12,6 @@ struct Hud : Component {
   virtual void render(struct Graphics& g);
 };
 
+extern Hud hud;
+
 void announce(const string&);

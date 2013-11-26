@@ -1,7 +1,6 @@
 #include "helpview.hpp"
 #include "viewstack.hpp"
 #include "graphics.hpp"
-#include "X11/keysym.h"
 
 extern bool paused;
 
@@ -36,10 +35,10 @@ void HelpView::render(Graphics& g) {
 
 void HelpView::handle_keypress(KeySym ks) {
   switch (ks) {
-  case XK_Escape:
+  case KEY_Escape:
     vstk->pop();
     break;
-  case XK_space:
+  case KEY_space:
     paused = !paused;
     break;
   default:

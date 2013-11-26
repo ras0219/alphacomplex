@@ -8,8 +8,6 @@
 #include "unitview.hpp"
 #include "citizen.hpp"
 
-#include <X11/keysym.h>
-
 extern Graphics* gfx;
 extern bool paused;
 
@@ -21,8 +19,6 @@ MainView::MainView(ViewStack* vs) : vstk(vs) {
   hview = new HelpView(vs);
   uview = new UnitView(vs);
 }
-
-Hud hud;
 
 JobListing activelist(20, &active_jobs, "Active Jobs");
 JobListing pendinglist(200, &jobs, "Pending Jobs");
@@ -43,13 +39,13 @@ void MainView::render(Graphics& g) {
 
 void MainView::handle_keypress(KeySym ks) {
   switch (ks) {
-  case XK_h:
+  case KEY_h:
     vstk->push(hview);
     break;
-  case XK_u:
+  case KEY_u:
     vstk->push(uview);
     break;
-  case XK_r:
+  case KEY_r:
     if (influence > 15) {
       influence -= 15;
       Citizen* e = new Citizen(1,1,'R');
@@ -58,7 +54,7 @@ void MainView::handle_keypress(KeySym ks) {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
     break;
-  case XK_a:
+  case KEY_a:
     if (influence > 5) {
       influence -= 5;
       Dwarf* e = new Dwarf(1,1,'D');
@@ -67,10 +63,10 @@ void MainView::handle_keypress(KeySym ks) {
       announce("You must have 5 influence to recruit new infrareds.");
     }
     break;
-  case XK_space:
+  case KEY_space:
     paused = !paused;
     break;
-  case XK_q:
+  case KEY_q:
     if (gfx)
       gfx->destroy();
     break;

@@ -1,6 +1,8 @@
 #include "city.hpp"
 #include "garbage.hpp"
 
+#include <cstdio>
+
 const char* CleaningRoom::RAWNAME = "cleaningroom";
 
 struct CleaningJob : ActivityJob<CleaningJob> {

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <vector>
 
-list<AIEntity*> AIEntity::ai_list;
+vector<AIEntity*> AIEntity::ai_list;
 
 int Entity::description(char* buf, size_t n) const {
   return snprintf(buf, n, "%s", rawname());

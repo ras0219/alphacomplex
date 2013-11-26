@@ -51,8 +51,10 @@ struct AIEntity : LocEntity {
 
   virtual void update() = 0;
 
-  static list<AIEntity*> ai_list;
-  list<AIEntity*>::iterator ai_it;
+  typedef vector<AIEntity*>::iterator iterator;
+
+  static vector<AIEntity*> ai_list;
+  iterator ai_it;
 };
 
 struct Dwarf : AIEntity {

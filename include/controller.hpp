@@ -1,6 +1,6 @@
 #pragma once
 
-#include <X11/Xlib.h>
+#include "defs.hpp"
 
 struct Controller {
   virtual void handle_keypress(KeySym ks) = 0;

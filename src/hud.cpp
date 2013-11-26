@@ -25,3 +25,5 @@ void Hud::render(Graphics& g) {
 void announce(const string& s) {
   msglog.push_back(s);
 }
+
+Hud hud;
