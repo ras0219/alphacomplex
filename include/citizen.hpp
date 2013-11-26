@@ -11,7 +11,7 @@ struct Citizen : AIEntity {
       pic(pic_),
       state(IDLE),
       job(nullptr),
-      dept(Department::INTERNAL_SECURITY)
+      dept(Department::ALL)
     { }
 
   virtual const char* rawname() const { return RAWNAME; }
