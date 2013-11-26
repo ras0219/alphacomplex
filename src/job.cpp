@@ -49,3 +49,6 @@ bool MultiJob::complete_activity(Citizen* e) {
   subjobs.front()->assign_task(e);
   return false;
 }
+
+bool Job::complete_walk(Citizen*) { assert(false); }
+bool Job::complete_activity(Citizen*) { assert(false); }

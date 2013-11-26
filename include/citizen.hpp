@@ -12,7 +12,8 @@ struct Citizen : AIEntity {
       sec(s),
       state(IDLE),
       job(nullptr),
-      dept(Department::ALL)
+      dept(Department::ALL),
+      intsec_review_job(nullptr)
     { }
 
   virtual const char* rawname() const { return RAWNAME; }
@@ -50,6 +51,8 @@ struct Citizen : AIEntity {
   vector<point>::reverse_iterator pathp;
 
   Department::Mask dept;
+
+  Job* intsec_review_job;
 
   static const char* RAWNAME;
 };

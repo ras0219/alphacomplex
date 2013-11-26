@@ -4,6 +4,7 @@
 #include "city.hpp"
 #include "workroom.hpp"
 
+#include <sstream>
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
@@ -85,6 +86,112 @@ struct TellOffJob : ActivityJob<TellOffJob> {
 };
 const char* TellOffJob::RAWNAME = "telloffjob";
 
+struct SecRevJobStep2 : ActivityJob<SecRevJobStep2> {
+  SecRevJobStep2(Citizen* t)
+    : target(t), complete(false) { }
+
+  virtual int description(char* buf, size_t n) const {
+    return snprintf(buf, n, "Reviewing");
+  }
+
+  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
+  virtual Security::Mask security() { return Security::ALL; }
+
+  virtual bool complete_activity(Citizen* c) {
+    if (!complete) {
+      c->energy = -20;
+      return false;
+    }
+
+    char buf[20];
+    target->description(buf,20);
+    stringstream ss;
+    ss << buf << " has undergone an IntSec Review by ";
+    c->description(buf,20);
+    ss << buf << '.';
+    announce(ss.str());
+    return true;
+  }
+  virtual int duration() { return 50; }
+
+  Citizen* target;
+  bool complete;
+
+  static const char* RAWNAME;
+};
+const char* SecRevJobStep2::RAWNAME = "secrevstep2";
+
+struct SecRevJobStep2B : ActivityJob<SecRevJobStep2B> {
+  SecRevJobStep2B(bool* f) : flag(f) {}
+  virtual int description(char* buf, size_t n) const {
+    return snprintf(buf, n, "Undergoing Review");
+  }
+
+  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
+  virtual Security::Mask security() { return Security::ALL; }
+
+  virtual bool complete_activity(Citizen* c) {
+    *flag = true;
+    c->intsec_review_job = nullptr;
+    return true;
+  }
+  virtual int duration() { return 50; }
+
+  bool* flag;
+  static const char* RAWNAME;
+};
+const char* SecRevJobStep2B::RAWNAME = "secrevstep2b";
+
+struct SecRevJobStep1 : Job {
+  SecRevJobStep1(Citizen* t)
+    : target(t)
+    {
+      s2 = new SecRevJobStep2(t);
+      s2b = new SecRevJobStep2B(&s2->complete);
+    }
+
+  virtual const char* rawname() const { return RAWNAME; }
+  virtual int description(char* buf, size_t n) const {
+    int d = snprintf(buf, n, "IntSec Review of ");
+    return target->description(buf+d, n-d) + d;
+  }
+
+  virtual void assign_task(Citizen* c) {
+    c->path_to(target->x, target->y);
+    c->state = Citizen::WALKINGTOJOB;
+  }
+  virtual bool complete_walk(Citizen* c) {
+    if (c->x != target->x or c->y != target->y) {
+      c->energy = -(rand() % 10);
+      c->state = Citizen::ACTIVITY;
+      return false;
+    }
+    target->interrupt(s2b);
+    return true;
+  }
+  virtual bool complete_activity(Citizen* c) {
+    assign_task(c);
+    return false;
+  }
+
+  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
+  virtual Security::Mask security() { return Security::ALL; }
+
+  Citizen* target;
+
+  SecRevJobStep2* s2;
+  SecRevJobStep2B* s2b;
+
+  static const char* RAWNAME;
+};
+const char* SecRevJobStep1::RAWNAME = "secrevstep1";
+
+Job* make_security_review_job(Citizen* reviewee) {
+  SecRevJobStep1* srjs1 = new SecRevJobStep1(reviewee);
+  MultiJob* j  = new MultiJob{srjs1, srjs1->s2};
+  return j;
+}
+
 void Citizen::set_job(Job* j) {
   assert(job == nullptr);
   job = j;
@@ -94,11 +201,27 @@ void Citizen::set_job(Job* j) {
 
 void Citizen::update() {
   ++energy;
+  if (intsec_review_job == nullptr && rand() % 2400 == 0) {
+    // Time for a random intsec review!
+    // Approx every minute (60 secs * 20 fps * 2 = 2400)
+    intsec_review_job = make_security_review_job(this);
+    jobs.add_job(intsec_review_job);
+  }
   switch (state) {
   case IDLE:
     if (energy >= 10) {
       energy = 0;
 
+      if (job != nullptr) {
+        char buf[100];
+        description(buf, 100);
+        cerr << buf << endl;
+        cerr << job->rawname() << endl;
+        while (job->rawname() == MultiJob::RAWNAME) {
+          job = job->as<MultiJob>().subjobs.front();
+          cerr << job->rawname() << endl;
+        }
+      }
       assert(job == nullptr);
       Job* j = jobs.pop_job(security(), department());
       if (j) {
@@ -137,6 +260,7 @@ void Citizen::update() {
     }
     return;
   case WANDERING:
+    assert(job != nullptr);
     if (energy >= 5) {
       energy = 0;
       if (pathp != path.rend()) {
@@ -175,6 +299,7 @@ void Citizen::update() {
     }
     return;
   case ACTIVITY:
+    assert(job != nullptr);
     if (energy >= 0) {
       energy = 0;
       if (job->complete_activity(this)) {
@@ -211,6 +336,7 @@ void Citizen::resume() {
 }
 
 void Citizen::finalize_job() {
+  assert(job != nullptr);
   active_jobs.remove_job(job_it);
   delete job;
   job = nullptr;

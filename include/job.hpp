@@ -13,8 +13,8 @@ struct Job {
   virtual ~Job() { }
 
   virtual void assign_task(struct Citizen*) = 0;
-  virtual bool complete_walk(struct Citizen*) = 0;
-  virtual bool complete_activity(struct Citizen*) = 0;
+  virtual bool complete_walk(struct Citizen*);
+  virtual bool complete_activity(struct Citizen*);
 
 
   template<class T>
@@ -52,10 +52,7 @@ struct WalkToJob : Job {
     e->path_to(x, y);
     e->state = Citizen::WALKINGTOJOB;
   }
-  virtual bool complete_walk(Citizen* e) {
-    return true;
-  }
-  virtual bool complete_activity(Citizen* e) { assert(false); return true; }
+  virtual bool complete_walk(Citizen* e) { return true; }
 
   int x, y;
 };
@@ -69,7 +66,6 @@ struct ActivityJob : Job {
     e->energy = -duration();
     e->state = Citizen::ACTIVITY;
   }
-  virtual bool complete_walk(Citizen* e) { assert(false); return true; }
   virtual bool complete_activity(Citizen* e) { return true; }
 
   virtual int duration() = 0;
