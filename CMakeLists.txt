@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (citysim)
 
-set (GRAPHICS "X11")
+set (GRAPHICS "SDL2")
 
 include_directories(include)
 
