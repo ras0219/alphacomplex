@@ -3,6 +3,7 @@
 #include "viewstack.hpp"
 #include "entity.hpp"
 #include "citizen.hpp"
+#include "hud.hpp"
 
 #include <algorithm>
 
@@ -100,6 +101,7 @@ void UnitListing::render(Graphics& g) {
 
 void UnitView::render(Graphics& g) {
   ulist.render(g);
+  hud.render(g);
 }
 
 void UnitView::handle_keypress(KeySym ks) {

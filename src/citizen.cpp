@@ -15,7 +15,7 @@ char Citizen::render() const {
   if (state == IDLE)
     return '?';
   else
-    return pic;
+    return Security::mask_to_dcode(sec)[0];
 }
 
 struct WanderingJob : WalkToJob<WanderingJob> {
@@ -187,9 +187,13 @@ void Citizen::update() {
 
 void Citizen::interrupt(Job* j) {
   if (job != nullptr) {
-    active_jobs.remove_job(job_it);
-    suspended_jobs.push_back(job);
-    job = nullptr;
+    if (job->rawname() == WanderingJob::RAWNAME) {
+      finalize_job();
+    } else {
+      active_jobs.remove_job(job_it);
+      suspended_jobs.push_back(job);
+      job = nullptr;
+    }
   }
 
   return set_job(j);
@@ -218,12 +222,5 @@ int Citizen::description(char* buf, size_t n) const {
 }
 
 Security::Mask Citizen::security() const {
-  switch (pic) {
-  case 'N': return Security::INFRARED;
-  case 'R': return Security::RED;
-  case 'O': return Security::ORANGE;
-  case 'Y': return Security::YELLOW;
-
-  default: return Security::GAMMA;
-  }
+  return sec;
 }

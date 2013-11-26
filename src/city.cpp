@@ -61,11 +61,11 @@ istream& operator>>(istream& is, City& c) {
       char ch = c.tile(i,j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
       } else if (ch == 'E') {
-        Citizen* e = new Citizen(i,j,'R');
+        Citizen* e = new Citizen(i,j,Security::RED);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'O') {
-        Citizen* e = new Citizen(i,j,'O');
+        Citizen* e = new Citizen(i,j,Security::ORANGE);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'D') {

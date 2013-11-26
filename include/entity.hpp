@@ -58,7 +58,7 @@ struct AIEntity : LocEntity {
 };
 
 struct Dwarf : AIEntity {
-  Dwarf(int x_, int y_, char pic_ = 'N') : AIEntity(x_, y_), pic(pic_) { }
+  Dwarf(int x_, int y_, char pic_ = 'S') : AIEntity(x_, y_), pic(pic_) { }
 
   virtual const char* rawname() const { return RAWNAME; }
   virtual int description(char* buf, size_t n) const;

@@ -46,18 +46,18 @@ void MainView::handle_keypress(KeySym ks) {
     vstk->push(uview);
     break;
   case KEY_r:
-    if (influence > 15) {
+    if (influence >= 15) {
       influence -= 15;
-      Citizen* e = new Citizen(1,1,'R');
+      Citizen* e = new Citizen(1,1,Security::RED);
       e->insert_after(city.ent(1,1));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
     break;
   case KEY_a:
-    if (influence > 5) {
+    if (influence >= 5) {
       influence -= 5;
-      Dwarf* e = new Dwarf(1,1,'D');
+      Citizen* e = new Citizen(1,1,Security::INFRARED);
       e->insert_after(city.ent(1,1));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");

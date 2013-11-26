@@ -7,9 +7,9 @@
 #include <list>
 
 struct Citizen : AIEntity {
-  Citizen(int x_, int y_, char pic_ = 'R')
+  Citizen(int x_, int y_, Security::Mask s)
     : AIEntity(x_, y_),
-      pic(pic_),
+      sec(s),
       state(IDLE),
       job(nullptr),
       dept(Department::ALL)
@@ -31,7 +31,7 @@ struct Citizen : AIEntity {
   void set_job(struct Job*);
 
 
-  char pic;
+  Security::Mask sec;
   int energy = 0;
   int clean_supplies = 0;
 

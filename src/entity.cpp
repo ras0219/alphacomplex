@@ -31,8 +31,7 @@ void Entity::remove() {
 }
 
 
-
-const char* Dwarf::RAWNAME = "dwarf";
+const char* Dwarf::RAWNAME = "scrubbot";
 
 void Dwarf::update() {
   ++energy;
@@ -65,5 +64,5 @@ void Dwarf::update() {
 char Dwarf::render() const { return pic; }
 
 int Dwarf::description(char* buf, size_t n) const {
-  return snprintf(buf, n, "[IR] %s-01", "Zappa");
+  return snprintf(buf, n, "Scrubbot-0012841");
 }
