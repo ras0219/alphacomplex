@@ -21,7 +21,7 @@
 #include "room.hpp"
 #include "log.hpp"
 #include "hud.hpp"
-#include "input.hpp"
+#include "controller.hpp"
 #include "mapview.hpp"
 
 #include <map>

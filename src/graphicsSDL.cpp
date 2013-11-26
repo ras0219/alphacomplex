@@ -1,6 +1,6 @@
 #include "graphics.hpp"
 #include "component.hpp"
-#include "input.hpp"
+#include "controller.hpp"
 
 #include <unistd.h> //let mingw handle it if needed
 #include <cassert>
