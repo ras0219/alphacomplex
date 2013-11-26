@@ -2,6 +2,7 @@
 #include <deque>
 #include <vector>
 #include <string>
+#include "defs.hpp"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ struct _XDisplay;
 typedef struct _XDisplay Display;
 struct GraphicsInternal;
 
-struct Graphics {
+struct Graphics : debug_policy_t {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
   Graphics();

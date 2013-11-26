@@ -3,6 +3,7 @@
 #include "room.hpp"
 #include "workroom.hpp"
 #include "garbage.hpp"
+#include "log.hpp"
 
 #include <stdexcept>
 
@@ -29,7 +30,7 @@ istream& operator>>(istream& is, City& c) {
 
   string s;
   while (getline(is, s)) {
-    cerr << "'" << s << "'" << endl;
+    LOGGER::error() << "'" << s << "'" << endl;
     if (s.size() == 0)
       continue;
     if (y == 0)
@@ -52,7 +53,7 @@ istream& operator>>(istream& is, City& c) {
   c.xsz = x;
   c.ysz = y;
 
-  cout << "C is " << x << " by " << y << endl;
+  LOGGER::verbose() << "C is " << x << " by " << y << endl;
 
   // Now generate rooms
   for (int j=0; j<c.getYSize();++j) {
@@ -99,12 +100,12 @@ istream& operator>>(istream& is, City& c) {
   }
 
   for (auto r : c.rooms)
-    cout << r->w << 'x' << r->h << " Room @ " << r->x << ", " << r->y << endl;
+    LOGGER::verbose() << r->w << 'x' << r->h << " Room @ " << r->x << ", " << r->y << endl;
 
   for (int j=0; j<c.getYSize();++j) {
     for (int i=0; i<c.getXSize();++i)
-      cout << (char)c.tile(i,j).type;
-    cout << '\n';
+      LOGGER::verbose() << (char)c.tile(i,j).type;
+    LOGGER::verbose() << '\n';
   }
 
   return is;

@@ -1,6 +1,7 @@
 #include "graphics.hpp"
 #include "component.hpp"
 #include "input.hpp"
+#include "log.hpp"
 
 #include <unistd.h> //let mingw handle it if needed
 #include <cassert>
@@ -64,7 +65,7 @@ void Graphics::handle_events(Controller* c) {
   int events = XPending(display);
 
   while (events > 0) {
-    //cerr << events << " Events." << endl;
+    LOGGER::debug() << events << " Events." << endl;
     XNextEvent(display, &event);
  
     switch (event.type) {

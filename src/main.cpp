@@ -19,6 +19,7 @@
 #include "joblist.hpp"
 #include "entity.hpp"
 #include "room.hpp"
+#include "log.hpp"
 #include "hud.hpp"
 #include "input.hpp"
 #include "mapview.hpp"

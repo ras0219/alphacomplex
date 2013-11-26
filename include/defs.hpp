@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include "debug_policy.hpp"
 
 using namespace std;
 
@@ -69,3 +70,5 @@ constexpr inline Department::Mask operator|(Department::Mask m1, Department::Mas
 constexpr inline Security::Mask operator|(Security::Mask m1, Security::Mask m2) {
   return (Security::Mask)((uint)m1 | (uint)m2);
 }
+
+typedef DebugPolicy<true> debug_policy_t;
