@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <array>
 #include "debug_policy.hpp"
 
 using namespace std;
@@ -51,6 +52,26 @@ namespace Security {
       return "??";
     }
   }
+
+  inline const char* mask_to_local(Mask m) {
+    switch (m) {
+    case INFRARED:
+      return "INFRARED";
+    case RED:
+      return "RED";
+    case ORANGE:
+      return "ORANGE";
+    case YELLOW:
+      return "YELLOW";
+    case GREEN:
+      return "GREEN";
+      // Got bored here.
+    case ULTRAVIOLET:
+      return "ULTRAVIOLET";
+    default:
+      return "UNKNOWN";
+    }
+  }
 }
 
 namespace Department {
@@ -62,6 +83,48 @@ namespace Department {
       RESEARCH = 16,
       ALL = (uint)(-1)
   };
+
+  constexpr const array<Mask,5> List = {{
+      INTERNAL_SECURITY,
+      AGRICULTURE,
+      FACILITIES,
+      MECHANICULTURE,
+      RESEARCH,
+    }};
+
+  inline const char* mask_to_dcode(Mask m) {
+    switch (m) {
+    case INTERNAL_SECURITY:
+      return "IS";
+    case AGRICULTURE:
+      return "AG";
+    case FACILITIES:
+      return "FC";
+    case MECHANICULTURE:
+      return "MC";
+    case RESEARCH:
+      return "RS";
+    default:
+      return "??";
+    }
+  }
+
+  inline const char* mask_to_local(Mask m) {
+    switch (m) {
+    case INTERNAL_SECURITY:
+      return "INTERNAL SECURITY";
+    case AGRICULTURE:
+      return "AGRICULTURE";
+    case FACILITIES:
+      return "FACILITIES";
+    case MECHANICULTURE:
+      return "MECHANICULTURE";
+    case RESEARCH:
+      return "RESEARCH";
+    default:
+      return "??";
+    }
+  }
 }
 
 constexpr inline Department::Mask operator|(Department::Mask m1, Department::Mask m2) {
