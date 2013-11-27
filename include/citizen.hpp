@@ -40,7 +40,8 @@ struct Citizen : AIEntity {
     IDLE,
     WALKINGTOJOB,
     WANDERING,
-    ACTIVITY
+    ACTIVITY,
+    SLEEPING
   } state;
 
   Job* job;

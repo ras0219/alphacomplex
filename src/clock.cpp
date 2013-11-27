@@ -5,12 +5,16 @@
 
 using namespace std;
 
-unsigned int gametime = 0;
+unsigned int gametime = 20 * 60 * 23;
 unsigned int animtime = 0;
 
+unsigned int hour(unsigned int t) {
+  return (t / 20 / 60) % 24;
+}
+
 string format_time(unsigned int t) {
-  unsigned int secs = t % 60;
-  t /= 60;
+  unsigned int secs = (t % 20) * 3;
+  t /= 20;
   unsigned int mins = t % 60;
   t /= 60;
   unsigned int hours = t % 24;

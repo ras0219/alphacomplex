@@ -16,6 +16,8 @@ char Citizen::render() const {
   //cerr << "rendering elf @ " << x << "," << y << endl;
   if (state == IDLE && animtime % 20 < 10)
     return '?';
+  else if (state == SLEEPING && animtime % 20 < 10)
+    return 'Z';
   else
     return Security::mask_to_dcode(sec)[0];
 }
@@ -213,16 +215,11 @@ void Citizen::update() {
     if (energy >= 10) {
       energy = 0;
 
-      if (job != nullptr) {
-        char buf[100];
-        description(buf, 100);
-        cerr << buf << endl;
-        cerr << job->rawname() << endl;
-        while (job->rawname() == MultiJob::RAWNAME) {
-          job = job->as<MultiJob>().subjobs.front();
-          cerr << job->rawname() << endl;
-        }
+      if (hour(gametime) < 8) {
+        state = SLEEPING;
+        return;
       }
+
       assert(job == nullptr);
       Job* j = jobs.pop_job(security(), department());
       if (j) {
@@ -308,6 +305,19 @@ void Citizen::update() {
         return resume();
       }
     }
+    return;
+  case SLEEPING:
+    if (energy >= 0) {
+      if (hour(gametime) < 8) {
+        energy = -100 + rand() % 20;
+        return;
+      } else {
+        energy = 0;
+        state = IDLE;
+        return;
+      }
+    }
+    return;
   }
 }
 
