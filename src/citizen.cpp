@@ -4,6 +4,7 @@
 #include "city.hpp"
 #include "workroom.hpp"
 #include "clock.hpp"
+#include "windows.hpp"
 
 #include <sstream>
 #include <cstdlib>
@@ -164,7 +165,7 @@ struct SecRevJobStep1 : Job {
     c->state = Citizen::WALKINGTOJOB;
   }
   virtual bool complete_walk(Citizen* c) {
-    if (c->x != target->x or c->y != target->y) {
+    if (c->x != target->x || c->y != target->y) {
       c->energy = -(rand() % 10);
       c->state = Citizen::ACTIVITY;
       return false;

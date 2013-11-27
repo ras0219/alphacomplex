@@ -1,8 +1,9 @@
 #include "defs.hpp"
 #include "entity.hpp"
+#include "city.hpp"
 #include "pathfind.hpp"
 #include "joblist.hpp"
-#include "city.hpp"
+#include "windows.hpp"
 
 #include "garbage.hpp"
 

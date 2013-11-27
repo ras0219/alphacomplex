@@ -50,5 +50,5 @@ bool MultiJob::complete_activity(Citizen* e) {
   return false;
 }
 
-bool Job::complete_walk(Citizen*) { assert(false); }
-bool Job::complete_activity(Citizen*) { assert(false); }
+bool Job::complete_walk(Citizen*) { assert(false); return false; }
+bool Job::complete_activity(Citizen*) { assert(false); return false; }
