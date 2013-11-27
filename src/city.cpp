@@ -9,8 +9,6 @@
 
 const char* SentinelEntity::RAWNAME = "sentinel";
 
-City city;
-
 Room* City::find_room(const char* rawname) {
   for (auto r : rooms) {
     if (r->rawname() == rawname)
@@ -41,7 +39,7 @@ istream& operator>>(istream& is, City& c) {
 
     for (int i=0; i < x; ++i) {
       c.tiles.push_back( {(Tile::TileKind)s[i]} );
-      c.ents.emplace_back();
+      c.ents.emplace_back(c);
     }
 
     ++y;
@@ -61,15 +59,15 @@ istream& operator>>(istream& is, City& c) {
       char ch = c.tile(i,j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
       } else if (ch == 'E') {
-        Citizen* e = new Citizen(i,j,Security::RED);
+        Citizen* e = new Citizen(i,j,Security::RED, c);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'O') {
-        Citizen* e = new Citizen(i,j,Security::ORANGE);
+        Citizen* e = new Citizen(i,j,Security::ORANGE, c);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'D') {
-        Dwarf* e = new Dwarf(i,j);
+        Dwarf* e = new Dwarf(i,j, c);
         e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else {

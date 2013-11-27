@@ -13,15 +13,13 @@
 using namespace std;
 
 struct SentinelEntity : Entity {
-  SentinelEntity() { }
+  SentinelEntity(City& c) : Entity(c) { }
 
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }
 
   virtual char render() const { assert(false); return '\0'; }
 };
-
-extern struct City city;
 
 struct City {
   int xsz;
@@ -44,7 +42,7 @@ struct City {
   }
 
   City() : xsz(0), ysz(0) {}
-  City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y) {}
+  City(int x, int y) : xsz(x), ysz(y), tiles(x*y), ents(x*y, SentinelEntity(*this)) {}
 
   struct Room* find_room(const char*);
 };

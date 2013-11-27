@@ -1,5 +1,6 @@
 #pragma once
 
+// #include "city.hpp"
 #include "pathfind.hpp"
 #include "graphics.hpp"
 
@@ -7,9 +8,13 @@
 
 using std::list;
 
+struct City;
+
 struct Entity {
-  Entity() : prev(nullptr),
-             next(nullptr)
+  Entity(City& c) : 
+    prev(nullptr),
+    next(nullptr),
+    city(c)
     { }
 
   virtual ~Entity() {
@@ -30,10 +35,11 @@ struct Entity {
 
   Entity* prev;
   Entity* next;
+  City& city;
 };
 
 struct LocEntity : Entity {
-  LocEntity(int x_, int y_) : x(x_), y(y_) { }
+  LocEntity(int x_, int y_, City& c) : Entity(c), x(x_), y(y_) { }
 
   int x, y;
 
@@ -41,8 +47,8 @@ struct LocEntity : Entity {
 };
 
 struct AIEntity : LocEntity {
-  AIEntity(int x_, int y_)
-    : LocEntity(x_, y_)
+  AIEntity(int x_, int y_, City& c)
+    : LocEntity(x_, y_, c)
     {
       ai_list.push_back(this);
       ai_it = --ai_list.end();
@@ -58,7 +64,7 @@ struct AIEntity : LocEntity {
 };
 
 struct Dwarf : AIEntity {
-  Dwarf(int x_, int y_, char pic_ = 'S') : AIEntity(x_, y_), pic(pic_) { }
+  Dwarf(int x_, int y_, City& c, char pic_ = 'S') : AIEntity(x_, y_, c), pic(pic_) { }
 
   virtual const char* rawname() const { return RAWNAME; }
   virtual int description(char* buf, size_t n) const;
