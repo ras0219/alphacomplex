@@ -5,6 +5,8 @@
 #include "hud.hpp"
 #include "helpview.hpp"
 #include "unitview.hpp"
+#include "announceview.hpp"
+#include "designview.hpp"
 #include "citizen.hpp"
 
 extern Graphics* gfx;
@@ -17,6 +19,8 @@ MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c) {
     mv = new MapView(city.getXSize(), city.getYSize(), &city);
   hview = new HelpView(vs);
   uview = new UnitView(vs);
+  aview = new AnnounceView(vs);
+  dview = new DesignView(vs, mv, c);
 }
 
 JobListing activelist(20, &active_jobs, "Active Jobs");
@@ -44,6 +48,12 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_u:
     vstk->push(uview);
     break;
+  case KEY_d:
+    vstk->push(dview);
+    break;
+  case KEY_a:
+    vstk->push(aview);
+    break;
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
@@ -53,7 +63,7 @@ void MainView::handle_keypress(KeySym ks) {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
     break;
-  case KEY_a:
+  case KEY_e:
     if (influence >= 5) {
       influence -= 5;
       Citizen* e = new Citizen(1,1,Security::INFRARED, city);

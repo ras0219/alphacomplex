@@ -3,17 +3,13 @@
 #include "city.hpp"
 #include "view.hpp"
 
-struct MainView : View {
-  MainView(struct ViewStack* vs, City& c);
+struct DesignView : View {
+  DesignView(struct ViewStack* vs, struct MapView* m, City& c);
 
   virtual void render(Graphics& g);
   virtual void handle_keypress(KeySym ks);
 
   struct ViewStack* vstk;
-
-  struct HelpView* hview;
-  struct UnitView* uview;
-  struct AnnounceView* aview;
-  struct DesignView* dview;
+  struct MapView* mv;
   City& city;
 };
