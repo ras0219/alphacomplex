@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-#include <thread>
 #include <iomanip>
 #include <iostream>
 #include <tuple>
@@ -9,6 +8,12 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+
+#ifndef _WIN32
+#include <unistd.h>
+#else
+#include <thread>
+#endif
 
 #include "city.hpp"
 #include "pathfind.hpp"
@@ -71,7 +76,12 @@ int main(int argc, char** argv) {
     auto sleep_till = t + milliseconds(50);
     t = steady_clock::now();
     if (sleep_till > t) {
+      #ifndef _WIN32
+      auto ticks = duration_cast<microseconds>(sleep_till - t).count();
+      usleep(ticks);
+      #else
       this_thread::sleep_until(sleep_till);
+      #endif
     }
   }
 
