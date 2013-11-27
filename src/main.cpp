@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <thread>
 #include <iomanip>
 #include <iostream>
 #include <tuple>
@@ -8,7 +9,6 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <unistd.h>
 
 #include "city.hpp"
 #include "pathfind.hpp"
@@ -71,8 +71,9 @@ int main(int argc, char** argv) {
     auto sleep_till = t + milliseconds(50);
     t = steady_clock::now();
     if (sleep_till > t) {
-      auto ticks = duration_cast<microseconds>(sleep_till - t).count();
-      usleep(ticks);
+      this_thread::sleep_until(sleep_till);
     }
   }
+
+  return 0;
 }
