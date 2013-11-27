@@ -29,10 +29,13 @@
 
 #include <map>
 
+
 using namespace std;
 using namespace chrono;
 /*************************/
 const char* white = "#FFFFFF";
+
+microseconds us_per_gf, us_per_lf;
 
 bool paused = false;
 
@@ -55,16 +58,18 @@ int main(int argc, char** argv) {
 
   g.c.push_back(&vs);
 
-  #define MS_PER_GFX 33
-  #define MS_PER_LGC 1
+  #define US_PER_GFX 33000
+  #define US_PER_LGC 10000
+  #define US_PER_REP 1000000
 
   auto last_gf = steady_clock::now();
   auto last_lf = steady_clock::now();
+  auto last_rep = steady_clock::now();
 
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
-    if (t - last_lf >= milliseconds(MS_PER_LGC)) {
+    if (t - last_lf >= microseconds(US_PER_LGC)) {
       if (!paused) {
         ++gametime;
         for (auto e : AIEntity::ai_list)
@@ -74,19 +79,29 @@ int main(int argc, char** argv) {
           r->update();
 
       }
+      us_per_lf = duration_cast<microseconds>(t - last_lf);
       last_lf = t;
     }
 
-    if (t - last_gf >= milliseconds(MS_PER_GFX)) {
+    if (t - last_gf >= microseconds(US_PER_GFX)) {
       ++animtime;
       g.repaint();
 
       g.handle_events(&vs);
+      us_per_gf = duration_cast<microseconds>(t - last_gf);
+      last_gf = t;
     }
 
-    auto sleep_till = last_lf + milliseconds(MS_PER_LGC);
-    if (sleep_till < last_gf + milliseconds(MS_PER_GFX))
-      sleep_till = last_gf + milliseconds(MS_PER_GFX);
+    if (t - last_rep >= microseconds(US_PER_REP)) {
+      stringstream ss;
+      ss << 1000000 / us_per_gf.count() << " | " << 1000000 /  us_per_lf.count() << ".";
+      announce(ss.str());
+      last_rep = t;
+    }
+
+    auto sleep_till = last_lf + microseconds(US_PER_LGC);
+    if (sleep_till > last_gf + microseconds(US_PER_GFX))
+      sleep_till = last_gf + microseconds(US_PER_GFX);
 
     t = steady_clock::now();
     if (sleep_till > t) {
