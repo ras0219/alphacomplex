@@ -5,7 +5,8 @@
 
 using namespace std;
 
-unsigned int gametime;
+unsigned int gametime = 0;
+unsigned int animtime = 0;
 
 string format_time(unsigned int t) {
   unsigned int secs = t % 60;

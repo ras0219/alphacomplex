@@ -51,14 +51,15 @@ int main(int argc, char** argv) {
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
+    ++animtime;
     if (!paused) {
+      ++gametime;
       for (auto e : AIEntity::ai_list)
         e->update();
 
       for (auto r : city.rooms)
         r->update();
 
-      gametime++;
     }
 
     g.repaint();

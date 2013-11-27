@@ -3,6 +3,7 @@
 #include "garbage.hpp"
 #include "city.hpp"
 #include "workroom.hpp"
+#include "clock.hpp"
 
 #include <sstream>
 #include <cstdlib>
@@ -13,7 +14,7 @@ const char* Citizen::RAWNAME = "citizen";
 
 char Citizen::render() const {
   //cerr << "rendering elf @ " << x << "," << y << endl;
-  if (state == IDLE)
+  if (state == IDLE && animtime % 20 < 10)
     return '?';
   else
     return Security::mask_to_dcode(sec)[0];
