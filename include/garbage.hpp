@@ -14,7 +14,7 @@ struct CleaningRoom : Room {
 };
 
 struct Garbage : LocEntity {
-  Garbage(int x_, int y_) : LocEntity(x_, y_) { }
+  Garbage(int x_, int y_, City& c) : LocEntity(x_, y_, c) { }
 
   static const char* RAWNAME;
   virtual const char* rawname() const { return RAWNAME; }

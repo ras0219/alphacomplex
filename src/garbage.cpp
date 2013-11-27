@@ -54,7 +54,7 @@ struct GarbageJob : WalkToJob<GarbageJob> {
       --e->clean_supplies;
       return WalkToJob<GarbageJob>::assign_task(e);
     } else {
-      Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+      Room* cleaning = g->city.find_room(CleaningRoom::RAWNAME);
       if (cleaning == nullptr)
         return WalkToJob<GarbageJob>::assign_task(e);
       

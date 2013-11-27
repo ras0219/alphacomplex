@@ -18,7 +18,7 @@
 #include "entity.hpp"
 #include "room.hpp"
 #include "log.hpp"
-
+#include "clock.hpp"
 #include "viewstack.hpp"
 #include "mainview.hpp"
 
@@ -34,6 +34,8 @@ bool paused = false;
 Graphics *gfx;
 
 int main(int argc, char** argv) {
+  City city;
+
   srand(time(NULL));
   if (argc < 2)
     cin >> city;
@@ -43,7 +45,7 @@ int main(int argc, char** argv) {
   Graphics g;
   gfx = &g;
   ViewStack vs;
-  MainView mv(&vs);
+  MainView mv(&vs, city);
   vs.push(&mv);
 
   g.c.push_back(&vs);
@@ -51,12 +53,15 @@ int main(int argc, char** argv) {
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
+    ++animtime;
     if (!paused) {
+      ++gametime;
       for (auto e : AIEntity::ai_list)
         e->update();
 
       for (auto r : city.rooms)
         r->update();
+
     }
 
     g.repaint();

@@ -1,7 +1,6 @@
 #include "mainview.hpp"
 #include "viewstack.hpp"
 #include "mapview.hpp"
-#include "city.hpp"
 #include "joblist.hpp"
 #include "hud.hpp"
 #include "helpview.hpp"
@@ -13,7 +12,7 @@ extern bool paused;
 
 MapView *mv = nullptr;
 
-MainView::MainView(ViewStack* vs) : vstk(vs) {
+MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c) {
   if (mv == nullptr)
     mv = new MapView(city.getXSize(), city.getYSize(), &city);
   hview = new HelpView(vs);
@@ -48,7 +47,7 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
-      Citizen* e = new Citizen(1,1,Security::RED);
+      Citizen* e = new Citizen(1,1,Security::RED, city);
       e->insert_after(city.ent(1,1));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
@@ -57,7 +56,7 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_a:
     if (influence >= 5) {
       influence -= 5;
-      Citizen* e = new Citizen(1,1,Security::INFRARED);
+      Citizen* e = new Citizen(1,1,Security::INFRARED, city);
       e->insert_after(city.ent(1,1));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
