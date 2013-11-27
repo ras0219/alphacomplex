@@ -41,8 +41,8 @@ struct SupplyJob : WalkToJob<SupplyJob> {
 };
 
 struct GarbageJob : WalkToJob<GarbageJob> {
-  GarbageJob(Garbage* g_, City& c)
-    : WalkToJob(g_->x, g_->y), g(g_), city(c) { }
+  GarbageJob(Garbage* g_)
+    : WalkToJob(g_->x, g_->y), g(g_) { }
 
   virtual int description(char* buf, size_t n) const;
   virtual Department::Mask department() { return Department::FACILITIES; }
@@ -53,7 +53,7 @@ struct GarbageJob : WalkToJob<GarbageJob> {
       --e->clean_supplies;
       return WalkToJob<GarbageJob>::assign_task(e);
     } else {
-      Room* cleaning = city.find_room(CleaningRoom::RAWNAME);
+      Room* cleaning = g->city.find_room(CleaningRoom::RAWNAME);
       if (cleaning == nullptr)
         return WalkToJob<GarbageJob>::assign_task(e);
       
@@ -64,7 +64,6 @@ struct GarbageJob : WalkToJob<GarbageJob> {
 
   static const char* RAWNAME;
   Garbage* g;
-  City& city;
 };
 
 const char* Garbage::RAWNAME = "garbage";
@@ -85,6 +84,6 @@ int SupplyJob::description(char* buf, size_t n) const {
   return snprintf(buf, n, "Fetch Cleaning Supplies");
 }
 
-Job* make_garbage_job(Garbage* g, City& city) {
-  return new MultiJob{new GarbageJob(g, city), new CleaningJob(g)};
+Job* make_garbage_job(Garbage* g) {
+  return new MultiJob{new GarbageJob(g), new CleaningJob(g)};
 }

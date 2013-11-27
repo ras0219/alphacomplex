@@ -22,4 +22,4 @@ struct Garbage : LocEntity {
   virtual char render() const { return ';'; }
 };
 
-Job* make_garbage_job(Garbage* g, City& city);
+Job* make_garbage_job(Garbage* g);
