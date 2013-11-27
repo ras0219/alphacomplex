@@ -29,7 +29,8 @@ set(SOURCES
   "src/viewstack.cpp"
   "src/mainview.cpp"
   "src/helpview.cpp"
-  "src/unitview.cpp")
+  "src/unitview.cpp"
+  "src/clock.cpp")
 
 
 ##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS

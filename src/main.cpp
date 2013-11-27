@@ -18,7 +18,7 @@
 #include "entity.hpp"
 #include "room.hpp"
 #include "log.hpp"
-
+#include "clock.hpp"
 #include "viewstack.hpp"
 #include "mainview.hpp"
 
@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
 
       for (auto r : city.rooms)
         r->update();
+
+      gametime++;
     }
 
     g.repaint();
