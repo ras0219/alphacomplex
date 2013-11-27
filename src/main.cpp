@@ -34,6 +34,8 @@ bool paused = false;
 Graphics *gfx;
 
 int main(int argc, char** argv) {
+  City city;
+
   srand(time(NULL));
   if (argc < 2)
     cin >> city;
@@ -43,7 +45,7 @@ int main(int argc, char** argv) {
   Graphics g;
   gfx = &g;
   ViewStack vs;
-  MainView mv(&vs);
+  MainView mv(&vs, city);
   vs.push(&mv);
 
   g.c.push_back(&vs);
