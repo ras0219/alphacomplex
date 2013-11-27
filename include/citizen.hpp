@@ -13,7 +13,8 @@ struct Citizen : AIEntity {
       state(IDLE),
       job(nullptr),
       dept(Department::ALL),
-      intsec_review_job(nullptr)
+      intsec_review_job(nullptr),
+      ssn(rand() % 10000)
     { }
 
   virtual const char* rawname() const { return RAWNAME; }
@@ -30,7 +31,6 @@ struct Citizen : AIEntity {
   void finalize_job();
   void path_to(int, int);
   void set_job(struct Job*);
-
 
   Security::Mask sec;
   int energy = 0;
@@ -53,6 +53,8 @@ struct Citizen : AIEntity {
   Department::Mask dept;
 
   Job* intsec_review_job;
+
+  unsigned int ssn;
 
   static const char* RAWNAME;
 };

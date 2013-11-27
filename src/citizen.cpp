@@ -345,7 +345,7 @@ void Citizen::finalize_job() {
 
 int Citizen::description(char* buf, size_t n) const {
   const char* dcode = Security::mask_to_dcode(security());
-  return snprintf(buf, n, "[%s] %s-01", dcode, "Ziggy");
+  return snprintf(buf, n, "[%s] %s-%05d", dcode, "Ziggy", ssn);
 }
 
 Security::Mask Citizen::security() const {
