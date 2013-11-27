@@ -1,2 +1,8 @@
 build/
 debug/
+
+# Windows stuff
+windows/*.suo
+windows/*.sdf
+windows/*.opensdf
+windows/*.user

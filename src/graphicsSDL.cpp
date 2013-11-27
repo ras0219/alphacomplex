@@ -2,14 +2,16 @@
 #include "component.hpp"
 #include "controller.hpp"
 
+#ifndef _WIN32
 #include <unistd.h> //let mingw handle it if needed
+#endif
+
 #include <cassert>
 #include <iostream>
 #include <vector>
 #include <chrono>
 #include <deque>
 
-#include <X11/keysym.h>
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
 
@@ -114,7 +116,6 @@ void Graphics::handle_events(Controller* c) {
       }
       break;
     case SDL_QUIT: //send q to controller
-      c->handle_keypress((KeySym)XK_Escape);
       destroy();
       return;
       break;

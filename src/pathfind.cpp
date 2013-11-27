@@ -4,10 +4,12 @@
 #include <algorithm>
 #include <iomanip>
 
+// since MSVC doesn't do constexprs and doesn't like get<> having a local variable as an argument, need to use define macros
+#define XCOORD 2
+#define YCOORD 3
+#define DIST 1
+
 vector<point> pathfind(City& c, int x1, int y1, int x2, int y2) {
-  constexpr size_t XCOORD = 2;
-  constexpr size_t YCOORD = 3;
-  constexpr size_t DIST = 1;
   vector<waypoint> pheap{ waypoint( -(abs(x1-x2) + abs(y1-y2) + 1), 1, x1, y1 ) };
 
   vector<int> dist(c.getXSize() * c.getYSize());

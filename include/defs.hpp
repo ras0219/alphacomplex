@@ -84,7 +84,7 @@ namespace Department {
       ALL = (uint)(-1)
   };
 
-  constexpr const array<Mask,5> List = {{
+  const array<Mask,5> List = {{
       INTERNAL_SECURITY,
       AGRICULTURE,
       FACILITIES,
@@ -127,10 +127,10 @@ namespace Department {
   }
 }
 
-constexpr inline Department::Mask operator|(Department::Mask m1, Department::Mask m2) {
+inline Department::Mask operator|(Department::Mask m1, Department::Mask m2) {
   return (Department::Mask)((uint)m1 | (uint)m2);
 }
-constexpr inline Security::Mask operator|(Security::Mask m1, Security::Mask m2) {
+inline Security::Mask operator|(Security::Mask m1, Security::Mask m2) {
   return (Security::Mask)((uint)m1 | (uint)m2);
 }
 

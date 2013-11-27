@@ -1,6 +1,7 @@
 #include "workroom.hpp"
 #include "city.hpp"
 #include "job.hpp"
+#include "windows.hpp"
 
 #include <cstdlib>
 #include <cstdio>

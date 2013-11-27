@@ -3,6 +3,7 @@
 #include "city.hpp"
 #include "pathfind.hpp"
 #include "joblist.hpp"
+#include "windows.hpp"
 
 #include "garbage.hpp"
 
