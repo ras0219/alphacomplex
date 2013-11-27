@@ -70,8 +70,8 @@ void Graphics::handle_events(Controller* c) {
  
     switch (event.type) {
     case Expose:
-      if (event.xexpose.count == 0)
-        repaint();
+//      if (event.xexpose.count == 0)
+//        repaint();
       break;
     case KeyPress: {
       auto keycode = event.xkey.keycode;

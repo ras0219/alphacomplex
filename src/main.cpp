@@ -55,25 +55,39 @@ int main(int argc, char** argv) {
 
   g.c.push_back(&vs);
 
+  #define MS_PER_GFX 33
+  #define MS_PER_LGC 1
+
+  auto last_gf = steady_clock::now();
+  auto last_lf = steady_clock::now();
+
   while(!g.destroyed) {
     auto t = steady_clock::now();
 
-    ++animtime;
-    if (!paused) {
-      ++gametime;
-      for (auto e : AIEntity::ai_list)
-        e->update();
+    if (t - last_lf >= milliseconds(MS_PER_LGC)) {
+      if (!paused) {
+        ++gametime;
+        for (auto e : AIEntity::ai_list)
+          e->update();
 
-      for (auto r : city.rooms)
-        r->update();
+        for (auto r : city.rooms)
+          r->update();
 
+      }
+      last_lf = t;
     }
 
-    g.repaint();
+    if (t - last_gf >= milliseconds(MS_PER_GFX)) {
+      ++animtime;
+      g.repaint();
 
-    g.handle_events(&vs);
+      g.handle_events(&vs);
+    }
 
-    auto sleep_till = t + milliseconds(50);
+    auto sleep_till = last_lf + milliseconds(MS_PER_LGC);
+    if (sleep_till < last_gf + milliseconds(MS_PER_GFX))
+      sleep_till = last_gf + milliseconds(MS_PER_GFX);
+
     t = steady_clock::now();
     if (sleep_till > t) {
       #ifndef _WIN32
