@@ -1,8 +1,8 @@
 #include "defs.hpp"
 #include "entity.hpp"
-#include "city.hpp"
 #include "pathfind.hpp"
 #include "joblist.hpp"
+#include "city.hpp"
 
 #include "garbage.hpp"
 
@@ -55,9 +55,9 @@ void Dwarf::update() {
   }
 
   if (rand() % 100 == 0) {
-    Garbage* g = new Garbage(x, y);
+    Garbage* g = new Garbage(x, y, city);
     g->insert_after(this);
-    jobs.add_job(make_garbage_job(g));
+    jobs.add_job(make_garbage_job(g, city));
   }
 }
 

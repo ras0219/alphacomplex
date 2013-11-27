@@ -7,8 +7,8 @@
 #include <list>
 
 struct Citizen : AIEntity {
-  Citizen(int x_, int y_, Security::Mask s)
-    : AIEntity(x_, y_),
+  Citizen(int x_, int y_, Security::Mask s, City& c)
+    : AIEntity(x_, y_, c),
       sec(s),
       state(IDLE),
       job(nullptr),
