@@ -77,6 +77,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\citizen.cpp" />
     <ClCompile Include="..\src\city.cpp" />
+    <ClCompile Include="..\src\clock.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\garbage.cpp" />
     <ClCompile Include="..\src\graphicsSDL.cpp" />
@@ -97,6 +98,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\citizen.hpp" />
     <ClInclude Include="..\include\city.hpp" />
+    <ClInclude Include="..\include\clock.hpp" />
     <ClInclude Include="..\include\component.hpp" />
     <ClInclude Include="..\include\controller.hpp" />
     <ClInclude Include="..\include\debug_policy.hpp" />
