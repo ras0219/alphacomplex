@@ -3,6 +3,8 @@ Alpha Complex
 
 ### Compilation
 
+C++11 compiler required.
+Needs X11 or SDL.
 Compile in a separate directory.
 
     $ mkdir build
