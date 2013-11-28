@@ -161,8 +161,7 @@ if(BUILD_SDL2)
 
     INCLUDE(FindPackageHandleStandardArgs)
 
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2
-      REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARIES SDL2_INCLUDE_DIR)
     set(SDL2_LIBRARIES ${SDL2_LIBRARIES} "-framework SDL2_ttf")
     set(SOURCES ${SOURCES} "src/graphicsSDL.cpp")
     include_directories(${SDL2_INCLUDE_DIR} "/Library/Frameworks/SDL2_ttf.framework/Headers/")
