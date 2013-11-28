@@ -128,7 +128,8 @@ void Graphics::handle_events(Controller* c) {
 void Graphics::drawString(int x, int y, const string & str, const Graphics::Context gc) {
   LoadText(str, TEMP_FONT_PATH);
   int w = 0, h = 0;
-  assert(TTF_SizeText(pImpl->best_font, str.c_str(), &w, &h) != -1);
+  int errcode = TTF_SizeText(pImpl->best_font, str.c_str(), &w, &h);
+  assert(errcode != -1);
   SDL_Rect dstRect = {x, y - 12, w, h};
   pImpl->sdl_last_call = SDL_RenderCopy(pImpl->ren,pImpl->ttf_texture, NULL, &dstRect);
 //  pImpl->main_texture
