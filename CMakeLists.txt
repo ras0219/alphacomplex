@@ -30,6 +30,8 @@ set(SOURCES
   "src/mainview.cpp"
   "src/helpview.cpp"
   "src/unitview.cpp"
+  "src/announceview.cpp"
+  "src/designview.cpp"
   "src/clock.cpp")
 
 

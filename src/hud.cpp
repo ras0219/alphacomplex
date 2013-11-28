@@ -7,8 +7,6 @@
 
 using namespace std;
 
-deque<string> msglog{"City begin.", "Placeholder.", "All systems nominal."};
-
 int influence = 0;
 
 void Hud::render(Graphics& g) {
@@ -18,15 +16,18 @@ void Hud::render(Graphics& g) {
 
   g.drawString(g.getWidth() - 150, g.getHeight()-5, format_time(gametime), Graphics::DEFAULT);
 
-  auto sz = msglog.size();
+  auto sz = a11s.msgs.size();
 
   for (int x=1;x<4;++x)
-    g.drawString(5, g.getHeight()-5-10*x, msglog[sz-x], Graphics::DEFAULT);
+    g.drawString(5, g.getHeight()-5-10*x, a11s.msgs[sz-x], Graphics::DEFAULT);
 
 }
 
-void announce(const string& s) {
-  msglog.push_back(s);
+void A11s::announce(const string& s) {
+  msgs.push_back(s);
 }
 
+void announce(const string& s) { a11s.announce(s); }
+
+A11s a11s;
 Hud hud;

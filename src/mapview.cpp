@@ -1,6 +1,7 @@
 #include "mapview.hpp"
 #include "graphics.hpp"
 #include "city.hpp"
+#include "clock.hpp"
 
 const char prettywalls[16] = {
   '+', HBAR, VBAR, CORNER_SE,
@@ -13,7 +14,9 @@ void MapView::render(Graphics& g) {
   for (int y=0;y<ysz;++y)
     for (int x=0;x<xsz;++x) {
       assert(city->ent(x,y)->rawname() == SentinelEntity::RAWNAME);
-      if (city->ent(x,y)->next != nullptr) {
+      if (csr_enable && x == csr_x && y == csr_y/* && animtime % 30 < 15*/) {
+        putChar(x, y, 'X');
+      } else if (city->ent(x,y)->next != nullptr) {
         putChar(x, y, city->ent(x,y)->next->render());
       } else if (city->tile(x,y).type == '+') {
         int i = 0;
@@ -39,4 +42,9 @@ void MapView::render(Graphics& g) {
 void MapView::putChar(int x, int y, char c) {
   if (x >= 0 && x < xsz && y >= 0 && y < ysz)
     buf[y*xsz + x] = c;
+}
+
+void MapView::zap_wall() { zap_wall(csr_x, csr_y); }
+void MapView::zap_wall(int x, int y) {
+  city->tile(x,y).type = Tile::ground;
 }

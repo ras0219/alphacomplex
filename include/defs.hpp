@@ -155,6 +155,8 @@ void announce(const string&);
 #define KEY_r XK_r
 #define KEY_a XK_a
 #define KEY_q XK_q
+#define KEY_e XK_e
+#define KEY_d XK_d
 
 #else
 #include "SDL.h"
@@ -174,6 +176,9 @@ typedef unsigned long KeySym;
 #define KEY_r SDLK_r
 #define KEY_a SDLK_a
 #define KEY_q SDLK_q
+#define KEY_e SDLK_e
+#define KEY_d SDLK_d
 
 #endif
 
+extern bool paused;

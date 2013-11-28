@@ -45,7 +45,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -57,6 +57,7 @@
       <AdditionalDependencies>SDL2-2.0.1\lib\x86\SDL2.lib;SDL2-2.0.1\lib\x86\SDL2main.lib;SDL2_ttf-2.0.12\lib\x86\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <IgnoreSpecificDefaultLibraries>libcmtd.lib;libcmt.lib;libc.lib;msvcrt.lib;libcd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,9 +76,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\announceview.cpp" />
     <ClCompile Include="..\src\citizen.cpp" />
     <ClCompile Include="..\src\city.cpp" />
     <ClCompile Include="..\src\clock.cpp" />
+    <ClCompile Include="..\src\designview.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\garbage.cpp" />
     <ClCompile Include="..\src\graphicsSDL.cpp" />
@@ -96,6 +99,7 @@
     <ClCompile Include="..\src\workroom.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\announceview.hpp" />
     <ClInclude Include="..\include\citizen.hpp" />
     <ClInclude Include="..\include\city.hpp" />
     <ClInclude Include="..\include\clock.hpp" />
@@ -103,6 +107,7 @@
     <ClInclude Include="..\include\controller.hpp" />
     <ClInclude Include="..\include\debug_policy.hpp" />
     <ClInclude Include="..\include\defs.hpp" />
+    <ClInclude Include="..\include\designview.hpp" />
     <ClInclude Include="..\include\entity.hpp" />
     <ClInclude Include="..\include\garbage.hpp" />
     <ClInclude Include="..\include\graphics.hpp" />
