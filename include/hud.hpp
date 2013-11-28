@@ -18,7 +18,7 @@ struct Hud : Component {
 extern Hud hud;
 
 struct A11s {
-  A11s() : msgs{"","",""} { }
+  A11s() : msgs{ { "", "", "" } } { }
 
   void announce(const string&);
 
