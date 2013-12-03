@@ -56,6 +56,11 @@ struct UnitListing : Component {
     }
 
     Citizen& c = (*it)->as<Citizen>();
+    if (c.faction() != Faction::PLAYER) {
+      announce("This unit is not under your control.");
+      return;
+    }
+
     c.dept = (Department::Mask)(c.dept ^ Department::List[col]);
   }
 
@@ -63,7 +68,7 @@ struct UnitListing : Component {
 } ulist;
 
 void UnitListing::render(Graphics& g) {
-  g.drawString(5, 17, "Citizen Roster", Graphics::DEFAULT);
+  g.drawString(5, 17, "Units Roster", Graphics::DEFAULT);
 
   uint c = 0;
   for (auto d : Department::List) {

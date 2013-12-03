@@ -4,18 +4,29 @@
 #include "defs.hpp"
 #include "joblist.hpp"
 
-#include <list>
+#include <string>
+#include <vector>
+
+using std::vector;
+using std::string;
+
+extern vector<string> names;
+extern vector<string> sectors;
 
 struct Citizen : AIEntity {
   Citizen(int x_, int y_, Security::Mask s, City& c)
     : AIEntity(x_, y_, c),
       sec(s),
+      fact(Faction::PLAYER),
+      dept(Department::ALL),
       state(IDLE),
       job(nullptr),
-      dept(Department::ALL),
       intsec_review_job(nullptr),
       ssn(rand() % 10000)
-    { }
+    {
+      name = names[rand() % names.size()];
+      sect = sectors[rand() % sectors.size()];
+    }
 
   virtual const char* rawname() const { return RAWNAME; }
   virtual int description(char* buf, size_t n) const;
@@ -25,6 +36,7 @@ struct Citizen : AIEntity {
 
   Security::Mask security() const;
   inline Department::Mask department() const { return dept; }
+  inline Faction::Mask faction() const { return fact; }
 
   void interrupt(struct Job*);
   void resume();
@@ -32,7 +44,11 @@ struct Citizen : AIEntity {
   void path_to(int, int);
   void set_job(struct Job*);
 
+  string name;
+  string sect;
   Security::Mask sec;
+  Faction::Mask fact;
+  Department::Mask dept;
   int energy = 0;
   int clean_supplies = 0;
 
@@ -50,8 +66,6 @@ struct Citizen : AIEntity {
 
   vector<point> path;
   vector<point>::reverse_iterator pathp;
-
-  Department::Mask dept;
 
   Job* intsec_review_job;
 
