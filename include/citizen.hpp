@@ -48,6 +48,7 @@ struct Citizen : AIEntity {
   void set_job(struct Job*);
 
   Skill::Skillset skills;
+  array<bool,Skill::NUM_SKILLS> skill_en;
 
   string name;
   string sect;

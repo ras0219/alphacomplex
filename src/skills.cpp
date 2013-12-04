@@ -11,6 +11,29 @@ namespace Skill {
     return r;
   }
 
+  const char* shortname(Category c) {
+    switch (c) {
+    case BUREAUCRACY: return "BUREAUCRACY";
+
+    case BOT_PROGRAMMING: return "BOT PROG";
+    case BOT_MAINTENANCE: return "BOT MAINT";
+    case BOT_OPERATION: return "BOT OPER";
+    case VEHICLE_PROGRAMMING: return "VEHCL PROG";
+    case VEHICLE_MAINTENANCE: return "VEHCL MAINT";
+    case VEHICLE_OPERATION: return "VEHCL OPER";
+    case REACTOR_PROGRAMMING: return "REACTR PROG";
+    case REACTOR_MAINTENANCE: return "REACTR MAINT";
+    case REACTOR_DESIGN: return "REACTOR DSGN";
+    case REACTOR_OPERATION: return "REACTOR OPER";
+    case MINING_LASER: return "MINING LASER";
+    case CONSTRUCTION: return "CONSTRUCTION";
+
+    case PHARMACEUTICALS: return "PHARMACEUT";
+    case DRUG_ADMINISTRATION: return "DRUG ADMIN";
+    default: return "???";
+    }
+  }
+
   const char* skillname(Category c) {
     switch (c) {
     case BUREAUCRACY: return "BUREAUCRACY";

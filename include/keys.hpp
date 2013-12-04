@@ -12,6 +12,8 @@
 //#define KEY_KP_Enter XK_KP_Enter
 #define KEY_Return XK_Return
 
+#define KEY_Tab XK_Tab
+
 #define KEY_h XK_h
 #define KEY_u XK_u
 #define KEY_r XK_r
@@ -32,6 +34,8 @@ typedef unsigned long KeySym;
 #define KEY_Up SDLK_UP
 #define KEY_Down SDLK_DOWN
 #define KEY_Return SDLK_RETURN
+
+#define KEY_Tab SDLK_TAB
 
 #define KEY_h SDLK_h
 #define KEY_u SDLK_u
