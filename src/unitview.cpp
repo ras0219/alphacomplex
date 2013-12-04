@@ -10,17 +10,24 @@
 extern bool paused;
 
 struct UnitListing : Component {
-  UnitListing() : row(0), col(0) { }
+  UnitListing() : row(0), col(0), assign_mode(true) { }
 
   virtual void render(struct Graphics& g);
+  void render_skills(Graphics&);
+  void render_assign(Graphics&);
 
   void down() {
     if (row+1 < AIEntity::ai_list.size())
       row++;
   }
   void right() {
-    if (col+1 < Department::List.size())
-      ++col;
+    if (assign_mode) {
+      if (col+1 < Department::List.size())
+        ++col;
+    } else {
+      if (col+1 < Skill::CATEGORY_MAX)
+        ++col;
+    }
   }
   void up() {
     if (row > 0)
@@ -37,8 +44,12 @@ struct UnitListing : Component {
       row = 1;
       r = true;
     }
-    if (col >= Department::List.size()) {
+    if (assign_mode && col >= Department::List.size()) {
       col = 1;
+      r = true;
+    }
+    if (!assign_mode && col >= Skill::CATEGORY_MAX) {
+      col = Skill::CATEGORY_MAX - 1;
       r = true;
     }
     return r;
@@ -61,18 +72,40 @@ struct UnitListing : Component {
       return;
     }
 
-    c.dept = (Department::Mask)(c.dept ^ Department::List[col]);
+    c.dept = Department::List[col];
   }
 
+  void mode_toggle() { assign_mode = !assign_mode; check(); }
+
   uint row, col;
+  bool assign_mode;
 } ulist;
 
+struct Spreadsheet {
+  string name;
+  uint row_off;
+  uint col_off;
+  uint left;
+};
+
 void UnitListing::render(Graphics& g) {
-  g.drawString(5, 17, "Units Roster", Graphics::DEFAULT);
+  if (assign_mode)
+    render_assign(g);
+  else
+    render_skills(g);
+}
+
+void UnitListing::render_assign(Graphics& g) {
+  uint row_off = 12;
+  uint col_off = 42;
+  uint left = 124;
+
+  g.drawString(5, 17, "Units Roster (Assignments)", Graphics::DEFAULT);
 
   uint c = 0;
   for (auto d : Department::List) {
-    g.drawString(133 + c*24, 29, Department::mask_to_dcode(d), Graphics::DEFAULT);
+    g.drawString(left + 6 + c*col_off, 29,
+                 Department::mask_to_local6(d), Graphics::DEFAULT);
     ++c;
   }
 
@@ -81,18 +114,23 @@ void UnitListing::render(Graphics& g) {
 
   for (auto e : AIEntity::ai_list) {
     e->description(buf, 18);
-    g.drawString(22, 41+12*r, buf, Graphics::DEFAULT);
+    g.drawString(22, 41 + r*row_off, buf, Graphics::DEFAULT);
 
     c = 0;
     for (auto d : Department::List) {
-      char buf2[] = { VBAR, ' ', ' ', ' ', 0 };
+      array<char,8> buf2 = {{ VBAR, ' ', ' ', ' ', ' ', ' ', ' ', 0 }};
       if (c == col && r == row) {
-        buf2[1] = '<';
-        buf2[3] = '>';
+        buf2[1] = '>';
+        buf2[6] = '<';
       }
-      if (e->rawname() == Citizen::RAWNAME && d & e->as<Citizen>().department())
-        buf2[2] = 'X';
-      g.drawString(124 + c*24, 41+12*r, buf2, Graphics::DEFAULT);
+      if (e->rawname() == Citizen::RAWNAME) {
+        Citizen& cit = e->as<Citizen>();
+        if (d & cit.department()) {
+          buf2[3] = 'X';
+          buf2[4] = 'X';
+        }
+      }
+      g.drawString(left + c*col_off, 41 + r*row_off, buf2.begin(), Graphics::DEFAULT);
       ++c;
     }
 
@@ -100,8 +138,55 @@ void UnitListing::render(Graphics& g) {
   }
 
   // Render cursor
-  g.drawChar(5, 39 + 12*row, '>', Graphics::DEFAULT);
-  g.drawChar(136 + 24*col, 17, 'V', Graphics::DEFAULT);
+  g.drawChar(5, 39 + row*row_off, '>', Graphics::DEFAULT);
+  g.drawString(left + 18 + col*col_off, 17, "VV", Graphics::DEFAULT);
+}
+
+void UnitListing::render_skills(Graphics& g) {
+  uint row_off = 12;
+  uint col_off = 42;
+  uint left = 124;
+
+  g.drawString(5, 17, "Units Roster (Skills)", Graphics::DEFAULT);
+
+  uint c = 0;
+  for (auto d : Department::List) {
+    g.drawString(left + 6 + c*col_off, 29,
+                 Department::mask_to_local6(d), Graphics::DEFAULT);
+    ++c;
+  }
+
+  uint r = 0;
+  char buf[60];
+
+  for (auto e : AIEntity::ai_list) {
+    e->description(buf, 18);
+    g.drawString(22, 41 + r*row_off, buf, Graphics::DEFAULT);
+
+    c = 0;
+    for (auto d : Department::List) {
+      array<char,8> buf2 = {{ VBAR, ' ', ' ', ' ', ' ', ' ', ' ', 0 }};
+      if (c == col && r == row) {
+        buf2[1] = '>';
+        buf2[6] = '<';
+      }
+      if (e->rawname() == Citizen::RAWNAME) {
+        Citizen& cit = e->as<Citizen>();
+        if (d & cit.department()) {
+          buf2[3] = 'X';
+          buf2[4] = 'X';
+        }
+      }
+      g.drawString(left + c*col_off, 41 + r*row_off, buf2.begin(), Graphics::DEFAULT);
+      ++c;
+    }
+
+    ++r;
+  }
+
+  // Render cursor
+  g.drawChar(5, 39 + row*row_off, '>', Graphics::DEFAULT);
+  g.drawString(left + 18 + col*col_off, 17, "VV", Graphics::DEFAULT);
 }
 
 void UnitView::render(Graphics& g) {
@@ -123,6 +208,8 @@ void UnitView::handle_keypress(KeySym ks) {
   case KEY_Down: return ulist.down();
 
   case KEY_Return: return ulist.toggle();
+
+    //case KEY_Tab: return ulist.mode_toggle();
 
   default: return; // maybe play an alert here?
   }

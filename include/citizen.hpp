@@ -3,6 +3,7 @@
 #include "entity.hpp"
 #include "defs.hpp"
 #include "joblist.hpp"
+#include "skills.hpp"
 
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ struct Citizen : AIEntity {
     : AIEntity(x_, y_, c),
       sec(s),
       fact(Faction::PLAYER),
-      dept(Department::ALL),
+      dept(Department::random_dept()),
       state(IDLE),
       job(nullptr),
       intsec_review_job(nullptr),
@@ -26,6 +27,8 @@ struct Citizen : AIEntity {
     {
       name = names[rand() % names.size()];
       sect = sectors[rand() % sectors.size()];
+
+      skills = Skill::random_skills(sec);
     }
 
   virtual const char* rawname() const { return RAWNAME; }
@@ -43,6 +46,8 @@ struct Citizen : AIEntity {
   void finalize_job();
   void path_to(int, int);
   void set_job(struct Job*);
+
+  Skill::Skillset skills;
 
   string name;
   string sect;

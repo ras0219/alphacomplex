@@ -32,7 +32,8 @@ set(SOURCES
   "src/unitview.cpp"
   "src/announceview.cpp"
   "src/designview.cpp"
-  "src/clock.cpp")
+  "src/clock.cpp"
+  "src/skills.cpp")
 
 
 ##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
