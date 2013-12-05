@@ -29,3 +29,15 @@ void announce(const string&);
 #include "keys.hpp"
 
 extern bool paused;
+
+// These definitions determine the desired framerates
+// units are microseconds per frame (gfx=graphics, lgc=logic)
+
+// Example config: (30 graphical fps, 100 logical fps)
+// #define US_PER_GFX 33000
+// #define US_PER_LGC 10000
+
+#define US_PER_GFX 33000
+#define US_PER_LGC 10000
+#define US_PER_REP 1000000
+
