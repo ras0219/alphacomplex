@@ -48,8 +48,7 @@ istream& operator>>(istream& is, City& c) {
   if (y == 0)
     throw runtime_error("invalid c size");
 
-  c.xsz = x;
-  c.ysz = y;
+  c.resize(x, y);
 
   LOGGER::verbose() << "C is " << x << " by " << y << endl;
 
@@ -107,4 +106,81 @@ istream& operator>>(istream& is, City& c) {
   }
 
   return is;
+}
+
+struct WalkToDigJob : WalkToJob<WalkToDigJob> {
+  WalkToDigJob(int x_, int y_)
+    : WalkToJob(x_, y_) { }
+  
+  virtual int description(char* buf, size_t n) const {
+    return snprintf(buf, n, "Digging");
+  }
+  virtual Department::Mask department() { return Department::FACILITIES; }
+  virtual Security::Mask security() { return Security::ALL; }
+
+  virtual bool complete_walk(Citizen* e) {
+    return true;
+  }
+
+  static const char* RAWNAME;
+};
+const char* WalkToDigJob::RAWNAME = "walktodigjob";
+
+struct DigJob : ActivityJob<DigJob> {
+  DigJob(City* c, int x_, int y_) : city(c), x(x_), y(y_) { }
+  
+  virtual int description(char* buf, size_t n) const {
+    return snprintf(buf, n, "Digging");
+  }
+  virtual Department::Mask department() { return Department::FACILITIES; }
+  virtual Security::Mask security() { return Security::ALL; }
+  virtual int duration() { return 20; }
+  virtual bool complete_activity(Citizen* e) {
+    if (city->designs(x,y) & 1 && city->tile(x,y).type == Tile::wall) {
+      city->remove_wall(x,y);
+    }
+    return true;
+  }
+
+  static const char* RAWNAME;
+  City* city;
+  int x, y;
+};
+const char* DigJob::RAWNAME = "digjob";
+
+void add_wall_dig_job(City* c, int x1, int y1, int x2, int y2) {
+  Job* j = new MultiJob{ new WalkToDigJob(x1, y1),
+                         new DigJob(c, x2, y2) };
+  jobs.add_job(j);
+}
+
+void City::toggle_dig_wall(int x, int y) {
+  if (tile(x,y).type == Tile::wall) {
+    designs(x,y) ^= 1; // Mark for digging
+    if (designs(x,y) & 1) {
+      for (auto o : offs) {
+        if (tile(x+o.first,y+o.second).walkable()) {
+          add_wall_dig_job(this, x+o.first, y+o.second, x, y);
+          break;
+        }
+      }
+    }
+  }
+}
+void City::remove_wall(int x, int y) {
+  if (tile(x,y).type != Tile::wall)
+    return;
+  designs(x,y) &= ~1;
+  tile(x,y).type = Tile::ground;
+
+  for (auto o : offs) {
+    if (!(designs(x+o.first, y+o.second) & 1))
+      continue;
+    int facings = 0;
+    for (auto o2 : offs)
+      if (tile(x+o.first+o2.first, y+o.second+o2.second).walkable())
+        ++facings;
+    if (facings == 1)
+      add_wall_dig_job(this, x, y, x+o.first, y+o.second);
+  }
 }

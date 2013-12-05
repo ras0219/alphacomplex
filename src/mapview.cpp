@@ -2,6 +2,7 @@
 #include "graphics.hpp"
 #include "city.hpp"
 #include "clock.hpp"
+#include "joblist.hpp"
 
 const char prettywalls[16] = {
   '+', HBAR, VBAR, CORNER_SE,
@@ -18,7 +19,9 @@ void MapView::render(Graphics& g) {
         putChar(x, y, 'X');
       } else if (city->ent(x,y)->next != nullptr) {
         putChar(x, y, city->ent(x,y)->next->render());
-      } else if (city->tile(x,y).type == '+') {
+      } else if (city->designs(x,y) & 1) {
+        putChar(x, y, '%');
+      } else if (city->tile(x,y).type == Tile::wall) {
         int i = 0;
         if (x > 0 && !city->tile(x-1,y).walkable())
           i += 1;
@@ -46,5 +49,5 @@ void MapView::putChar(int x, int y, char c) {
 
 void MapView::zap_wall() { zap_wall(csr_x, csr_y); }
 void MapView::zap_wall(int x, int y) {
-  city->tile(x,y).type = Tile::ground;
+  city->toggle_dig_wall(x,y);
 }
