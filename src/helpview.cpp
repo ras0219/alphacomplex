@@ -10,20 +10,34 @@ struct HelpText : Component {
   }
 } helptext;
 
+vector<string> help_prgh = {
+  "== All Modes ==",
+  "  Escape   - Return to the previous screen",
+  "  Space    - Pause",
+  "== Main Screen ==",
+  "  d        - Digging mode",
+  "  u        - Units Screen",
+  "  h        - Help Screen",
+  "  a        - Announcements Screen",
+  "  r        - Recruit a new RED clearance citizen",
+  "  e        - Recruit a new INFRARED clearance citizen",
+  "  q        - Quit",
+  "== Digging Screen ==",
+  "  Arrows   - Move the cursor (the 'X')",
+  "  Enter    - Toggle digging wall underneath cursor",
+  "== Units Screen ==",
+  "  Arrows   - Move the cursor (the '> <'s)",
+  "  Enter    - Modify data cell",
+  "  Tab      - Switch between Skills and Department assignment",
+  "",
+  "",
+  "Good Luck!"
+};
+
 struct HelpInfo : Component {
   virtual void render(Graphics& g) {
-    static vector<string> lines = {
-      "Press space to pause.",
-      "Press 'r' to hire a Troubleshooter.",
-      "Press 'a' to hire an Infrared.",
-      "Press 'u' to see the units list.",
-      "Press Esc to return to the main screen.",
-      "Press 'q' to quit.",
-      "",
-      "Good Luck!"
-    };
-    for (uint x=0;x<lines.size();++x) {
-      g.drawString(5, 12+5+12*x, lines[x], Graphics::DEFAULT);
+    for (uint x=0; x<help_prgh.size(); ++x) {
+      g.drawString(5, 12+5+12*x, help_prgh[x], Graphics::DEFAULT);
     }
   }
 } helpinfo;
