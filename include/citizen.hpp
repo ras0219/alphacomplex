@@ -11,25 +11,8 @@
 using std::vector;
 using std::string;
 
-extern vector<string> names;
-extern vector<string> sectors;
-
 struct Citizen : AIEntity {
-  Citizen(int x_, int y_, Security::Mask s, City& c)
-    : AIEntity(x_, y_, c),
-      sec(s),
-      fact(Faction::PLAYER),
-      dept(Department::random_dept()),
-      state(IDLE),
-      job(nullptr),
-      intsec_review_job(nullptr),
-      ssn(rand() % 10000)
-    {
-      name = names[rand() % names.size()];
-      sect = sectors[rand() % sectors.size()];
-
-      skills = Skill::random_skills(sec);
-    }
+  Citizen(int x_, int y_, Security::Mask s, City& c);
 
   virtual const char* rawname() const { return RAWNAME; }
   virtual int description(char* buf, size_t n) const;
