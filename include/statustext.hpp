@@ -5,7 +5,7 @@
 
 #include "component.hpp"
 
-class Status {
+struct StatusMsg {
 protected:
   unsigned int priority;
   std::function<int()> callback;
@@ -14,15 +14,15 @@ protected:
   friend class StatusText;
 
 public:
-  Status() = delete;
-  Status(unsigned int p, std::function<int()> c, const std::string& t);
+  StatusMsg() = delete;
+  StatusMsg(unsigned int p, std::function<int()> c, const std::string& t);
 
-  virtual bool operator<(const Status& rhs) const;
+  virtual bool operator<(const StatusMsg& rhs) const;
 };
 
 class StatusText : Component {
 protected:
-  std::priority_queue<Status> status_queue;
+  std::priority_queue<StatusMsg> status_queue;
 public:
   // Convenience enum: This is meant to be returned as a bitfield, e.g. return StatusText::EMIT | StatusText::KEEP
   // PASS and KEEP are default (e.g. do not output the status and do not remove the status from the list of possible statuses)
@@ -36,5 +36,5 @@ public:
   StatusText();
 
   virtual void render(Graphics& g);
-  void add(const Status& status);
+  void add(const StatusMsg& status);
 };

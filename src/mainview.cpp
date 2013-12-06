@@ -8,6 +8,7 @@
 #include "announceview.hpp"
 #include "designview.hpp"
 #include "citizen.hpp"
+#include "statustext.hpp"
 
 extern Graphics* gfx;
 extern bool paused;

@@ -7,9 +7,10 @@ using namespace std;
 extern bool paused;
 StatusText statustext;
 
-Status::Status(unsigned int p, std::function<int()> c, const std::string& t) : priority(p), callback(c), text(t) { }
+StatusMsg::StatusMsg(unsigned int p, std::function<int()> c, const std::string& t)
+  : priority(p), callback(c), text(t) { }
 
-bool Status::operator<(const Status& rhs) const {
+bool StatusMsg::operator<(const StatusMsg& rhs) const {
   return priority < rhs.priority;
 }
 
@@ -19,10 +20,10 @@ StatusText::StatusText() {
 }
 
 void StatusText::render(Graphics& g) {
-  vector<Status> keep_queue;
+  vector<StatusMsg> keep_queue;
 
   while (!status_queue.empty()) {
-    Status s = status_queue.top();
+    StatusMsg s = status_queue.top();
     status_queue.pop();
     int retval = s.callback();
 
@@ -41,6 +42,6 @@ void StatusText::render(Graphics& g) {
   }
 }
 
-void StatusText::add(const Status& status) {
+void StatusText::add(const StatusMsg& status) {
   status_queue.push(status);
 }
