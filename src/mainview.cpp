@@ -31,6 +31,7 @@ struct HelpText : Component {
 };
 
 extern HelpText helptext;
+extern StatusText statustext;
 
 void MainView::render(Graphics& g) {
   mv->render(g);
@@ -38,6 +39,7 @@ void MainView::render(Graphics& g) {
   activelist.render(g);
   pendinglist.render(g);
   helptext.render(g);
+  statustext.render(g);
 }
 
 void MainView::handle_keypress(KeySym ks) {

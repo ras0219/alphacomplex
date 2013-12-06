@@ -93,6 +93,7 @@
     <ClCompile Include="..\src\mapview.cpp" />
     <ClCompile Include="..\src\pathfind.cpp" />
     <ClCompile Include="..\src\room.cpp" />
+    <ClCompile Include="..\src\statustext.cpp" />
     <ClCompile Include="..\src\unitview.cpp" />
     <ClCompile Include="..\src\viewstack.cpp" />
     <ClCompile Include="..\src\windows.cpp" />
@@ -126,6 +127,9 @@
     <ClInclude Include="..\include\viewstack.hpp" />
     <ClInclude Include="..\include\windows.hpp" />
     <ClInclude Include="..\include\workroom.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

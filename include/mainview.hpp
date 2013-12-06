@@ -2,6 +2,7 @@
 
 #include "city.hpp"
 #include "view.hpp"
+#include "statustext.hpp"
 
 struct MainView : View {
   MainView(struct ViewStack* vs, City& c);
@@ -15,5 +16,8 @@ struct MainView : View {
   struct UnitView* uview;
   struct AnnounceView* aview;
   struct DesignView* dview;
+
+  StatusText* stext;
+
   City& city;
 };
