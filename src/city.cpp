@@ -4,6 +4,7 @@
 #include "workroom.hpp"
 #include "garbage.hpp"
 #include "log.hpp"
+#include "windows.hpp"
 
 #include <stdexcept>
 

@@ -4,6 +4,7 @@
 #include "entity.hpp"
 #include "citizen.hpp"
 #include "hud.hpp"
+#include "windows.hpp"
 
 #include <algorithm>
 
@@ -134,7 +135,7 @@ void UnitListing::render_assign(Graphics& g) {
           buf2[4] = 'X';
         }
       }
-      g.drawString(left + c*col_off, top_row + 12 + r*row_off, buf2.begin(), Graphics::DEFAULT);
+      g.drawString(left + c*col_off, top_row + 12 + r*row_off, string(buf2.begin(), buf2.end()), Graphics::DEFAULT);
       ++c;
     }
 
@@ -184,7 +185,7 @@ void UnitListing::render_skills(Graphics& g) {
           buf2[5] = 'X';
         }
       }
-      g.drawString(left + c*col_off, top_row + 12 + r*row_off, buf2.begin(), Graphics::DEFAULT);
+      g.drawString(left + c*col_off, top_row + 12 + r*row_off, string(buf2.begin(), buf2.end()), Graphics::DEFAULT);
       ++c;
     }
 
