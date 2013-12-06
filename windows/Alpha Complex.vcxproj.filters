@@ -140,6 +140,9 @@
     <ClInclude Include="..\include\tile.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\statustext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\unitview.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

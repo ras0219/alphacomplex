@@ -121,15 +121,13 @@
     <ClInclude Include="..\include\mapview.hpp" />
     <ClInclude Include="..\include\pathfind.hpp" />
     <ClInclude Include="..\include\room.hpp" />
+	<ClInclude Include="..\include\statustext.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
     <ClInclude Include="..\include\unitview.hpp" />
     <ClInclude Include="..\include\view.hpp" />
     <ClInclude Include="..\include\viewstack.hpp" />
     <ClInclude Include="..\include\windows.hpp" />
     <ClInclude Include="..\include\workroom.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
