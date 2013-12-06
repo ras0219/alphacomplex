@@ -50,7 +50,7 @@ struct WalkToJob : Job {
 
   virtual void assign_task(Citizen* e) {
     e->path_to(x, y);
-    e->state = Citizen::WALKINGTOJOB;
+    e->set_walkingtojob();
   }
   virtual bool complete_walk(Citizen* e) { return true; }
 
@@ -63,8 +63,7 @@ struct ActivityJob : Job {
   ActivityJob() { }
 
   virtual void assign_task(Citizen* e) {
-    e->energy = -duration();
-    e->state = Citizen::ACTIVITY;
+    e->set_activity(duration());
   }
   virtual bool complete_activity(Citizen* e) { return true; }
 

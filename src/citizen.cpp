@@ -91,7 +91,7 @@ struct WanderingJob : WalkToJob<WanderingJob> {
 
   virtual void assign_task(Citizen* c) {
     this->WalkToJob<WanderingJob>::assign_task(c);
-    c->state = Citizen::WANDERING;
+    c->set_wandering();
   }
 
   virtual int description(char* buf, size_t n) const {
@@ -215,12 +215,11 @@ struct SecRevJobStep1 : Job {
 
   virtual void assign_task(Citizen* c) {
     c->path_to(target->x, target->y);
-    c->state = Citizen::WALKINGTOJOB;
+    c->set_walkingtojob();
   }
   virtual bool complete_walk(Citizen* c) {
     if (c->x != target->x || c->y != target->y) {
-      c->energy = -(rand() % 10);
-      c->state = Citizen::ACTIVITY;
+      c->set_activity(rand() % 10);
       return false;
     }
     target->interrupt(s2b);
@@ -256,6 +255,101 @@ void Citizen::set_job(Job* j) {
   job->assign_task(this);
 }
 
+void Citizen::update_idle() {
+  if (hour(gametime) < 8)
+    return set_sleeping();
+
+  assert(job == nullptr);
+  Job* j = jobs.pop_job(security(), department());
+  if (j) {
+    return set_job(j);
+  } else {
+    int x2 = rand() % city.getXSize();
+    int y2 = rand() % city.getYSize();
+
+    if (city.tile(x2, y2).walkable())
+      return set_job(new WanderingJob(x2, y2));
+
+    return set_idle();
+  }
+}
+
+void Citizen::update_walkingtojob() {
+  assert(job != nullptr);
+
+  if (pathp != path.rend()) {
+    assert(city.tile(pathp->first, pathp->second).walkable());
+        
+    remove();
+    insert_after(city.ent(pathp->first, pathp->second));
+    set_loc(pathp->first, pathp->second);
+        
+    ++pathp;
+  }
+  if (pathp == path.rend()) {
+    if (job->complete_walk(this)) {
+      finalize_job();
+            
+      return resume();
+    }
+  } else return set_walkingtojob();
+}
+
+void Citizen::update_wandering() {
+  assert(job != nullptr);
+
+  if (pathp != path.rend()) {
+    assert(city.tile(pathp->first, pathp->second).walkable());
+
+    remove();
+    insert_after(city.ent(pathp->first, pathp->second));
+    set_loc(pathp->first, pathp->second);
+
+    ++pathp;
+
+    set_wandering();
+
+    if (security() == Security::ORANGE) {
+      Entity* e = city.ent(x,y)->next;
+      while (e != nullptr) {
+        if (e != this && e->rawname() == Citizen::RAWNAME) {
+          Citizen& c = e->as<Citizen>();
+          if (c.security() < Security::ORANGE) {
+            // Oh boy, a subordinate!
+
+            interrupt(new TellOffJob());
+            c.interrupt(new GetToldOffJob());
+            return;
+          }
+        }
+        e = e->next;
+      }
+    }
+  }
+  if (pathp == path.rend()) {
+    path.clear();
+    pathp = path.rbegin();
+
+    finalize_job();
+    return resume();
+  }
+}
+
+void Citizen::update_activity() {
+  assert(job != nullptr);
+  if (job->complete_activity(this)) {
+    finalize_job();
+    return resume();
+  }
+}
+
+void Citizen::update_sleeping() {
+  if (hour(gametime) < 8)
+    return set_sleeping();
+  else
+    return set_idle();
+}
+
 void Citizen::update() {
   ++energy;
   if (intsec_review_job == nullptr && rand() % 2400 == 0) {
@@ -264,115 +358,14 @@ void Citizen::update() {
     intsec_review_job = make_security_review_job(this);
     jobs.add_job(intsec_review_job);
   }
-  switch (state) {
-  case IDLE:
-    if (energy >= 10) {
-      energy = 0;
-
-      if (hour(gametime) < 8) {
-        state = SLEEPING;
-        return;
-      }
-
-      assert(job == nullptr);
-      Job* j = jobs.pop_job(security(), department());
-      if (j) {
-        return set_job(j);
-      } else {
-        int x2 = rand() % city.getXSize();
-        int y2 = rand() % city.getYSize();
-
-        if (city.tile(x2, y2).walkable()) {
-          set_job(new WanderingJob(x2, y2));
-          return;
-        }
-      }
+  if (energy >= 0)
+    switch (state) {
+    case IDLE: return update_idle();
+    case WALKINGTOJOB: return update_walkingtojob();
+    case WANDERING: return update_wandering();
+    case ACTIVITY: return update_activity();
+    case SLEEPING: return update_sleeping();
     }
-    return;
-  case WALKINGTOJOB:
-    assert(job != nullptr);
-    if (energy >= 2) {
-      energy = 0;
-      if (pathp != path.rend()) {
-        assert(city.tile(pathp->first, pathp->second).walkable());
-        
-        remove();
-        insert_after(city.ent(pathp->first, pathp->second));
-        set_loc(pathp->first, pathp->second);
-        
-        ++pathp;
-      }
-      if (pathp == path.rend()) {
-        if (job->complete_walk(this)) {
-          finalize_job();
-            
-          return resume();
-        }
-      }
-    }
-    return;
-  case WANDERING:
-    assert(job != nullptr);
-    if (energy >= 5) {
-      energy = 0;
-      if (pathp != path.rend()) {
-        assert(city.tile(pathp->first, pathp->second).walkable());
-
-        remove();
-        insert_after(city.ent(pathp->first, pathp->second));
-        set_loc(pathp->first, pathp->second);
-
-        ++pathp;
-
-        if (security() == Security::ORANGE) {
-          Entity* e = city.ent(x,y)->next;
-          while (e != nullptr) {
-            if (e != this && e->rawname() == Citizen::RAWNAME) {
-              Citizen& c = e->as<Citizen>();
-              if (c.security() < Security::ORANGE) {
-                // Oh boy, a subordinate!
-
-                interrupt(new TellOffJob());
-                c.interrupt(new GetToldOffJob());
-                return;
-              }
-            }
-            e = e->next;
-          }
-        }
-      }
-      if (pathp == path.rend()) {
-        path.clear();
-        pathp = path.rbegin();
-
-        finalize_job();
-        return resume();
-      }
-    }
-    return;
-  case ACTIVITY:
-    assert(job != nullptr);
-    if (energy >= 0) {
-      energy = 0;
-      if (job->complete_activity(this)) {
-        finalize_job();
-        return resume();
-      }
-    }
-    return;
-  case SLEEPING:
-    if (energy >= 0) {
-      if (hour(gametime) < 8) {
-        energy = -100 + rand() % 20;
-        return;
-      } else {
-        energy = 0;
-        state = IDLE;
-        return;
-      }
-    }
-    return;
-  }
 }
 
 void Citizen::interrupt(Job* j) {

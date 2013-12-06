@@ -41,13 +41,28 @@ struct Citizen : AIEntity {
   int energy = 0;
   int clean_supplies = 0;
 
+
+  void update_idle();
+  void update_walkingtojob();
+  void update_wandering();
+  void update_activity();
+  void update_sleeping();
+
+  inline void set_idle() { energy = -10; state = IDLE; }
+  inline void set_sleeping() { energy = -100; state = SLEEPING; }
+  inline void set_walkingtojob() { energy = -2; state = WALKINGTOJOB; }
+  inline void set_wandering() { energy = -5; state = WANDERING; }
+  inline void set_activity(int i) { energy = -i; state = ACTIVITY; }
+
   enum StateMachine {
     IDLE,
     WALKINGTOJOB,
     WANDERING,
     ACTIVITY,
     SLEEPING
-  } state;
+  };
+private: StateMachine state;
+public:
 
   Job* job;
   JobList::iterator job_it;
