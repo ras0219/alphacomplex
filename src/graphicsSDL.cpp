@@ -108,8 +108,8 @@ void Graphics::handle_events(Controller* c) {
     case SDL_WINDOWEVENT: //window moved, max,min, etc
       if(event.window.event == SDL_WINDOWEVENT_RESIZED)
       {
-        int old_size = (0xffff &event.window.data1);
-        int new_size = (0xffff &event.window.data2);
+        //int old_size = (0xffff &event.window.data1);
+        //int new_size = (0xffff &event.window.data2);
         //disregard horizontal for now
         //FONT_SIZE = new_size/old_size * FONT_SIZE;
         //FONT_SIZE++;
@@ -128,7 +128,8 @@ void Graphics::handle_events(Controller* c) {
 void Graphics::drawString(int x, int y, const string & str, const Graphics::Context gc) {
   LoadText(str, TEMP_FONT_PATH);
   int w = 0, h = 0;
-  assert(TTF_SizeText(pImpl->best_font, str.c_str(), &w, &h) != -1);
+  int errcode = TTF_SizeText(pImpl->best_font, str.c_str(), &w, &h);
+  if (errcode == -1) assert(false);
   SDL_Rect dstRect = {x, y - 12, w, h};
   pImpl->sdl_last_call = SDL_RenderCopy(pImpl->ren,pImpl->ttf_texture, NULL, &dstRect);
 //  pImpl->main_texture

@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASESTATIC "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG -static-libstdc++ -static-libgcc")
+set(CMAKE_CXX_FLAGS_RELEASESTATIC "${CMAKE_CXX_FLAGS_RELEASESTATIC} -O4 -DNDEBUG -static-libstdc++ -static-libgcc")
 
 set(SOURCES 
   "src/main.cpp"
@@ -32,7 +32,8 @@ set(SOURCES
   "src/unitview.cpp"
   "src/announceview.cpp"
   "src/designview.cpp"
-  "src/clock.cpp")
+  "src/clock.cpp"
+  "src/skills.cpp")
 
 
 ##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
@@ -161,8 +162,7 @@ if(BUILD_SDL2)
 
     INCLUDE(FindPackageHandleStandardArgs)
 
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2
-      REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARIES SDL2_INCLUDE_DIR)
     set(SDL2_LIBRARIES ${SDL2_LIBRARIES} "-framework SDL2_ttf")
     set(SOURCES ${SOURCES} "src/graphicsSDL.cpp")
     include_directories(${SDL2_INCLUDE_DIR} "/Library/Frameworks/SDL2_ttf.framework/Headers/")

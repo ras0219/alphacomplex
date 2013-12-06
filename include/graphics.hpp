@@ -51,6 +51,12 @@ struct Graphics : debug_policy_t {
 
   enum Context {
     WHITE,
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    BROWN,
+    ORANGE,
     DEFAULT
   };
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);

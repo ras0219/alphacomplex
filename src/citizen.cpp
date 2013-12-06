@@ -11,10 +11,46 @@
 #include <cstdio>
 #include <cassert>
 
+vector<string> names = {
+  "Alex",
+  "Alice",
+  "Ansi",
+  "Arnold",
+  "Ben",
+  "Bob",
+  "Bill",
+  "Casie",
+  "Cal",
+  "David",
+  "Dan",
+  "John",
+  "Jim",
+  "James",
+  "Zim"
+};
+
+vector<string> sectors = {
+  "QNX",
+  "ABC",
+  "TRN",
+  "NZB",
+  "EST",
+  "PST",
+  "CST",
+  "ZNM",
+  "OOO",
+  "OPS",
+  "UPS",
+  "QAZ",
+  "SDF",
+  "MLY",
+  "TME",
+  "GOX"
+};
+
 const char* Citizen::RAWNAME = "citizen";
 
 char Citizen::render() const {
-  //cerr << "rendering elf @ " << x << "," << y << endl;
   if (state == IDLE && animtime % 20 < 10)
     return '?';
   else if (state == SLEEPING && animtime % 20 < 10)
@@ -355,8 +391,10 @@ void Citizen::finalize_job() {
 }
 
 int Citizen::description(char* buf, size_t n) const {
+  if (security() == Security::INFRARED)
+    return snprintf(buf, n, "%s-%s [%1d]", name.c_str(), sect.c_str(), ssn);
   const char* dcode = Security::mask_to_dcode(security());
-  return snprintf(buf, n, "[%s] %s-%05d", dcode, "Ziggy", ssn);
+  return snprintf(buf, n, "%s-%c-%s [%1d]", name.c_str(), *dcode, sect.c_str(), ssn);
 }
 
 Security::Mask Citizen::security() const {

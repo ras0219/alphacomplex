@@ -58,10 +58,6 @@ int main(int argc, char** argv) {
 
   g.c.push_back(&vs);
 
-  #define US_PER_GFX 33000
-  #define US_PER_LGC 10000
-  #define US_PER_REP 1000000
-
   auto last_gf = steady_clock::now();
   auto last_lf = steady_clock::now();
   auto last_rep = steady_clock::now();
