@@ -4,6 +4,7 @@ project (citysim)
 option (BUILD_X11 "Build a version linked against X11" ON)
 option (BUILD_SDL2 "Build a version linked against SDL2" OFF)
 
+include_directories(${citysim_INCLUDE_DIR})
 include_directories(include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
@@ -39,7 +40,7 @@ set(SOURCES
 ##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
 if(BUILD_X11)
   find_package(X11 REQUIRED)
-
+  include_directories(${X11_INCLUDE_DIR})
   add_executable(alphacomplex-x11 ${SOURCES} "src/graphicsX.cpp")
   target_link_libraries(alphacomplex-x11 ${X11_LIBRARIES})
   set_target_properties(alphacomplex-x11 PROPERTIES COMPILE_DEFINITIONS "GRAPHICS_X11=1")

@@ -47,7 +47,7 @@ static std::ostream& get_nullstr() {
   return *ostr;
 }
 
-static std::ostream& get_level_ostream (LoggingLevel base, LoggingLevel fn) {
+static inline std::ostream& get_level_ostream (LoggingLevel base, LoggingLevel fn) {
   if(base >= fn) {
     switch (fn) {
     case ERROR:
