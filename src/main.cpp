@@ -50,19 +50,18 @@ int main(int argc, char** argv) {
   else
     fstream(argv[1]) >> city;
 
-  Graphics g;
-  gfx = &g;
+  gfx = new_graphics();
   ViewStack vs;
   MainView mv(&vs, city);
   vs.push(&mv);
 
-  g.c.push_back(&vs);
+  gfx->c.push_back(&vs);
 
   auto last_gf = steady_clock::now();
   auto last_lf = steady_clock::now();
   auto last_rep = steady_clock::now();
 
-  while(!g.destroyed) {
+  while(!gfx->destroyed) {
     auto t = steady_clock::now();
 
     if (t - last_lf >= microseconds(US_PER_LGC)) {
@@ -81,9 +80,9 @@ int main(int argc, char** argv) {
 
     if (t - last_gf >= microseconds(US_PER_GFX)) {
       ++animtime;
-      g.repaint();
+      gfx->repaint();
 
-      g.handle_events(&vs);
+      gfx->handle_events(&vs);
       us_per_gf = duration_cast<microseconds>(t - last_gf);
       last_gf = t;
     }

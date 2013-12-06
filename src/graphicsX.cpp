@@ -15,17 +15,35 @@
 using namespace std;
 using namespace chrono;
 
-struct GraphicsInternal {
+struct _XDisplay;
+typedef struct _XDisplay Display;
+
+struct GraphicsImpl : Graphics {
+  GraphicsImpl();
+
+  // Methods
+  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
+  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+
+  void handle_events(struct Controller*);
+
+  void LoadText(const std::string msg, const std::string font_file);
+  void repaint();
+  void destroy();
+
+  // Data
+  int s;
+  Display *display;
+
   Window window;
 
   GC white_gc;
   XColor white_col;
   Colormap colormap;
 
-  int width, height;
 };
 
-Graphics::Graphics() : pImpl(new GraphicsInternal()) {
+GraphicsImpl::GraphicsImpl() {
   /* open connection with the server */
   display = XOpenDisplay(NULL);
   assert(display != nullptr);
@@ -33,33 +51,33 @@ Graphics::Graphics() : pImpl(new GraphicsInternal()) {
   s = DefaultScreen(display);
 
   /* create window */
-  pImpl->width = 800;
-  pImpl->height = 600;
+  width = 800;
+  height = 600;
 
-  pImpl->window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10,
-                                      pImpl->width, pImpl->height, 1,
+  window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10,
+                                      width, height, 1,
                                       BlackPixel(display, s), WhitePixel(display, s));
 
-  pImpl->colormap = DefaultColormap(display, s);
-  pImpl->white_gc = XCreateGC(display, pImpl->window, 0, 0);
-  XParseColor(display, pImpl->colormap, white, &pImpl->white_col);
-  XAllocColor(display, pImpl->colormap, &pImpl->white_col);
-  XSetForeground(display, pImpl->white_gc, pImpl->white_col.pixel);
+  colormap = DefaultColormap(display, s);
+  white_gc = XCreateGC(display, window, 0, 0);
+  XParseColor(display, colormap, white, &white_col);
+  XAllocColor(display, colormap, &white_col);
+  XSetForeground(display, white_gc, white_col.pixel);
 
   /* select kind of events we are interested in */
-  XSelectInput(display, pImpl->window,
+  XSelectInput(display, window,
                ExposureMask
                | KeyPressMask
                | StructureNotifyMask);
  
   /* map (show) the window */
-  XMapWindow(display, pImpl->window);
+  XMapWindow(display, window);
 }
-void Graphics::LoadText(const std::string msg, const std::string font_file)
+void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
 {
   return;
 }
-void Graphics::handle_events(Controller* c) {
+void GraphicsImpl::handle_events(Controller* c) {
   XEvent event;
 
   int events = XPending(display);
@@ -81,8 +99,8 @@ void Graphics::handle_events(Controller* c) {
       break;
     }
     case ConfigureNotify:
-      pImpl->width = event.xconfigure.width;
-      pImpl->height = event.xconfigure.height;
+      width = event.xconfigure.width;
+      height = event.xconfigure.height;
       break;
     default:
       cerr << "Unhandled event: " << event.type << endl;
@@ -92,60 +110,70 @@ void Graphics::handle_events(Controller* c) {
     events = XPending(display);
   }
 }
-void Graphics::drawString(int x, int y, const string & str, const Graphics::Context gc) {
+void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsImpl::Context gc) {
   GC* t;
   switch (gc) {
   case WHITE:
-    t = &pImpl->white_gc;
+    t = &white_gc;
     break;
   default:
     t = &DefaultGC(display, s);
     break;
   }
   XDrawString(display,
-              pImpl->window,
+              window,
               *t,
               x, y,
               str.c_str(),
               str.length());
 }
 
-void Graphics::drawChar(int x, int y, char ch, const Graphics::Context gc) {
+void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context gc) {
   GC* t;
   switch (gc) {
   case WHITE:
-    t = &pImpl->white_gc;
+    t = &white_gc;
     break;
   default:
     t = &DefaultGC(display, s);
     break;
   }
   XDrawString(display,
-              pImpl->window,
+              window,
               *t,
               x, y,
               &ch,
               1);
 }
 
-void Graphics::repaint() {
-  XFillRectangle(display, pImpl->window, pImpl->white_gc, 0, 0, getWidth(), getHeight());
+void GraphicsImpl::repaint() {
+  XFillRectangle(display, window, white_gc, 0, 0, getWidth(), getHeight());
   
   for (auto p : c)
     p->render(*this);
 }
 
-void Graphics::destroy() {
+void GraphicsImpl::destroy() {
   if (destroyed) return;
   XCloseDisplay(display);
   destroyed = true;
 }
 
-Graphics::~Graphics() { 
-  destroy();
-  delete pImpl;
-  pImpl = 0;
-}
+Graphics* new_graphics() { return new GraphicsImpl(); }
 
-int Graphics::getWidth() { return pImpl->width; }
-int Graphics::getHeight() { return pImpl->height; }
+//// Now for the plug functions
+void Graphics::drawString(int x, int y, const std::string& str, Context gc) {
+  return static_cast<GraphicsImpl*>(this)->drawString(x,y,str,gc);
+}
+void Graphics::drawChar(int x, int y, char str, Context gc) {
+  return static_cast<GraphicsImpl*>(this)->drawChar(x,y,str,gc);
+}
+void Graphics::handle_events(Controller* c) {
+  return static_cast<GraphicsImpl*>(this)->handle_events(c);
+}
+void Graphics::repaint() {
+  return static_cast<GraphicsImpl*>(this)->repaint();
+}
+void Graphics::destroy() {
+  return static_cast<GraphicsImpl*>(this)->destroy();
+}

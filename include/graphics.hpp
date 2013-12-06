@@ -39,15 +39,12 @@ enum : char {
 #endif
 
 struct Component;
-struct _XDisplay;
-typedef struct _XDisplay Display;
-struct GraphicsInternal;
+
+struct GraphicsImpl;
 
 struct Graphics : debug_policy_t {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
-  Graphics();
-  ~Graphics();
 
   enum Context {
     WHITE,
@@ -62,20 +59,26 @@ struct Graphics : debug_policy_t {
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
 
-  Display *display;
-  int s;
-
-  deque<Component*> c;
-
   void handle_events(struct Controller*);
-  bool destroyed = false;
 
   void LoadText(const std::string msg, const std::string font_file);
   void repaint();
   void destroy();
 
-  int getWidth();
-  int getHeight();
-  
-  GraphicsInternal* pImpl;
+  inline int getWidth() { return width; }
+  inline int getHeight() { return height; }
+
+  int width, height;
+
+  deque<Component*> c;
+
+  bool destroyed = false;
+
+private:
+  friend struct GraphicsImpl;
+
+  Graphics() { }
+  ~Graphics() { destroy(); }
 };
+
+Graphics* new_graphics();
