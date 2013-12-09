@@ -2,6 +2,7 @@
 
 #include "defs.hpp"
 #include "component.hpp"
+#include "clearance.hpp"
 
 #include <list>
 #include <string>
@@ -11,16 +12,12 @@ using namespace std;
 struct Job;
 
 struct JobList {
-  typedef list<Job*>::iterator iterator;
-
-  list<Job*> jlist;
-
-  JobList() {}
-
   iterator add_job(Job*);
-  void remove_job(iterator);
-  Job* pop_job(Security::Mask = Security::RED,
-               Department::Mask = Department::ALL);
+  void remove_jobs();
+  Job* find_job(Clearance c);
+
+  typedef list<Job*>::iterator iterator;
+  list<Job*> jlist;
 };
 
 struct JobListing : Component {
@@ -35,4 +32,3 @@ struct JobListing : Component {
 };
 
 extern JobList jobs;
-extern JobList active_jobs;

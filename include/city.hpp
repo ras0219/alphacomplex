@@ -10,16 +10,9 @@
 #include "tile.hpp"
 #include "entity.hpp"
 #include "component.hpp"
+#include "containable.hpp"
+
 using namespace std;
-
-struct SentinelEntity : Entity {
-  SentinelEntity(City& c) : Entity(c) { }
-
-  static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
-  virtual char render() const { assert(false); return '\0'; }
-};
 
 template<class T>
 struct Overlay {
@@ -49,7 +42,7 @@ struct City {
   int xsz;
   int ysz;
   vector<Tile> tiles;
-  vector<SentinelEntity> ents;
+  vector< vector<Ent*> > ents;
   vector<struct Room*> rooms;
   Overlay<char> designs;
 
@@ -59,8 +52,8 @@ struct City {
   inline Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
   inline Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
 
-  inline const SentinelEntity* ent(int x, int y) const { return &ents[xsz*y + x]; }
-  inline SentinelEntity* ent(int x, int y) { return &ents[xsz*y + x]; }
+  inline const vector<Ent*>& ent(int x, int y) const { return &ents[xsz*y + x]; }
+  inline vector<Ent*>& ent(int x, int y) { return &ents[xsz*y + x]; }
 
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
@@ -73,7 +66,7 @@ struct City {
 
   City() : xsz(0), ysz(0), designs(0, 0) {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y),
-                       ents(x*y, SentinelEntity(*this)),
+                       ents(x*y),
                        designs(xsz, ysz) {}
 
   struct Room* find_room(const char*);

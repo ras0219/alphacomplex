@@ -1,71 +1,39 @@
 #pragma once
 
 #include "defs.hpp"
+#include "windows.hpp"
 
 #include <cassert>
-#include <list>
+#include <vector>
+
+struct AIScript;
 
 struct Job {
-  virtual const char* rawname() const = 0;
-  virtual int description(char* buf, size_t n) const = 0;
-  virtual Department::Mask department() = 0;
-  virtual Security::Mask security() = 0;
-  virtual ~Job() { }
+  Job(string d, Clearance c, AIScript* ais)
+    : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
+  ~Job() { if (scr) delete scr; }
 
-  virtual void assign_task(struct Citizen*) = 0;
-  virtual bool complete_walk(struct Citizen*);
-  virtual bool complete_activity(struct Citizen*);
-
-
-  template<class T>
-  T& as() { return (T&)(*this); }
-  template<class T>
-  const T& as() const { return (const T&)(*this); }
-};
-
-struct MultiJob : Job {
-  static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-  virtual int description(char*, size_t) const;
-  virtual Department::Mask department();
-  virtual Security::Mask security();
-  virtual ~MultiJob() { for (auto j : subjobs) delete j; }
-
-  MultiJob() {}
-  MultiJob(const initializer_list<Job*>& il) : subjobs(il) { }
-
-  virtual void assign_task(struct Citizen*);
-  virtual bool complete_walk(struct Citizen*);
-  virtual bool complete_activity(struct Citizen*);
-
-  list<Job*> subjobs;
-};
-
-#include "citizen.hpp"
-
-template<class Derived>
-struct WalkToJob : Job {
-  virtual const char* rawname() const { return Derived::RAWNAME; }
-  WalkToJob(int x_, int y_) : x(x_), y(y_) { }
-
-  virtual void assign_task(Citizen* e) {
-    e->path_to(x, y);
-    e->set_walkingtojob();
+  inline int description(char* buf, size_t n) const {
+    return snprintf(buf, n, "%s", desc.c_str());
   }
-  virtual bool complete_walk(Citizen* e) { return true; }
+  inline Clearance clearance() const { return clear; }
 
-  int x, y;
-};
-
-template<class Derived>
-struct ActivityJob : Job {
-  virtual const char* rawname() const { return Derived::RAWNAME; }
-  ActivityJob() { }
-
-  virtual void assign_task(Citizen* e) {
-    e->set_activity(duration());
+  inline AIState* script() {
+    AIState* r = scr;
+    scr = nullptr;
+    return scr;
   }
-  virtual bool complete_activity(Citizen* e) { return true; }
 
-  virtual int duration() = 0;
+  inline void reserve() { assert(state == UNRESERVED); state = RESERVED; }
+  inline void complete() { assert(state == RESERVED); state = COMPLETED; }
+
+  string desc;
+  Clearance clear;
+  AIScript* scr;
+
+  enum State {
+    UNRESERVED,
+    RESERVED,
+    COMPLETED
+  } state = UNRESERVED;
 };

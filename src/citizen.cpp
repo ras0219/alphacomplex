@@ -4,6 +4,7 @@
 #include "city.hpp"
 #include "workroom.hpp"
 #include "clock.hpp"
+#include "ai.hpp"
 #include "windows.hpp"
 
 #include <sstream>
@@ -48,356 +49,170 @@ vector<string> sectors = {
   "GOX"
 };
 
-Citizen::Citizen(int x_, int y_, Security::Mask s, City& c)
-  : AIEntity(x_, y_, c),
-    sec(s),
-    fact(Faction::PLAYER),
-    dept(Department::random_dept()),
-    state(IDLE),
-    job(nullptr),
-    intsec_review_job(nullptr),
-    ssn(rand() % 10000)
-{
-  name = names[rand() % names.size()];
-  sect = sectors[rand() % sectors.size()];
-  
-  skills = Skill::random_skills(sec);
-}
+struct IdleAI : AIScript {
+  IdleAI() : job(nullptr) { }
 
+  virtual int start(AI* c) {
+    return request_job(c);
+  }
+  virtual int update(AI* c) {
+    return request_job(c);
+  }
+
+  int request_job(AI* ai) {
+    if (job) {
+      job->complete();
+      job = nullptr;
+    }
+
+    assert(ai->parent->has(EComp::Clearance));
+    Clearance* c = ai->parent->get<Clearance>();
+
+    job = jobs.find_job(*c);
+    if (job) {
+      job->reserve();
+      return ai->push_script( job->script() );
+    } else {
+      return 30;
+    }
+  }
+
+  Job* job;
+};
+
+Ent* make_new_red(Position pos) {
+  Ent* e = new Ent();
+  e->pos = new PositionComp(pos);
+  e->pos->set_parent(e);
+  e->add(new AI(new IdleAI()));
+  e->add(new ClearanceComp({Security::RED, Department::random_dept()}));
+  e->add(new Renderable(Security::mask_to_dcode(Security::RED)[0]));
+}
 
 const char* Citizen::RAWNAME = "citizen";
 
 char Citizen::render() const {
-  if (state == IDLE && animtime % 20 < 10)
-    return '?';
-  else if (state == SLEEPING && animtime % 20 < 10)
-    return 'Z';
-  else
+  // if (state == IDLE && animtime % 20 < 10)
+  //   return '?';
+  // else if (state == SLEEPING && animtime % 20 < 10)
+  //   return 'Z';
+  // else
     return Security::mask_to_dcode(sec)[0];
 }
 
-struct WanderingJob : WalkToJob<WanderingJob> {
-  static const char* RAWNAME;
+struct ActivityAtAI : AIState {
+  ActivityAtAI(point d, int dur) : walking(false), duration(dur), dest(d) { }
 
-  const char* msg;
-  static const array<const char*, 4> msgs;
-
-  WanderingJob(int x_, int y_) : WalkToJob(x_, y_) {
-    msg = msgs[rand() % msgs.size()];
-  }
-
-  virtual Department::Mask department() { return Department::ALL; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  virtual void assign_task(Citizen* c) {
-    this->WalkToJob<WanderingJob>::assign_task(c);
-    c->set_wandering();
-  }
-
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "%s", msg);
-  }
-};
-
-const array<const char*, 4> WanderingJob::msgs =
-{{
-    "Avoiding Narcolepsy",
-    "Obtaining Trouble",
-    "Avoiding Work",
-    "Chasing Silence"
-  }};
-
-const char* WanderingJob::RAWNAME = "wandering";
-
-void Citizen::path_to(int x2, int y2) {
-  assert(city.tile(x2, y2).walkable());
-  path = pathfind(city, x, y, x2, y2);
-  pathp = path.rbegin();
-}
-
-struct GetToldOffJob : ActivityJob<GetToldOffJob> {
-  static const char* RAWNAME;
-
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "Getting told off");
-  }
-
-  virtual Department::Mask department() { return Department::ALL; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  virtual int duration() { return 40; }
-};
-const char* GetToldOffJob::RAWNAME = "gettoldoffjob";
-
-struct TellOffJob : ActivityJob<TellOffJob> {
-  static const char* RAWNAME;
-
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "Telling off a subordinate");
-  }
-
-  virtual Department::Mask department() { return Department::ALL; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  virtual int duration() { return 40; }
-};
-const char* TellOffJob::RAWNAME = "telloffjob";
-
-struct SecRevJobStep2 : ActivityJob<SecRevJobStep2> {
-  SecRevJobStep2(Citizen* t)
-    : target(t), complete(false) { }
-
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "Reviewing");
-  }
-
-  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  virtual bool complete_activity(Citizen* c) {
-    if (!complete) {
-      c->energy = -20;
-      return false;
+  virtual int start(Citizen* c) {
+    //assert(c->city.tile(x2, y2).walkable());
+    if (c->x != dest.first || c->y != dest.second) {
+      path = pathfind(c->city, c->x, c->y, dest.first, dest.second);
+      pathp = path.rbegin();
+      walking = true;
+      return 5;
     }
-
-    char buf[20];
-    target->description(buf,20);
-    stringstream ss;
-    ss << buf << " has undergone an IntSec Review by ";
-    c->description(buf,20);
-    ss << buf << '.';
-    announce(ss.str());
-    return true;
-  }
-  virtual int duration() { return 50; }
-
-  Citizen* target;
-  bool complete;
-
-  static const char* RAWNAME;
-};
-const char* SecRevJobStep2::RAWNAME = "secrevstep2";
-
-struct SecRevJobStep2B : ActivityJob<SecRevJobStep2B> {
-  SecRevJobStep2B(bool* f) : flag(f) {}
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "Undergoing Review");
+    walking = false;
+    return duration;
   }
 
-  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  virtual bool complete_activity(Citizen* c) {
-    *flag = true;
-    c->intsec_review_job = nullptr;
-    return true;
-  }
-  virtual int duration() { return 50; }
-
-  bool* flag;
-  static const char* RAWNAME;
-};
-const char* SecRevJobStep2B::RAWNAME = "secrevstep2b";
-
-struct SecRevJobStep1 : Job {
-  SecRevJobStep1(Citizen* t)
-    : target(t)
-    {
-      s2 = new SecRevJobStep2(t);
-      s2b = new SecRevJobStep2B(&s2->complete);
-    }
-
-  virtual const char* rawname() const { return RAWNAME; }
-  virtual int description(char* buf, size_t n) const {
-    int d = snprintf(buf, n, "IntSec Review of ");
-    return target->description(buf+d, n-d) + d;
-  }
-
-  virtual void assign_task(Citizen* c) {
-    c->path_to(target->x, target->y);
-    c->set_walkingtojob();
-  }
-  virtual bool complete_walk(Citizen* c) {
-    if (c->x != target->x || c->y != target->y) {
-      c->set_activity(rand() % 10);
-      return false;
-    }
-    target->interrupt(s2b);
-    return true;
-  }
-  virtual bool complete_activity(Citizen* c) {
-    assign_task(c);
-    return false;
-  }
-
-  virtual Department::Mask department() { return Department::INTERNAL_SECURITY; }
-  virtual Security::Mask security() { return Security::ALL; }
-
-  Citizen* target;
-
-  SecRevJobStep2* s2;
-  SecRevJobStep2B* s2b;
-
-  static const char* RAWNAME;
-};
-const char* SecRevJobStep1::RAWNAME = "secrevstep1";
-
-Job* make_security_review_job(Citizen* reviewee) {
-  SecRevJobStep1* srjs1 = new SecRevJobStep1(reviewee);
-  MultiJob* j  = new MultiJob{srjs1, srjs1->s2};
-  return j;
-}
-
-void Citizen::set_job(Job* j) {
-  assert(job == nullptr);
-  job = j;
-  job_it = active_jobs.add_job(job);
-  job->assign_task(this);
-}
-
-void Citizen::update_idle() {
-  if (hour(gametime) < 8)
-    return set_sleeping();
-
-  assert(job == nullptr);
-  Job* j = jobs.pop_job(security(), department());
-  if (j) {
-    return set_job(j);
-  } else {
-    int x2 = rand() % city.getXSize();
-    int y2 = rand() % city.getYSize();
-
-    if (city.tile(x2, y2).walkable())
-      return set_job(new WanderingJob(x2, y2));
-
-    return set_idle();
-  }
-}
-
-void Citizen::update_walkingtojob() {
-  assert(job != nullptr);
-
-  if (pathp != path.rend()) {
-    assert(city.tile(pathp->first, pathp->second).walkable());
-        
-    remove();
-    insert_after(city.ent(pathp->first, pathp->second));
-    set_loc(pathp->first, pathp->second);
-        
-    ++pathp;
-  }
-  if (pathp == path.rend()) {
-    if (job->complete_walk(this)) {
-      finalize_job();
-            
-      return resume();
-    }
-  } else return set_walkingtojob();
-}
-
-void Citizen::update_wandering() {
-  assert(job != nullptr);
-
-  if (pathp != path.rend()) {
-    assert(city.tile(pathp->first, pathp->second).walkable());
-
-    remove();
-    insert_after(city.ent(pathp->first, pathp->second));
-    set_loc(pathp->first, pathp->second);
-
-    ++pathp;
-
-    set_wandering();
-
-    if (security() == Security::ORANGE) {
-      Entity* e = city.ent(x,y)->next;
-      while (e != nullptr) {
-        if (e != this && e->rawname() == Citizen::RAWNAME) {
-          Citizen& c = e->as<Citizen>();
-          if (c.security() < Security::ORANGE) {
-            // Oh boy, a subordinate!
-
-            interrupt(new TellOffJob());
-            c.interrupt(new GetToldOffJob());
-            return;
-          }
-        }
-        e = e->next;
+  virtual int update(Citizen* c) {
+    if (walking) {
+      if (pathp != path.rend()) {
+        assert(c->city.tile(pathp->first, pathp->second).walkable());
+        c->set_loc(pathp->first, pathp->second);
+        ++pathp;
       }
+
+      if (pathp == path.rend()) {
+        walking = false;
+        return duration;
+      }
+      return 5;
+    } else {
+      return complete(c);
     }
   }
-  if (pathp == path.rend()) {
-    path.clear();
-    pathp = path.rbegin();
 
-    finalize_job();
-    return resume();
+  bool walking;
+  int duration;
+  point dest;
+  vector<point> path;
+  vector<point>::reverse_iterator pathp;
+};
+
+struct JobAI : AIState {
+  JobAI(Job* j) : job(j), child(nullptr) { }
+
+  virtual int start(Citizen* c) {
+    job->state = Job::RESERVED;
+    child = job->get_script(c);
+    return c->push_aistate(child);
   }
-}
-
-void Citizen::update_activity() {
-  assert(job != nullptr);
-  if (job->complete_activity(this)) {
-    finalize_job();
-    return resume();
+  virtual int update(Citizen* c) {
+    assert(false);
+    return -1;
   }
+  virtual int resume(Citizen* c, AIState* s) {
+    assert(s == child);
+    child = nullptr;
+    job->state = Job::COMPLETED;
+    return complete(c);
+  }
+
+  Job* job;
+  AIState* child;
+};
+
+int Citizen::push_aistate(AIState* ai) {
+  // suspend old state
+  aistate->suspend(this, ai);
+  // link in current state
+  ai->set_parent(aistate);
+  aistate = ai;
+  // dispatch call to start
+  return ai->start(this);
 }
 
-void Citizen::update_sleeping() {
-  if (hour(gametime) < 8)
-    return set_sleeping();
-  else
-    return set_idle();
+AIState* Citizen::path_script(int x2, int y2) {
+  assert(city.tile(x2, y2).walkable());
+
+  return new PathAI({x2, y2});
 }
+AIState* Citizen::job_script(Job* j) {
+  return new JobAI(j);
+}
+AIState* Citizen::activity_script(int duration) { 
+  return new ActivityAI(duration);
+}
+AIState* Citizen::path_activity_script(int tx, int ty, int d) {
+  return new ActivityAtAI({tx, ty}, d);
+}
+
+struct SleepAI : AIState {
+  virtual int start(Citizen* c) {
+    return 100;
+  }
+  virtual int resume(Citizen* c, AIState*) {
+    return complete(c);
+  }
+  virtual int update(Citizen* c) {
+    if (hour(gametime) < 8)
+      return 100;
+    else
+      return complete(c);
+  }
+};
 
 void Citizen::update() {
   ++energy;
-  if (intsec_review_job == nullptr && rand() % 2400 == 0) {
-    // Time for a random intsec review!
-    // Approx every minute (60 secs * 20 fps * 2 = 2400)
-    intsec_review_job = make_security_review_job(this);
-    jobs.add_job(intsec_review_job);
-  }
+  // if (intsec_review_job == nullptr && rand() % 2400 == 0) {
+  //   // Time for a random intsec review!
+  //   // Approx every minute (60 secs * 20 fps * 2 = 2400)
+  //   intsec_review_job = make_security_review_job(this);
+  //   jobs.add_job(intsec_review_job);
+  // }
   if (energy >= 0)
-    switch (state) {
-    case IDLE: return update_idle();
-    case WALKINGTOJOB: return update_walkingtojob();
-    case WANDERING: return update_wandering();
-    case ACTIVITY: return update_activity();
-    case SLEEPING: return update_sleeping();
-    }
-}
-
-void Citizen::interrupt(Job* j) {
-  if (job != nullptr) {
-    if (job->rawname() == WanderingJob::RAWNAME) {
-      finalize_job();
-    } else {
-      active_jobs.remove_job(job_it);
-      suspended_jobs.push_back(job);
-      job = nullptr;
-    }
-  }
-
-  return set_job(j);
-}
-
-void Citizen::resume() {
-  assert(job == nullptr);
-  if (suspended_jobs.empty()) {
-    state = IDLE;
-    return;
-  }
-  Job* j = suspended_jobs.back();
-  suspended_jobs.pop_back();
-  set_job(j);
-}
-
-void Citizen::finalize_job() {
-  assert(job != nullptr);
-  active_jobs.remove_job(job_it);
-  delete job;
-  job = nullptr;
+    energy = -aistate->update(this);
 }
 
 int Citizen::description(char* buf, size_t n) const {
@@ -410,3 +225,19 @@ int Citizen::description(char* buf, size_t n) const {
 Security::Mask Citizen::security() const {
   return sec;
 }
+
+Citizen::Citizen(int x_, int y_, Security::Mask s, City& c)
+  : AIEntity(x_, y_, c),
+    sec(s),
+    fact(Faction::PLAYER),
+    dept(Department::random_dept()),
+    aistate(new IdleAI()),
+    //intsec_review_job(nullptr),
+    ssn(rand() % 10000)
+{
+  name = names[rand() % names.size()];
+  sect = sectors[rand() % sectors.size()];
+  
+  skills = Skill::random_skills(sec);
+}
+

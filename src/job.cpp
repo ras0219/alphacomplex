@@ -1,54 +1,31 @@
 #include "job.hpp"
 #include "citizen.hpp"
 
-#include <cassert>
-
-const char* MultiJob::RAWNAME = "multijob";
-
-int MultiJob::description(char* m, size_t n) const {
-  assert(!subjobs.empty());
-  return subjobs.front()->description(m, n);
+int AIState::resume(Citizen* c, AIState*) {
+  return start(c);
 }
 
-Department::Mask MultiJob::department() {
-  assert(!subjobs.empty());
-  return subjobs.front()->department();
-}
-Security::Mask MultiJob::security() {
-  assert(!subjobs.empty());
-  return subjobs.front()->security();
-}
+void AIState::suspend(Citizen* c, AIState*) { }
 
-void MultiJob::assign_task(Citizen* e) {
-  assert(!subjobs.empty());
-  subjobs.front()->assign_task(e);
+int AIState::complete(Citizen* c) {
+  c->aistate = parent;
+  delete this;
+  return c->aistate->resume(c, this);
 }
 
-bool MultiJob::complete_walk(Citizen* e) {
-  if (!subjobs.front()->complete_walk(e))
-    return false;
 
-  delete subjobs.front();
-  subjobs.pop_front();
-  if (subjobs.empty())
-    return true;
-
-  subjobs.front()->assign_task(e);
-  return false;
+int SequenceAI::start(Citizen* c) {
+  return c->push_aistate(*it);
 }
-
-bool MultiJob::complete_activity(Citizen* e) {
-  if (!subjobs.front()->complete_activity(e))
-    return false;
-
-  delete subjobs.front();
-  subjobs.pop_front();
-  if (subjobs.empty())
-    return true;
-
-  subjobs.front()->assign_task(e);
-  return false;
+int SequenceAI::update(Citizen*) {
+  assert(false);
+  return -1;
 }
-
-bool Job::complete_walk(Citizen*) { assert(false); return false; }
-bool Job::complete_activity(Citizen*) { assert(false); return false; }
+int SequenceAI::resume(Citizen* c, AIState* ai) {
+  assert(ai == *it);
+  ++it;
+  if (it == subs.end())
+    return complete(c);
+  else
+    return start(c);
+}

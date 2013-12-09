@@ -1,33 +1,30 @@
 #include "city.hpp"
 #include "garbage.hpp"
 #include "windows.hpp"
+#include "citizen.hpp"
 
 #include <cstdio>
 
 const char* CleaningRoom::RAWNAME = "cleaningroom";
 
-struct CleaningJob : ActivityJob<CleaningJob> {
-  CleaningJob(Garbage* g_) : g(g_) { }
+template<class T>
+struct DeleteAI : AIState {
+  DeleteAI(T* t) : ptr(t) { }
 
-  virtual int description(char* buf, size_t n) const;
-  virtual int duration() { return 20; }
-  virtual Department::Mask department() { return Department::FACILITIES; }
-  virtual Security::Mask security() {
-    return (Security::Mask)(Security::INFRARED | Security::RED);
+  virtual int start(Citizen* c) {
+    delete ptr;
+    return complete(c);
+  }
+  virtual int update(Citizen* c) {
+    assert(false);
+    return -1;
   }
 
-  virtual bool complete_activity(Citizen*) {
-    delete g;
-    return true;
-  }
-
-  static const char* RAWNAME;
-  Garbage* g;
+  T* ptr;
 };
 
-struct SupplyJob : WalkToJob<SupplyJob> {
-  SupplyJob(int x_, int y_)
-    : WalkToJob(x_, y_) { }
+struct GarbageJob : Job {
+  GarbageJob(Garbage* g_) : g(g_) { }
 
   virtual int description(char* buf, size_t n) const;
   virtual Department::Mask department() { return Department::FACILITIES; }
@@ -35,62 +32,38 @@ struct SupplyJob : WalkToJob<SupplyJob> {
     return (Security::Mask)(Security::INFRARED | Security::RED);
   }
 
-  virtual bool complete_walk(Citizen* e) {
-    e->clean_supplies = 3;
-    return true;
+  virtual AIState* get_script(Citizen* c) const {
+    return new SequenceAI({ c->path_activity_script(g->x, g->y, 100), new DeleteAI<Garbage>(g) });
   }
 
-  static const char* RAWNAME;
-  Job* g;
-  int x, y;
-};
-
-struct GarbageJob : WalkToJob<GarbageJob> {
-  GarbageJob(Garbage* g_)
-    : WalkToJob(g_->x, g_->y), g(g_) { }
-
-  virtual int description(char* buf, size_t n) const;
-  virtual Department::Mask department() { return Department::FACILITIES; }
-  virtual Security::Mask security() {
-    return (Security::Mask)(Security::INFRARED | Security::RED);
-  }
-
-  virtual void assign_task(Citizen* e) {
-    if (e->clean_supplies > 0) {
-      --e->clean_supplies;
-      return WalkToJob<GarbageJob>::assign_task(e);
-    } else {
-      Room* cleaning = g->city.find_room(CleaningRoom::RAWNAME);
-      if (cleaning == nullptr)
-        return WalkToJob<GarbageJob>::assign_task(e);
+  // if (e->clean_supplies > 0) {
+  //   --e->clean_supplies;
+  //   return WalkToJob<GarbageJob>::assign_task(e);
+  // } else {
+  //   Room* cleaning = g->city.find_room(CleaningRoom::RAWNAME);
+  //   if (cleaning == nullptr)
+  //     return WalkToJob<GarbageJob>::assign_task(e);
       
-      e->job->as<MultiJob>().subjobs.push_front(new SupplyJob(cleaning->x, cleaning->y));
-      e->job->assign_task(e);
-    }
-  }
+  //   e->job->as<MultiJob>().subjobs.push_front(new SupplyJob(cleaning->x, cleaning->y));
+  //   e->job->assign_task(e);
+  // }
 
-  static const char* RAWNAME;
   Garbage* g;
 };
-
-const char* Garbage::RAWNAME = "garbage";
-
-const char* SupplyJob::RAWNAME = "supplyjob";
-const char* GarbageJob::RAWNAME = "garbagejob";
-const char* CleaningJob::RAWNAME = "cleaningjob";
-
 int GarbageJob::description(char* buf, size_t n) const {
   return snprintf(buf, n, "Clean Garbage @ %d, %d", g->x, g->y);
 }
 
-int CleaningJob::description(char* buf, size_t n) const {
-  return snprintf(buf, n, "Cleaning Garbage");
-}
+const char* Garbage::RAWNAME = "garbage";
 
-int SupplyJob::description(char* buf, size_t n) const {
-  return snprintf(buf, n, "Fetch Cleaning Supplies");
-}
+// int CleaningJob::description(char* buf, size_t n) const {
+//   return snprintf(buf, n, "Cleaning Garbage");
+// }
+
+// int SupplyJob::description(char* buf, size_t n) const {
+//   return snprintf(buf, n, "Fetch Cleaning Supplies");
+// }
 
 Job* make_garbage_job(Garbage* g) {
-  return new MultiJob{new GarbageJob(g), new CleaningJob(g)};
+  return new GarbageJob(g);
 }

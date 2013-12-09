@@ -24,8 +24,7 @@ MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c) {
   dview = new DesignView(vs, mv, c);
 }
 
-JobListing activelist(20, &active_jobs, "Active Jobs");
-JobListing pendinglist(200, &jobs, "Pending Jobs");
+JobListing pendinglist(20, &jobs, "Pending Jobs");
 
 struct HelpText : Component {
   virtual void render(Graphics& g);
@@ -37,7 +36,6 @@ extern StatusText statustext;
 void MainView::render(Graphics& g) {
   mv->render(g);
   hud.render(g);
-  activelist.render(g);
   pendinglist.render(g);
   helptext.render(g);
   statustext.render(g);
