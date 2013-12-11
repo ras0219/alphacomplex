@@ -3,16 +3,16 @@
 #include <array>
 #include <cassert>
 #include <iostream>
-#include <vector>
+#include <set>
 
 #include "defs.hpp"
 #include "graphics.hpp"
 #include "tile.hpp"
-#include "entity.hpp"
 #include "component.hpp"
-#include "containable.hpp"
 
 using namespace std;
+
+struct Ent;
 
 template<class T>
 struct Overlay {
@@ -42,7 +42,7 @@ struct City {
   int xsz;
   int ysz;
   vector<Tile> tiles;
-  vector< vector<Ent*> > ents;
+  vector< set<Ent*> > ents;
   vector<struct Room*> rooms;
   Overlay<char> designs;
 
@@ -52,8 +52,17 @@ struct City {
   inline Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
   inline Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
 
-  inline const vector<Ent*>& ent(int x, int y) const { return &ents[xsz*y + x]; }
-  inline vector<Ent*>& ent(int x, int y) { return &ents[xsz*y + x]; }
+  inline const set<Ent*>& ent(int x, int y) const { return ents[xsz*y + x]; }
+  inline set<Ent*>& ent(int x, int y) { return ents[xsz*y + x]; }
+
+  inline void add_ent(int x, int y, Ent* e) {
+    ent(x, y).insert(e);
+  }
+  inline void del_ent(int x, int y, Ent* e) {
+    uint sz = ent(x,y).size();
+    ent(x,y).erase(e);
+    assert(sz > ent(x,y).size());
+  }
 
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
@@ -73,3 +82,11 @@ struct City {
 };
 
 istream& operator>>(istream& is, City& city);
+
+struct Position {
+  inline point as_point() const { return {x, y}; }
+
+  int x, y;
+  City* city;
+};
+

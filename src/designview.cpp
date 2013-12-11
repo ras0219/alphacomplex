@@ -4,19 +4,19 @@
 #include "mapview.hpp"
 #include "hud.hpp"
 #include "citizen.hpp"
+#include "statustext.hpp"
 
 extern bool paused;
 
 DesignView::DesignView(ViewStack* vs, MapView* m, City& c)
   : vstk(vs), mv(m), city(c) { }
 
-//extern HelpText helptext;
-
 void DesignView::render(Graphics& g) {
   mv->csr_enable = true;
   mv->render(g);
   hud.render(g);
   //helptext.render(g);
+  statustext.render(g);
 }
 
 void DesignView::handle_keypress(KeySym ks) {

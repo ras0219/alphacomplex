@@ -3,6 +3,7 @@
 #include "viewstack.hpp"
 #include "hud.hpp"
 #include "graphics.hpp"
+#include "statustext.hpp"
 
 #include <algorithm>
 
@@ -20,6 +21,8 @@ void AnnounceView::render(Graphics& g) {
     --r;
     ++it;
   }
+
+  statustext.render(g);
 }
 
 void AnnounceView::handle_keypress(KeySym ks) {

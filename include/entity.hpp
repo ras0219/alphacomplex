@@ -1,114 +1,102 @@
 #pragma once
 
-// #include "city.hpp"
+#include "city.hpp"
 #include "pathfind.hpp"
 #include "graphics.hpp"
+#include "system.hpp"
 
 #include <list>
 #include <map>
 #include <cassert>
+#include <unordered_set>
+#include <unordered_map>
 
 using std::list;
 
-struct City;
-
-struct EComp {
-  EComp(Kind k_) : k(k_), parent(nullptr) { }
-  virtual ~EComp() {}
-
-  inline void set_parent(Ent* p) { parent = p; }
-  inline Kind kind() const { return k; }
-
-  template<class T>
-  T* as() {
-    assert(k == T::StaticKind);
-    return static_cast<T*>(this);
-  }
-  template<class T>
-  const T* as() const {
-    assert(k == T::StaticKind);
-    return static_cast<const T*>(this);
-  }
-
+struct Aspect {
   enum Kind {
     Skilled,
     Renderable,
     AI,
     Clearance,
     Descriptable,
-    Position
+    Position,
+    CitizenName,
+    Movable,
+    Inventory
   };
-  const Kind k;
-  struct Ent* parent;
-};
-template<EComp::Kind K>
-struct ECompStatic : EComp {
-  static const EComp::Kind StaticKind = K;
-  ECompStatic() : EComp(K) { }
-};
-template<EComp::Kind K>
-struct ECompStaticList : ECompStatic<K> {
-  ECompStaticList() { glob_list.insert(this); ptr = --glob_list.end(); }
-  virtual ~ECompStaticList() { glob_list.erase(ptr); }
 
-  typedef list< ECompStaticList<K> > list_t;
+  Aspect(Kind k) : kind(k), parent(nullptr) { }
+  virtual ~Aspect() {}
 
-  static list_t glob_list;
-  list_t::iterator ptr;
-};
-
-struct Position {
-  int x;
-  int y;
-  City* c;
-};
-
-struct PositionComp : ECompStatic<EComp::Position> {
-  PositionComp(Position p) : pos(p) { }
-
-  inline City* city() { return pos.c; }
-  inline int x() const { return pos.x; }
-  inline int y() const { return pos.y; }
-
-  inline void move(int tx, int ty) {
-    remove();
-    pos.x = tx;
-    pos.y = ty;
-    insert();
-  }
-
-  // These methods should not normally be called.
-  inline void insert() {
-    pos.city->ent(pos.x, pos.y).push_back(parent);
-  }
-  inline void remove() {
-    auto v = pos.city->ent(pos.x, pos.y);
-    auto it = std::find(v.begin(), v.end(), parent);
-    assert(it != v.end());
-    v.erase(it);
-  }
-
-  Position pos;
-};
-
-struct Ent {
-  PositionComp pos;
-
-  typedef std::unordered_map<EComp::Kind, EComp*> map_t;
-
-  inline EComp* get(EComp::Kind k) {
-    return compmap[k];
+  template<class T>
+  T& as() {
+    assert(kind == T::StaticKind);
+    return static_cast<T&>(*this);
   }
   template<class T>
-  inline T* get() { return compmap[T::StaticKind]->as<T>(); }
+  const T& as() const {
+    assert(kind == T::StaticKind);
+    return static_cast<const T&>(*this);
+  }
 
-  inline bool has(EComp::Kind k) { return compmap.find(k) != compmap.end(); }
-  inline void add(EComp* comp) {
-    comp->set_parent(this);
-    compmap[comp->kind()] = comp;
+  const Kind kind;
+  struct Ent* parent;
+};
+template<Aspect::Kind K, class T>
+struct AspectStatic : Aspect {
+  static const Aspect::Kind StaticKind = K;
+  AspectStatic() : Aspect(K) {
+    instances.insert(&this->as<T>());
+  }
+  ~AspectStatic() { instances.erase(&this->as<T>()); }
+
+  typedef std::unordered_set<T*> set_t;
+  typedef typename set_t::iterator iterator;
+  static set_t instances;
+};
+template<Aspect::Kind K, class T>
+typename AspectStatic<K,T>::set_t AspectStatic<K,T>::instances;
+
+struct Ent {
+  typedef std::unordered_map<int, Aspect*> map_t;
+  typedef std::unordered_set<System*> set_t;
+
+  ~Ent() {
+    for (auto p : compmap)
+      delete p.second;
+    for (auto sys : sysset)
+      sys->erase(this);
+  }
+
+  template<class T>
+  inline T* assert_get() {
+    assert(has<T>());
+    return get<T>();
+  }
+
+  template<class T>
+  inline T* get() { return static_cast<T*>(compmap[T::StaticKind]); }
+  template<class T>
+  inline bool has() { return compmap.find(T::StaticKind) != compmap.end(); }
+
+  template<class...Ts>
+  inline tuple<Ts*...> get_tuple() {
+    return make_tuple(get<Ts>()...);
+  }
+
+  inline bool has(Aspect::Kind k) { return compmap.find(k) != compmap.end(); }
+  inline void add(Aspect* comp) {
+    comp->parent = this;
+    compmap[comp->kind] = comp;
+  }
+  inline void add(System* sys) {
+    sysset.insert(sys);
+    sys->insert(this);
   }
 
   map_t compmap;
+  set_t sysset;
 };
 
 // inline Ent* make_dwarf(int x, int y, City* c) {

@@ -26,6 +26,8 @@
 #include "clock.hpp"
 #include "viewstack.hpp"
 #include "mainview.hpp"
+#include "ai.hpp"
+#include "movable.hpp"
 
 #include <map>
 
@@ -40,6 +42,8 @@ microseconds us_per_gf, us_per_lf;
 bool paused = false;
 
 Graphics *gfx;
+
+vector<System*> systems = { &aisystem, &smsystem };
 
 int main(int argc, char** argv) {
   City city;
@@ -67,9 +71,9 @@ int main(int argc, char** argv) {
     if (t - last_lf >= microseconds(US_PER_LGC)) {
       if (!paused) {
         ++gametime;
-        for (auto e : AIEntity::ai_list)
-          e->update();
-
+        for (auto sys : systems)
+          sys->update();
+        
         for (auto r : city.rooms)
           r->update();
 

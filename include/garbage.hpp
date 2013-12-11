@@ -13,13 +13,5 @@ struct CleaningRoom : Room {
   static const char* RAWNAME;
 };
 
-struct Garbage : LocEntity {
-  Garbage(int x_, int y_, City& c) : LocEntity(x_, y_, c) { }
-
-  static const char* RAWNAME;
-  virtual const char* rawname() const { return RAWNAME; }
-
-  virtual char render() const { return ';'; }
-};
-
-Job* make_garbage_job(Garbage* g);
+Ent* make_garbage(Position p);
+Job* make_garbage_job(Ent* g);

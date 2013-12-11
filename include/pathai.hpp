@@ -2,6 +2,7 @@
 
 #include "ai.hpp"
 #include "pathfind.hpp"
+#include "movable.hpp"
 
 #include <vector>
 
@@ -12,23 +13,36 @@ struct PathAI : AIScript {
 
   inline virtual int start(AI* ai) {
     Ent* c = ai->parent;
-    //assert(c->city.tile(x2, y2).walkable());
-    path = pathfind(c->city, c->x, c->y, dest.first, dest.second);
+    assert(c->has<PositionComp>());
+    PositionComp* pos = c->get<PositionComp>();
+
+    path = pathfind(pos->city(), pos->x(), pos->y(),
+                    dest.first, dest.second);
     pathp = path.rbegin();
+
+    if (pathp == path.rend())
+      return complete(ai);
+
     return walkrate;
   }
 
   inline virtual int update(AI* ai) {
+    return update_impl(ai);
+  }
+
+  inline int update_impl(AI* ai) {
     Ent* c = ai->parent;
+    assert(c->has<Movable>());
+    Movable* mov = c->get<Movable>();
 
     if (pathp != path.rend()) {
-      assert(c->city.tile(pathp->first, pathp->second).walkable());
-      c->set_loc(pathp->first, pathp->second);
+      assert(mov->pos.city->tile(pathp->first, pathp->second).walkable());
+      mov->set(*pathp);
       ++pathp;
     }
 
     if (pathp == path.rend())
-      return complete(c);
+      return complete(ai);
 
     return walkrate;
   }

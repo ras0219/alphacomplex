@@ -16,7 +16,6 @@ set(CMAKE_CXX_FLAGS_RELEASESTATIC "${CMAKE_CXX_FLAGS_RELEASESTATIC} -O4 -DNDEBUG
 
 set(SOURCES 
   "src/main.cpp"
-  "src/entity.cpp"
   "src/city.cpp"
   "src/pathfind.cpp"
   "src/garbage.cpp"
@@ -35,10 +34,14 @@ set(SOURCES
   "src/designview.cpp"
   "src/clock.cpp"
   "src/skills.cpp"
-  "src/statustext.cpp")
+  "src/statustext.cpp"
+  ## Entity Component Systems
+  "src/entity.cpp"
+  "src/citizenname.cpp"
+  "src/ai.cpp"
+  "src/movable.cpp")
 
 
-##TO-DO: THROW AN ERROR IF ONE OF THEM IS NOT SELECTED, OR EMPTY GRAPHICS
 if(BUILD_X11)
   find_package(X11 REQUIRED)
   include_directories(${X11_INCLUDE_DIR})

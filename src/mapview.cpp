@@ -3,6 +3,7 @@
 #include "city.hpp"
 #include "clock.hpp"
 #include "joblist.hpp"
+#include "renderable.hpp"
 
 const char prettywalls[16] = {
   '+', HBAR, VBAR, CORNER_SE,
@@ -14,14 +15,31 @@ const char prettywalls[16] = {
 void MapView::render(Graphics& g) {
   for (int y=0;y<ysz;++y)
     for (int x=0;x<xsz;++x) {
-      assert(city->ent(x,y)->rawname() == SentinelEntity::RAWNAME);
       if (csr_enable && x == csr_x && y == csr_y/* && animtime % 30 < 15*/) {
         putChar(x, y, 'X');
-      } else if (city->ent(x,y)->next != nullptr) {
-        putChar(x, y, city->ent(x,y)->next->render());
-      } else if (city->designs(x,y) & 1) {
+        continue;
+      }
+      if (city->designs(x,y) & 1) {
         putChar(x, y, '%');
-      } else if (city->tile(x,y).type == Tile::wall) {
+        continue;
+      }
+
+      if (mode == DEFAULT) {
+        auto s = city->ent(x, y);
+        auto it = s.begin();
+        while (it != s.end()) {
+          if ((*it)->has<Renderable>()) {
+            putChar(x, y, (*it)->get<Renderable>()->render());
+            break;
+          }
+          ++it;
+        }
+        
+        if (it != s.end())
+          continue;
+      }
+
+      if (city->tile(x,y).type == Tile::wall) {
         int i = 0;
         if (x > 0 && !city->tile(x-1,y).walkable())
           i += 1;
@@ -32,9 +50,15 @@ void MapView::render(Graphics& g) {
         if (y < city->getYSize()-1 && !city->tile(x,y+1).walkable())
           i += 8;
         putChar(x, y, prettywalls[i]);
-      } else {
-        putChar(x, y, city->tile(x,y).type);
+        continue;
       }
+
+      if (mode == ENTCOUNT) {
+        putChar(x, y, '0' + city->ent(x, y).size());
+        continue;
+      }
+
+      putChar(x, y, city->tile(x,y).type);
     }
 
   for (int y=0;y<ysz;++y)

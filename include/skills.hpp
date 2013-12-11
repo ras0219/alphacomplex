@@ -53,7 +53,8 @@ namespace Skill {
     NUM_SKILLS
   };
 
-  const array<Category,NUM_SKILLS> List = {{
+  typedef array<Category,NUM_SKILLS> List_t;
+  const List_t List = {{
       // Technical Skills
       BOT_MAINTENANCE,
       BOT_OPERATION,

@@ -21,18 +21,15 @@ void JobList::remove_jobs() {
   }
 }
 
-Job* JobList::find_job(Security::Mask secmask,
-                       Department::Mask deptmask) {
+Job* JobList::find_job(Clearance c) {
   auto it = jlist.begin();
   while (it != jlist.end()) {
     Job *j = *it;
-    if (j->state == Job::COMPLETED) {
+    if (j->completed()) {
       jlist.erase(it++);
       continue;
     }
-    if (j->state == Job::UNRESERVED &&
-        j->security() & secmask &&
-        j->department() & deptmask)
+    if (j->available() && j->clearance() & c)
       return j;
     ++it;
   }
@@ -45,12 +42,12 @@ void JobListing::render(Graphics& g) {
 
   int yoffset = y+30;
   for (auto j : jlist->jlist) {
-    if (j->state == Job::COMPLETED)
+    if (j->completed())
       continue;
 
     char buf[25];
     // Mark in-progress jobs
-    *buf = (j->state == Job::RESERVED ? '~' : ' ');
+    *buf = (j->available() ? ' ' : '~');
 
     j->description(buf+1, 24);
     g.drawString(g.getWidth() - 200, yoffset, string(buf));

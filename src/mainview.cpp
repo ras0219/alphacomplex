@@ -31,7 +31,6 @@ struct HelpText : Component {
 };
 
 extern HelpText helptext;
-extern StatusText statustext;
 
 void MainView::render(Graphics& g) {
   mv->render(g);
@@ -58,8 +57,9 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
-      Citizen* e = new Citizen(1,1,Security::RED, city);
-      e->insert_after(city.ent(1,1));
+      // Citizen* e = new Citizen(1,1,Security::RED, city);
+      // e->insert_after(city.ent(1,1));
+      city.ent(1,1).insert(new_citizen({1,1,&city}, Security::RED));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
@@ -67,11 +67,15 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_e:
     if (influence >= 5) {
       influence -= 5;
-      Citizen* e = new Citizen(1,1,Security::INFRARED, city);
-      e->insert_after(city.ent(1,1));
+      // Citizen* e = new Citizen(1,1,Security::INFRARED, city);
+      // e->insert_after(city.ent(1,1));
+      city.ent(1,1).insert(new_citizen({1,1,&city}, Security::INFRARED));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }
+    break;
+  case KEY_Tab:
+    mv->next_mode();
     break;
   case KEY_space:
     paused = !paused;

@@ -6,10 +6,16 @@
 #include "log.hpp"
 #include "citizen.hpp"
 #include "windows.hpp"
+#include "ifai.hpp"
+#include "callbackai.hpp"
+#include "sequenceai.hpp"
+#include "pathai.hpp"
+#include "ifai.hpp"
+#include "activityai.hpp"
 
 #include <stdexcept>
 
-const char* SentinelEntity::RAWNAME = "sentinel";
+//const char* SentinelEntity::RAWNAME = "sentinel";
 
 Room* City::find_room(const char* rawname) {
   for (auto r : rooms) {
@@ -41,7 +47,7 @@ istream& operator>>(istream& is, City& c) {
 
     for (int i=0; i < x; ++i) {
       c.tiles.push_back( {(Tile::TileKind)s[i]} );
-      c.ents.emplace_back(c);
+      c.ents.emplace_back();
     }
 
     ++y;
@@ -60,16 +66,18 @@ istream& operator>>(istream& is, City& c) {
       char ch = c.tile(i,j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
       } else if (ch == 'E') {
-        Citizen* e = new Citizen(i,j,Security::RED, c);
-        e->insert_after(c.ent(i,j));
+        // Citizen* e = new Citizen(i,j,Security::RED, c);
+        // e->insert_after(c.ent(i,j));
+        c.ent(i,j).insert(new_citizen({i,j,&c}, Security::RED));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'O') {
-        Citizen* e = new Citizen(i,j,Security::ORANGE, c);
-        e->insert_after(c.ent(i,j));
+        // Citizen* e = new Citizen(i,j,Security::ORANGE, c);
+        // e->insert_after(c.ent(i,j));
+        c.ent(i,j).insert(new_citizen({i,j,&c}, Security::ORANGE));
         c.tile(i,j).type = Tile::ground;
       } else if (ch == 'D') {
-        Dwarf* e = new Dwarf(i,j, c);
-        e->insert_after(c.ent(i,j));
+        // Dwarf* e = new Dwarf(i,j, c);
+        // e->insert_after(c.ent(i,j));
         c.tile(i,j).type = Tile::ground;
       } else {
         if (i > 0 && c.tile(i-1,j).type == ch)
@@ -110,47 +118,64 @@ istream& operator>>(istream& is, City& c) {
   return is;
 }
 
-struct DigAI : AIState {
-  DigAI(City* c, int dx, int dy, int wx, int wy)
-    : city(c), digx(dx), digy(dy), walkx(wx), walky(wy) { }
+// struct DigAI : AIState {
+//   DigAI(City* c, int dx, int dy, int wx, int wy)
+//     : city(c), digx(dx), digy(dy), walkx(wx), walky(wy) { }
 
-  virtual int start(Citizen* c) {
-    return c->push_aistate(c->path_activity_script(walkx, walky, 100));
-  }
-  virtual int update(Citizen* c) {
-    assert(false); return -1;
-  }
-  virtual int resume(Citizen* c, AIState*) {
-    if (city->designs(digx,digy) & 1 && city->tile(digx,digy).type == Tile::wall) {
-      city->remove_wall(digx,digy);
-    }
-    return complete(c);
-  }
+//   virtual int start(Citizen* c) {
+//     return c->push_aistate(c->path_activity_script(walkx, walky, 100));
+//   }
+//   virtual int update(Citizen* c) {
+//     assert(false); return -1;
+//   }
+//   virtual int resume(Citizen* c, AIState*) {
+//     if (city->designs(digx,digy) & 1 && city->tile(digx,digy).type == Tile::wall) {
+//       city->remove_wall(digx,digy);
+//     }
+//     return complete(c);
+//   }
 
-  City* city;
-  int digx, digy, walkx, walky;
-};
+//   City* city;
+//   int digx, digy, walkx, walky;
+// };
 
-struct DigJob : Job {
-  DigJob(City* c, int dx_, int dy_, int wx_, int wy_)
-    : city(c), dx(dx_), dy(dy_), wx(wx_), wy(wy_) { }
+// struct DigJob : Job {
+//   DigJob(City* c, int dx_, int dy_, int wx_, int wy_)
+//     : city(c), dx(dx_), dy(dy_), wx(wx_), wy(wy_) { }
   
-  virtual int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "Digging");
-  }
-  virtual Department::Mask department() { return Department::FACILITIES; }
-  virtual Security::Mask security() { return Security::ALL; }
+//   virtual int description(char* buf, size_t n) const {
+//     return snprintf(buf, n, "Digging");
+//   }
+//   virtual Department::Mask department() { return Department::FACILITIES; }
+//   virtual Security::Mask security() { return Security::ALL; }
 
-  virtual AIState* get_script(Citizen* e) const {
-    return new DigAI(city, dx, dy, wx, wy);
-  }
+//   virtual AIState* get_script(Citizen* e) const {
+//     return new DigAI(city, dx, dy, wx, wy);
+//   }
 
-  City* city;
-  int dx, dy, wx, wy;
-};
+//   City* city;
+//   int dx, dy, wx, wy;
+// };
 
-void add_wall_dig_job(City* c, int x1, int y1, int x2, int y2) {
-  jobs.add_job(new DigJob(c, x2, y2, x1, y1));
+void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
+  Clearance c = { Security::ALL, Department::ALL };
+  auto wall_cb = [=]() {
+    return city->designs(digx,digy) & 1 && city->tile(digx,digy).type == Tile::wall;
+  };
+  auto dig_cb = [=]() { city->remove_wall(digx,digy); };
+
+  AIScript* s1 = new SequenceAI {
+    new ActivityAI(100),
+    new_ifscript(wall_cb, new_callbackai(dig_cb))
+  };
+
+  AIScript* s2 = new SequenceAI {
+    new PathAI({x1, y1}),
+    new_ifscript(wall_cb, s1)
+  };
+  
+  Job* job = new Job("Dig", c, s2);
+  jobs.add_job(job);
 }
 
 void City::toggle_dig_wall(int x, int y) {

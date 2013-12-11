@@ -11,7 +11,8 @@ namespace Department {
       ALL = (uint)(-1)
   };
 
-  const array<Mask,5> List = {{
+  typedef array<Mask,5> List_t;
+  const List_t List = {{
       INTERNAL_SECURITY,
       AGRICULTURE,
       FACILITIES,

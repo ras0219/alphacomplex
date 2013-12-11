@@ -3,22 +3,19 @@
 #include "ai.hpp"
 
 struct SequenceAI : AIScript {
-  SequenceAI(initializer_list<AIScript*> il) : subs(il), it(subs.begin()) { }
+  SequenceAI(initializer_list<AIScript*> il) : subs(il), i(0) { }
   ~SequenceAI() {
-    while (it != subs.end())
-      delete *it++;
+    while (i != subs.size())
+      delete subs[i++];
   }
 
   inline virtual int start(AI* ai) {
-    return ai->push_script(*it++);
-  }
-  inline virtual int resume(AI* ai) {
-    if (it == subs.end())
+    if (i == subs.size())
       return complete(ai);
     else
-      return ai->push_script(*it++);
+      return ai->push_script(subs[i++]);
   }
 
-  vector<AIState*> subs;
-  vector<AIState*>::iterator it;
+  vector<AIScript*> subs;
+  uint i;
 };

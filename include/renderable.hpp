@@ -2,7 +2,7 @@
 
 #include "entity.hpp"
 
-struct Renderable : ECompStaticList<EComp::Renderable> {
+struct Renderable :  AspectStatic<Aspect::Renderable, Renderable> {
   Renderable(char c = '?') : ch(c) { }
 
   inline char render() const { return ch; }

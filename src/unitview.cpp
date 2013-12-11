@@ -5,6 +5,8 @@
 #include "citizen.hpp"
 #include "hud.hpp"
 #include "windows.hpp"
+#include "citizenname.hpp"
+#include "statustext.hpp"
 
 #include <algorithm>
 
@@ -13,15 +15,16 @@ extern bool paused;
 struct UnitListing : Component {
   UnitListing() : row(0), col(0), assign_mode(true) { }
 
-  virtual void render(struct Graphics& g);
-  void render_skills(Graphics&);
-  void render_assign(Graphics&);
+  virtual void render(Graphics& g);
 
-  void down() {
-    if (row+1 < AIEntity::ai_list.size())
+  template<class Policy>
+  void render_policy(Graphics&);
+
+  inline void down() {
+    if (row+1 < rows())
       row++;
   }
-  void right() {
+  inline void right() {
     if (assign_mode) {
       if (col+1 < Department::List.size())
         ++col;
@@ -30,19 +33,21 @@ struct UnitListing : Component {
         ++col;
     }
   }
-  void up() {
+  inline void up() {
     if (row > 0)
       --row;
   }
-  void left() {
+  inline void left() {
     if (col > 0)
       --col;
   }
 
+  inline uint rows() const { return CitizenName::instances.size(); }
+
   bool check() {
     bool r = false;
-    if (row >= AIEntity::ai_list.size()) {
-      row = AIEntity::ai_list.size() - 1;
+    if (row >= rows()) {
+      row = rows() - 1;
       r = true;
     }
     if (assign_mode && col >= Department::List.size()) {
@@ -56,28 +61,7 @@ struct UnitListing : Component {
     return r;
   }
 
-  void toggle() {
-    if (check()) return;
-
-    auto it = AIEntity::ai_list.begin();
-    advance(it, row);
-
-    if ((*it)->rawname() != Citizen::RAWNAME) {
-      announce("This unit is not a duty-assignable citizen.");
-      return;
-    }
-
-    Citizen& c = (*it)->as<Citizen>();
-    if (c.faction() != Faction::PLAYER) {
-      announce("This unit is not under your control.");
-      return;
-    }
-
-    if (assign_mode)
-      c.dept = Department::List[col];
-    else
-      c.skill_en[col] = !c.skill_en[col];
-  }
+  void toggle();
 
   void mode_toggle() { assign_mode = !assign_mode; check(); }
 
@@ -85,107 +69,85 @@ struct UnitListing : Component {
   bool assign_mode;
 } ulist;
 
-struct Spreadsheet {
-  string name;
-  uint row_off;
-  uint col_off;
-  uint left;
+#include <sstream>
+
+struct AssignPolicy {
+  static inline string title() { return "Units Roster (Dept)"; }
+  static inline const Department::List_t& col_list() { return Department::List; }
+  static inline string col_label(Department::Mask& d) { return Department::mask_to_local6(d); }
+  static inline void entry(CitizenName* cn, Department::Mask m, string& buf) {
+    ClearanceComp* cc = cn->parent->assert_get<ClearanceComp>();
+    if (!(cc->department() & m))
+      return;
+    buf[3] = 'X';
+    buf[4] = 'X';
+  }
+
+  static inline void toggle(CitizenName::iterator it, int col_num) {
+    ClearanceComp* cc = (*it)->parent->assert_get<ClearanceComp>();
+    cc->department() = Department::List[col_num];
+  }
 };
+struct SkillsPolicy {
+  static inline string title() { return "Units Roster (Skills)"; }
+  static inline const Skill::List_t& col_list() { return Skill::List; }
+  static inline string col_label(Skill::Category& d) { return Skill::shortname(d); }
+  static inline void entry(CitizenName* cn, Skill::Category, string& buf) { }
+
+  static inline void toggle(CitizenName::iterator it, int col_num) { }
+};
+void UnitListing::toggle() {
+  if (check()) return;
+
+  auto it = CitizenName::instances.begin();
+  advance(it, row);
+
+  // announce("This unit is not a duty-assignable citizen.");
+  // return;
+
+  if (assign_mode)
+    AssignPolicy::toggle(it, col);
+  else
+    SkillsPolicy::toggle(it, col);
+}
 
 void UnitListing::render(Graphics& g) {
   if (assign_mode)
-    render_assign(g);
+    render_policy<AssignPolicy>(g);
   else
-    render_skills(g);
+    render_policy<SkillsPolicy>(g);
 }
 
-void UnitListing::render_assign(Graphics& g) {
+template<class P>
+void UnitListing::render_policy(Graphics& g) {
   uint row_off = 12;
   uint col_off = 42;
   uint left = 124;
   uint top_row = 42;
 
-  g.drawString(6, 18, "Units Roster (Dept)", Graphics::DEFAULT);
+  g.drawString(6, 18, P::title());
 
   uint c = 0;
-  for (auto d : Department::List) {
-    g.drawString(left + 6 + c*col_off, top_row,
-                 Department::mask_to_local6(d), Graphics::DEFAULT);
+  for (auto d : P::col_list()) {
+    g.drawString(left + 6 + c*col_off, top_row, P::col_label(d));
     ++c;
   }
 
   uint r = 0;
-  char buf[60];
 
-  for (auto e : AIEntity::ai_list) {
-    e->description(buf, 18);
-    g.drawString(18, top_row + 12 + r*row_off, buf, Graphics::DEFAULT);
+  for (auto e : CitizenName::instances) {
+    g.drawString(18, top_row + 12 + r*row_off, get_full_name(e->parent));
 
     c = 0;
-    for (auto d : Department::List) {
-      array<char,8> buf2 = {{ VBAR, ' ', ' ', ' ', ' ', ' ', ' ', 0 }};
+    for (auto d : P::col_list()) {
+      string buf2 = "|      ";
       if (c == col && r == row) {
         buf2[1] = '>';
         buf2[6] = '<';
       }
-      if (e->rawname() == Citizen::RAWNAME) {
-        Citizen& cit = e->as<Citizen>();
-        if (d & cit.department()) {
-          buf2[3] = 'X';
-          buf2[4] = 'X';
-        }
-      }
-      g.drawString(left + c*col_off, top_row + 12 + r*row_off, string(buf2.begin(), buf2.end()), Graphics::DEFAULT);
-      ++c;
-    }
+      P::entry(e, d, buf2);
 
-    ++r;
-  }
-
-  // Render cursor
-  g.drawChar(6, top_row + 12 + row*row_off, '>', Graphics::DEFAULT);
-  g.drawString(left + 18 + col*col_off, 18, "VV", Graphics::DEFAULT);
-}
-
-void UnitListing::render_skills(Graphics& g) {
-  uint row_off = 12;
-  uint col_off = 42;
-  uint left = 124;
-  uint top_row = 42;
-
-  g.drawString(6, 18, "Units Roster (Skills)", Graphics::DEFAULT);
-
-  uint c = 0;
-  for (auto d : Skill::List) {
-    g.drawString(left + 6 + c*col_off, 30 + (c % 2 ? 0 : 12),
-                 Skill::shortname(d), Graphics::DEFAULT);
-    ++c;
-  }
-
-  uint r = 0;
-  char buf[60];
-
-  for (auto e : AIEntity::ai_list) {
-    e->description(buf, 18);
-    g.drawString(18, top_row + 12 + r*row_off, buf, Graphics::DEFAULT);
-
-    c = 0;
-    for (auto d : Skill::List) {
-      array<char,8> buf2 = {{ VBAR, ' ', ' ', ' ', ' ', ' ', ' ', 0 }};
-      if (c == col && r == row) {
-        buf2[1] = '>';
-        buf2[6] = '<';
-      }
-      if (e->rawname() == Citizen::RAWNAME) {
-        Citizen& cit = e->as<Citizen>();
-        int lv = cit.skills[d].lv();
-        buf2[2] = '0' + (lv / 10);
-        buf2[3] = '0' + (lv % 10);
-        if (cit.skill_en[d]) {
-          buf2[5] = 'X';
-        }
-      }
-      g.drawString(left + c*col_off, top_row + 12 + r*row_off, string(buf2.begin(), buf2.end()), Graphics::DEFAULT);
+      g.drawString(left + c*col_off, top_row + 12 + r*row_off, buf2);
       ++c;
     }
 
@@ -200,6 +162,7 @@ void UnitListing::render_skills(Graphics& g) {
 void UnitView::render(Graphics& g) {
   ulist.render(g);
   hud.render(g);
+  statustext.render(g);
 }
 
 void UnitView::handle_keypress(KeySym ks) {

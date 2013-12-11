@@ -12,11 +12,12 @@ using namespace std;
 struct Job;
 
 struct JobList {
+  typedef list<Job*>::iterator iterator;
+
   iterator add_job(Job*);
   void remove_jobs();
   Job* find_job(Clearance c);
 
-  typedef list<Job*>::iterator iterator;
   list<Job*> jlist;
 };
 

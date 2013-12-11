@@ -1,8 +1,9 @@
 #pragma once
 
 #include "entity.hpp"
+#include "subsystem.hpp"
 
-struct AI : ECompStaticList<EComp::AI> {
+struct AI : AspectStatic<Aspect::AI, AI> {
   AI(struct AIScript* base) : script(base) { }
 
   // Methods for the public
@@ -18,16 +19,25 @@ struct AI : ECompStaticList<EComp::AI> {
   struct AIScript* script;
 };
 
+struct AISystem : SubSystem<AISystem, AI> {
+  inline void update(value_type& p) {
+    get<0>(p.second)->update();
+  }
+};
+extern AISystem aisystem;
+
+
 struct AIScript {
   AIScript() : prev(nullptr) {}
+  virtual ~AIScript() { }
 
   inline void set_prev(AIScript* ais) { prev = ais; }
   inline AIScript* get_prev() { return prev; }
 
   virtual int start(AI* ai) = 0;
-  inline virtual void suspend(AI* ai) { }
-  inline virtual int resume(AI* ai) { return start(ai); }
-  inline virtual int update(AI* ai) { return complete(ai); }
+  virtual void suspend(AI* ai) { }
+  virtual int resume(AI* ai) { return start(ai); }
+  virtual int update(AI* ai) { return complete(ai); }
 
   inline int complete(AI* ai) {
     ai->script = prev;

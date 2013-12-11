@@ -9,14 +9,14 @@ struct Clearance {
   Department::Mask dept;
 };
 
-struct ClearanceComp : ECompStatic<EComp::Clearance> {
-  ClearanceComp(Clearance c) : clear(c) { }
+struct ClearanceComp : AspectStatic<Aspect::Clearance, ClearanceComp> {
+  ClearanceComp(struct Clearance c) : clear(c) { }
 
-  inline Clearance clearance() const { return clear; }
-  inline Security::Mask security() const { return clear.security; }
-  inline Department::Mask department() const { return clear.dept; }
+  inline struct Clearance& clearance() { return clear; }
+  inline Security::Mask& security() { return clear.security; }
+  inline Department::Mask& department() { return clear.dept; }
 
-  Clearance clear;
+  struct Clearance clear;
 };
 
 inline bool operator&(const Clearance& l, const Clearance& r) {

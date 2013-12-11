@@ -38,3 +38,5 @@ public:
   virtual void render(Graphics& g);
   void add(const StatusMsg& status);
 };
+
+extern StatusText statustext;
