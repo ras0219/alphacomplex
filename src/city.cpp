@@ -101,12 +101,12 @@ wistream& operator>>(wistream& is, City& c) {
           if (c.tile(k, j).type != ch)
             break;
         }
-        int w = k - i;
+        //int w = k - i;
         for (k = j + 1; k < c.getYSize(); ++k) {
           if (c.tile(i, k).type != ch)
             break;
         }
-        int h = k - j;
+        //int h = k - j;
 
         // room's top-left is i,j and dimensions are w x h
         // if (ch == 'C')

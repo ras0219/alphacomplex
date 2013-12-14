@@ -16,7 +16,7 @@ struct JobList {
   using iterator = list_t::iterator;
 
   inline iterator add_job(Job* j) { return add_job(shared_ptr<Job>(j)); }
-  inline iterator add_job(shared_ptr<Job>& j) {
+  inline iterator add_job(const shared_ptr<Job>& j) {
     jlist.push_back(j);
     return --jlist.end();
   }

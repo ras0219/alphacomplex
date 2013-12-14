@@ -48,7 +48,7 @@ Ent* make_workroom(City* c, int x, int y, int w, int h) {
   AIScript* script = new MakeWorkScript();
 
   AI* ai = new AI(script);
-  
+  r->add(ai);
   return r;
 }
 
