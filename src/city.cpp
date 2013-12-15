@@ -1,27 +1,28 @@
-#include "defs.hpp"
-#include "city.hpp"
-#include "room.hpp"
-#include "workroom.hpp"
-#include "garbage.hpp"
-#include "log.hpp"
-#include "citizen.hpp"
-#include "windows.hpp"
-#include "ifai.hpp"
-#include "callbackai.hpp"
-#include "sequenceai.hpp"
-#include "pathai.hpp"
-#include "ifai.hpp"
 #include "activityai.hpp"
+#include "callbackai.hpp"
+#include "citizen.hpp"
+#include "city.hpp"
+#include "defs.hpp"
+#include "furniture.hpp"
+#include "garbage.hpp"
+#include "ifai.hpp"
+#include "ifai.hpp"
+#include "log.hpp"
+#include "pathai.hpp"
+#include "room.hpp"
+#include "sequenceai.hpp"
+#include "windows.hpp"
+#include "workroom.hpp"
 
 #include <stdexcept>
 
 //const char* SentinelEntity::RAWNAME = "sentinel";
 
 Room* City::find_room(const char* rawname) {
-  for (auto r : rooms) {
-    if (r->rawname() == rawname)
-      return r;
-  }
+  // for (auto r : rooms) {
+  //   if (r->rawname() == rawname)
+  //     return r;
+  // }
   return nullptr;
 }
 
@@ -98,10 +99,10 @@ istream& operator>>(istream& is, City& c) {
         int h = k-j;
 
         // room's top-left is i,j and dimensions are w x h
-        if (ch == 'C')
-          c.rooms.push_back(new CleaningRoom(i,j,w,h));
-        else
-          c.rooms.push_back(new WorkRoom(i,j,w,h,ch));
+        // if (ch == 'C')
+        //   c.rooms.push_back(new CleaningRoom(i,j,w,h));
+        // else
+        //   c.rooms.push_back(new WorkRoom(i,j,w,h,ch));
       }
     }
   }
@@ -176,6 +177,28 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   
   Job* job = new Job("Dig", c, s2);
   jobs.add_job(job);
+}
+
+vector<Room*> City::find_rooms(int x, int y) {
+  vector<Room*> ret;
+  for (auto r : rooms)
+    if (r->contains(x, y))
+      ret.push_back(r);
+  return ret;
+}
+
+vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
+  vector<Furniture*> ret;
+  for (int i = x; i < x+w; ++i) {
+    for (int j = y; j < y+h; ++j) {
+      for (auto e : ent(i,j)) {
+        if (e->has<Furniture>()) {
+          ret.push_back(e->assert_get<Furniture>());
+        }
+      }
+    }
+  }
+  return ret;
 }
 
 void City::toggle_dig_wall(int x, int y) {

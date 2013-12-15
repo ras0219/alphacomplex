@@ -6,31 +6,23 @@
 #include "callbackai.hpp"
 #include "sequenceai.hpp"
 #include "pathai.hpp"
+#include "room.hpp"
 
 #include <cstdlib>
 #include <cstdio>
 
-const char* WorkRoom::RAWNAME = "workroom";
-
 extern int influence;
 
-void WorkRoom::update() {
-  if (current_work == nullptr) {
-    ++work_counter;
+Job* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p);
 
-    int work_countdown = 400 - work_counter;
-    if (rand() % work_countdown == 0) {
-      // Congratulations! Mandatory bonus work!
-      current_work = make_fetch_job(1, 1, x, y, this);
-      jobs.add_job(current_work);
-      work_counter = 0;
-    }
-  }
-}
+Ent* make_workroom(City* c, int x, int y, int w, int h) {
+  Ent* r = new Ent;
+  
+  Room* room = new Room(c, x, y, w, h);
+  r->add(room);
+  room->init();
 
-void WorkRoom::complete_job() {
-  current_work = nullptr;
-  influence += 1;
+  return r;
 }
 
 Job* make_fetch_job(int x1, int y1, int x2, int y2, WorkRoom* p) {

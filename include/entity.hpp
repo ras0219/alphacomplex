@@ -18,12 +18,19 @@ struct Aspect {
     Skilled,
     Renderable,
     AI,
+    NeedsAI,
     Clearance,
     Descriptable,
     Position,
     CitizenName,
     Movable,
-    Inventory
+    Inventory,
+    Room,
+    Furniture,
+    Foodstuff,
+    Pharmaceutical,
+    Item,
+    JobProvider
   };
 
   Aspect(Kind k) : kind(k), parent(nullptr) { }

@@ -13,6 +13,8 @@ struct SubSystem : System {
   typedef unordered_map<Ent*, tuple_t > map_t;
   typedef typename map_t::value_type value_type;
 
+  SubSystem(int tr = 1) : tickcount(0), tickrate(tr) { }
+
   virtual void insert(Ent* e) override {
     nodes.insert({e, e->get_tuple<Args...>()});
   }
@@ -21,9 +23,13 @@ struct SubSystem : System {
   }
 
   virtual void update() override {
-    for (auto node : nodes)
-      static_cast<Derived*>(this)->update(node);
+    tickcount = (tickcount + 1) % tickrate;
+    if (tickcount == 0)
+      for (auto node : nodes)
+        static_cast<Derived*>(this)->update(node);
   }
 
+  int tickcount;
+  int tickrate;
   map_t nodes;
 };

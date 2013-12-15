@@ -10,7 +10,7 @@
 
 #include <cstdio>
 
-const char* CleaningRoom::RAWNAME = "cleaningroom";
+// const char* CleaningRoom::RAWNAME = "cleaningroom";
 
 Ent* make_garbage(Position pos) {
   Ent* e = new Ent;

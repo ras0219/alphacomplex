@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 #include "defs.hpp"
 #include "graphics.hpp"
@@ -59,10 +60,20 @@ struct City {
     ent(x, y).insert(e);
   }
   inline void del_ent(int x, int y, Ent* e) {
-    uint sz = ent(x,y).size();
-    ent(x,y).erase(e);
-    assert(sz > ent(x,y).size());
+    ent(x, y).erase(e);
   }
+
+  inline void add_room(struct Room* r) {
+    rooms.push_back(r);
+  }
+  inline void del_room(struct Room* r) {
+    auto it = std::find(rooms.begin(), rooms.end(), r);
+    assert(it != rooms.end());
+    rooms.erase(it);
+  }
+
+  vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
+  vector<struct Room*> find_rooms(int x, int y);
 
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);

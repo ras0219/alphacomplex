@@ -71,12 +71,9 @@ int main(int argc, char** argv) {
     if (t - last_lf >= microseconds(US_PER_LGC)) {
       if (!paused) {
         ++gametime;
+
         for (auto sys : systems)
           sys->update();
-        
-        for (auto r : city.rooms)
-          r->update();
-
       }
       us_per_lf = duration_cast<microseconds>(t - last_lf);
       last_lf = t;
