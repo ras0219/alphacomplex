@@ -6,36 +6,16 @@
 #
 # This cmake module is based on cmake code found on github...
 
-include(LibFindMacros)
 
 if (UNIX AND NOT APPLE)
-  set(SDL2_PKGCONF_INCLUDE_DIRS)
-  set(SDL2_PKGCONF_LIBRARY_DIRS)
-  libfind_pkg_check_modules(SDL2_PKGCONF SDL2)
+  include(FindPkgConfig)
+  pkg_search_module (SDL2 sdl2 SDL2)
 
-  #find_package (PkgConfig QUIET)
+  include(FindPackageHandleStandardArgs)
 
-  # include (FindPkgConfig)
-  #if (PkgConfig_FOUND)
-  #  pkg_search_module (SDL2 REQUIRED sdl2)
-  #endif ()
+  find_package_handle_standard_args (SDL2 DEFAULT_MSG SDL2_LIBRARIES SDL2_INCLUDE_DIRS)
+  mark_as_advanced (SDL2_LIBRARIES SDL2_INCLUDE_DIRS)
 
-  find_path (SDL2_INCLUDE_DIR
-    NAMES SDL.h
-    PATH_SUFFIXES include/SDL2 include
-    PATHS ${SDL2_PKGCONF_INCLUDE_DIRS}
-  )
-
-  find_path (SDL2_LIBRARY
-    NAMES SDL2
-    PATH_SUFFIXES lib64 lib
-    PATHS ${SDL2_PKGCONF_LIBRARY_DIRS}
-  )
-
-  set (SDL2_PROCESS_INCLUDES SDL2_INCLUDE_DIR)
-  set (SDL2_PROCESS_LIBS SDL2_LIBRARIES)
-
-  libfind_process (SDL2)
 elseif (APPLE)
   FIND_PATH(SDL2_INCLUDE_DIR SDL.h
     HINTS $ENV{SDL2DIR}
