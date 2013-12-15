@@ -5,11 +5,6 @@
 
 #include <iostream>
 
-JobList::iterator JobList::add_job(Job* j) {
-  jlist.push_back(j);
-  return --jlist.end();
-}
-
 void JobList::remove_jobs() {
   auto it = jlist.begin();
   while (it != jlist.end()) {
@@ -24,13 +19,13 @@ void JobList::remove_jobs() {
 Job* JobList::find_job(Clearance c) {
   auto it = jlist.begin();
   while (it != jlist.end()) {
-    Job *j = *it;
+    auto j = *it;
     if (j->completed()) {
       jlist.erase(it++);
       continue;
     }
     if (j->available() && j->clearance() & c)
-      return j;
+      return j.get();
     ++it;
   }
   return nullptr;

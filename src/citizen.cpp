@@ -65,7 +65,7 @@ Ent* new_citizen(Position pos, Security::Mask sec) {
   e->add(new PositionComp(pos));
   e->add(new Movable(pos));
   e->add(new AI(new IdleAI));
-  e->add(new ClearanceComp({sec, Department::random_dept()}));
+  e->add(new ClearanceComp(Clearance{ sec, Department::random_dept() }));
   e->add(new Renderable(Security::mask_to_dcode(sec)[0]));
   e->add(random_citizenname());
 

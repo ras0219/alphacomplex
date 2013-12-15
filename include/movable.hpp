@@ -27,7 +27,7 @@ struct Movable : AspectStatic<Aspect::Movable, Movable> {
 struct SimpleMovableSystem : SubSystem<SimpleMovableSystem, Movable> {
   inline void update(value_type& p) {
     PositionComp* pc = p.first->assert_get<PositionComp>();
-    pc->move(get<0>(p.second)->pos);
+    pc->move(p.second->pos);
   }
 };
 

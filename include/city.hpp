@@ -82,7 +82,7 @@ struct City {
   void toggle_dig_wall(int x, int y);
   void remove_wall(int x, int y);
 
-  inline void resize(int x, int y) { xsz = x; ysz = y; designs.resize(x, y); }
+  void resize(int x, int y);
 
   City() : xsz(0), ysz(0), designs(0, 0) {}
   City(int x, int y) : xsz(x), ysz(y), tiles(x*y),
@@ -92,7 +92,7 @@ struct City {
   struct Room* find_room(const char*);
 };
 
-istream& operator>>(istream& is, City& city);
+wistream& operator>>(wistream& is, City& city);
 
 struct Position {
   inline point as_point() const { return {x, y}; }

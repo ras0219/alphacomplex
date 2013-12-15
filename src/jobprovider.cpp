@@ -7,16 +7,17 @@ JobProvider::~JobProvider() {
     delete j;
 
   for (auto j : provided_jobs)
-    j->complete();
+    if (j->available())
+      j->complete();
 }
 
 void JobProviderSystem::update(value_type& p) {
-  JobProvider& jp = *get<0>(p.second);
+  JobProvider& jp = *p.second;
 
-  for (auto j : to_provide_jobs) {
-    jobs.add_job(j);
-    provided_jobs.push_back(j);
+  for (auto j : jp.to_provide_jobs) {
+    jp.provided_jobs.emplace_back(j);
+    jobs.add_job(jp.provided_jobs.back());
   }
 
-  to_provide_jobs.clear();
+  jp.to_provide_jobs.clear();
 }

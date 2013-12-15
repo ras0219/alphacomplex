@@ -7,16 +7,15 @@
 
 using std::unordered_map;
 
-template<class Derived, class...Args>
+template<class Derived, class Arg>
 struct SubSystem : System {
-  typedef tuple<Args*...> tuple_t;
-  typedef unordered_map<Ent*, tuple_t > map_t;
+  typedef unordered_map<Ent*, Arg*> map_t;
   typedef typename map_t::value_type value_type;
 
   SubSystem(int tr = 1) : tickcount(0), tickrate(tr) { }
 
   virtual void insert(Ent* e) override {
-    nodes.insert({e, e->get_tuple<Args...>()});
+    nodes.insert({e, e->get<Arg>()});
   }
   virtual void erase(Ent* e) override {
     nodes.erase(e);

@@ -8,7 +8,7 @@ struct ItemProperties {
 };
 
 struct Item : AspectStatic<Aspect::Item, Item> {
-  Item(const ItemProperties& p) : prop(p), { }
+  Item(const ItemProperties& p) : prop(p), locked(false) { }
 
   inline void lock() { assert(!locked); locked = true; }
   inline void unlock() { assert(locked); locked = false; }

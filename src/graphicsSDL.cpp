@@ -48,7 +48,6 @@ struct GraphicsImpl : Graphics {
   int sdl_last_call;
 };
 
-
 GraphicsImpl::GraphicsImpl()
   : win(nullptr), ren(nullptr), main_texture(nullptr),
     ttf_texture(nullptr), font_color({0,0,0}),

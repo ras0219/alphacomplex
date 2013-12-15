@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -53,12 +53,21 @@
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <AdditionalDependencies>SDL2-2.0.1\lib\x86\SDL2.lib;SDL2-2.0.1\lib\x86\SDL2main.lib;SDL2_ttf-2.0.12\lib\x86\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;libcmt.lib;libc.lib;msvcrt.lib;libcd.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y SDL2-2.0.1\lib\x86\SDL2.dll "$(TargetDir)"
+xcopy /Y SDL2_ttf-2.0.12\lib\x86\SDL2_ttf.dll "$(TargetDir)"
+xcopy /Y SDL2_ttf-2.0.12\lib\x86\libfreetype-6.dll "$(TargetDir)"
+xcopy /Y SDL2_ttf-2.0.12\lib\x86\zlib1.dll "$(TargetDir)"
+xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -76,21 +85,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\ai.cpp" />
     <ClCompile Include="..\src\announceview.cpp" />
     <ClCompile Include="..\src\citizen.cpp" />
+    <ClCompile Include="..\src\citizenname.cpp" />
     <ClCompile Include="..\src\city.cpp" />
     <ClCompile Include="..\src\clock.cpp" />
     <ClCompile Include="..\src\designview.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
+    <ClCompile Include="..\src\foodstuff.cpp" />
+    <ClCompile Include="..\src\furniture.cpp" />
     <ClCompile Include="..\src\garbage.cpp" />
     <ClCompile Include="..\src\graphicsSDL.cpp" />
     <ClCompile Include="..\src\helpview.cpp" />
     <ClCompile Include="..\src\hud.cpp" />
     <ClCompile Include="..\src\job.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
+    <ClCompile Include="..\src\jobprovider.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\mainview.cpp" />
     <ClCompile Include="..\src\mapview.cpp" />
+    <ClCompile Include="..\src\movable.cpp" />
     <ClCompile Include="..\src\pathfind.cpp" />
     <ClCompile Include="..\src\room.cpp" />
     <ClCompile Include="..\src\skills.cpp" />
@@ -101,33 +116,55 @@
     <ClCompile Include="..\src\workroom.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\activityai.hpp" />
+    <ClInclude Include="..\include\ai.hpp" />
+    <ClInclude Include="..\include\aidsl.hpp" />
     <ClInclude Include="..\include\announceview.hpp" />
+    <ClInclude Include="..\include\callbackai.hpp" />
     <ClInclude Include="..\include\citizen.hpp" />
+    <ClInclude Include="..\include\citizenname.hpp" />
     <ClInclude Include="..\include\city.hpp" />
+    <ClInclude Include="..\include\clearance.hpp" />
     <ClInclude Include="..\include\clock.hpp" />
     <ClInclude Include="..\include\component.hpp" />
     <ClInclude Include="..\include\controller.hpp" />
     <ClInclude Include="..\include\debug_policy.hpp" />
     <ClInclude Include="..\include\defs.hpp" />
+    <ClInclude Include="..\include\deleteai.hpp" />
     <ClInclude Include="..\include\department.hpp" />
+    <ClInclude Include="..\include\descriptable.hpp" />
     <ClInclude Include="..\include\designview.hpp" />
     <ClInclude Include="..\include\entity.hpp" />
     <ClInclude Include="..\include\faction.hpp" />
+    <ClInclude Include="..\include\foodstuff.hpp" />
+    <ClInclude Include="..\include\furniture.hpp" />
     <ClInclude Include="..\include\garbage.hpp" />
     <ClInclude Include="..\include\graphics.hpp" />
     <ClInclude Include="..\include\helpview.hpp" />
     <ClInclude Include="..\include\hud.hpp" />
+    <ClInclude Include="..\include\ifai.hpp" />
+    <ClInclude Include="..\include\inventory.hpp" />
+    <ClInclude Include="..\include\item.hpp" />
     <ClInclude Include="..\include\job.hpp" />
     <ClInclude Include="..\include\joblist.hpp" />
+    <ClInclude Include="..\include\jobprovider.hpp" />
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\mainview.hpp" />
     <ClInclude Include="..\include\mapview.hpp" />
+    <ClInclude Include="..\include\movable.hpp" />
+    <ClInclude Include="..\include\needsai.hpp" />
+    <ClInclude Include="..\include\pathai.hpp" />
     <ClInclude Include="..\include\pathfind.hpp" />
+    <ClInclude Include="..\include\position.hpp" />
+    <ClInclude Include="..\include\renderable.hpp" />
     <ClInclude Include="..\include\room.hpp" />
-	  <ClInclude Include="..\include\statustext.hpp" />
+    <ClInclude Include="..\include\sequenceai.hpp" />
+    <ClInclude Include="..\include\statustext.hpp" />
     <ClInclude Include="..\include\security.hpp" />
     <ClInclude Include="..\include\skills.hpp" />
+    <ClInclude Include="..\include\subsystem.hpp" />
+    <ClInclude Include="..\include\system.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
     <ClInclude Include="..\include\unitview.hpp" />
     <ClInclude Include="..\include\view.hpp" />

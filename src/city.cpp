@@ -26,7 +26,13 @@ Room* City::find_room(const char* rawname) {
   return nullptr;
 }
 
-istream& operator>>(istream& is, City& c) {
+void City::resize(int x, int y) {
+  xsz = x;
+  ysz = y;
+  designs.resize(x, y);
+}
+
+wistream& operator>>(wistream& is, City& c) {
   c.tiles.clear();
   c.ents.clear();
   c.xsz = 0;
@@ -35,9 +41,9 @@ istream& operator>>(istream& is, City& c) {
   int x = 0;
   int y = 0;
 
-  string s;
+  wstring s;
   while (getline(is, s)) {
-    LOGGER::error() << "'" << s << "'" << endl;
+    // LOGGER::error() << "'" << s. << "'" << endl;
     if (s.size() == 0)
       continue;
     if (y == 0)
@@ -46,8 +52,8 @@ istream& operator>>(istream& is, City& c) {
     if (s.size() != (uint)x)
       throw runtime_error("invalid c format");
 
-    for (int i=0; i < x; ++i) {
-      c.tiles.push_back( {(Tile::TileKind)s[i]} );
+    for (int i = 0; i < x; ++i) {
+      c.tiles.push_back({ (Tile::TileKind)s[i] });
       c.ents.emplace_back();
     }
 
@@ -62,41 +68,45 @@ istream& operator>>(istream& is, City& c) {
   LOGGER::verbose() << "C is " << x << " by " << y << endl;
 
   // Now generate rooms
-  for (int j=0; j<c.getYSize();++j) {
-    for (int i=0; i<c.getXSize();++i) {
-      char ch = c.tile(i,j).type;
+  for (int j = 0; j < c.getYSize(); ++j) {
+    for (int i = 0; i < c.getXSize(); ++i) {
+      char ch = c.tile(i, j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
-      } else if (ch == 'E') {
+      }
+      else if (ch == 'E') {
         // Citizen* e = new Citizen(i,j,Security::RED, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i,j).insert(new_citizen({i,j,&c}, Security::RED));
-        c.tile(i,j).type = Tile::ground;
-      } else if (ch == 'O') {
+        c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::RED));
+        c.tile(i, j).type = Tile::ground;
+      }
+      else if (ch == 'O') {
         // Citizen* e = new Citizen(i,j,Security::ORANGE, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i,j).insert(new_citizen({i,j,&c}, Security::ORANGE));
-        c.tile(i,j).type = Tile::ground;
-      } else if (ch == 'D') {
+        c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::ORANGE));
+        c.tile(i, j).type = Tile::ground;
+      }
+      else if (ch == 'D') {
         // Dwarf* e = new Dwarf(i,j, c);
         // e->insert_after(c.ent(i,j));
-        c.tile(i,j).type = Tile::ground;
-      } else {
-        if (i > 0 && c.tile(i-1,j).type == ch)
+        c.tile(i, j).type = Tile::ground;
+      }
+      else {
+        if (i > 0 && c.tile(i - 1, j).type == ch)
           continue;
-        if (j > 0 && c.tile(i,j-1).type == ch)
+        if (j > 0 && c.tile(i, j - 1).type == ch)
           continue;
         // figure out how wide and high the room is
         int k;
-        for (k = i+1; k < c.getXSize(); ++k) {
-          if (c.tile(k,j).type != ch)
+        for (k = i + 1; k < c.getXSize(); ++k) {
+          if (c.tile(k, j).type != ch)
             break;
         }
-        int w = k-i;
-        for (k = j+1; k < c.getYSize(); ++k) {
-          if (c.tile(i,k).type != ch)
+        int w = k - i;
+        for (k = j + 1; k < c.getYSize(); ++k) {
+          if (c.tile(i, k).type != ch)
             break;
         }
-        int h = k-j;
+        int h = k - j;
 
         // room's top-left is i,j and dimensions are w x h
         // if (ch == 'C')
@@ -110,9 +120,9 @@ istream& operator>>(istream& is, City& c) {
   for (auto r : c.rooms)
     LOGGER::verbose() << r->w << 'x' << r->h << " Room @ " << r->x << ", " << r->y << endl;
 
-  for (int j=0; j<c.getYSize();++j) {
-    for (int i=0; i<c.getXSize();++i)
-      LOGGER::verbose() << (char)c.tile(i,j).type;
+  for (int j = 0; j < c.getYSize(); ++j) {
+    for (int i = 0; i < c.getXSize(); ++i)
+      LOGGER::verbose() << (char)c.tile(i, j).type;
     LOGGER::verbose() << '\n';
   }
 
@@ -143,7 +153,7 @@ istream& operator>>(istream& is, City& c) {
 // struct DigJob : Job {
 //   DigJob(City* c, int dx_, int dy_, int wx_, int wy_)
 //     : city(c), dx(dx_), dy(dy_), wx(wx_), wy(wy_) { }
-  
+
 //   virtual int description(char* buf, size_t n) const {
 //     return snprintf(buf, n, "Digging");
 //   }
@@ -161,20 +171,20 @@ istream& operator>>(istream& is, City& c) {
 void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   Clearance c = { Security::ALL, Department::ALL };
   auto wall_cb = [=]() {
-    return city->designs(digx,digy) & 1 && city->tile(digx,digy).type == Tile::wall;
+    return city->designs(digx, digy) & 1 && city->tile(digx, digy).type == Tile::wall;
   };
-  auto dig_cb = [=]() { city->remove_wall(digx,digy); };
+  auto dig_cb = [=]() { city->remove_wall(digx, digy); };
 
-  AIScript* s1 = new SequenceAI {
+  AIScript* s1 = new SequenceAI{
     new ActivityAI(100),
     new_ifscript(wall_cb, new_callbackai(dig_cb))
   };
 
-  AIScript* s2 = new SequenceAI {
-    new PathAI({x1, y1}),
+  AIScript* s2 = new SequenceAI{
+    new PathAI(point(x1, y1)),
     new_ifscript(wall_cb, s1)
   };
-  
+
   Job* job = new Job("Dig", c, s2);
   jobs.add_job(job);
 }
@@ -182,16 +192,16 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
 vector<Room*> City::find_rooms(int x, int y) {
   vector<Room*> ret;
   for (auto r : rooms)
-    if (r->contains(x, y))
-      ret.push_back(r);
+  if (r->contains(x, y))
+    ret.push_back(r);
   return ret;
 }
 
 vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
   vector<Furniture*> ret;
-  for (int i = x; i < x+w; ++i) {
-    for (int j = y; j < y+h; ++j) {
-      for (auto e : ent(i,j)) {
+  for (int i = x; i < x + w; ++i) {
+    for (int j = y; j < y + h; ++j) {
+      for (auto e : ent(i, j)) {
         if (e->has<Furniture>()) {
           ret.push_back(e->assert_get<Furniture>());
         }
@@ -202,12 +212,12 @@ vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
 }
 
 void City::toggle_dig_wall(int x, int y) {
-  if (tile(x,y).type == Tile::wall) {
-    designs(x,y) ^= 1; // Mark for digging
-    if (designs(x,y) & 1) {
+  if (tile(x, y).type == Tile::wall) {
+    designs(x, y) ^= 1; // Mark for digging
+    if (designs(x, y) & 1) {
       for (auto o : offs) {
-        if (tile(x+o.first,y+o.second).walkable()) {
-          add_wall_dig_job(this, x+o.first, y+o.second, x, y);
+        if (tile(x + o.first, y + o.second).walkable()) {
+          add_wall_dig_job(this, x + o.first, y + o.second, x, y);
           break;
         }
       }
@@ -215,19 +225,19 @@ void City::toggle_dig_wall(int x, int y) {
   }
 }
 void City::remove_wall(int x, int y) {
-  if (tile(x,y).type != Tile::wall)
+  if (tile(x, y).type != Tile::wall)
     return;
-  designs(x,y) &= ~1;
-  tile(x,y).type = Tile::ground;
+  designs(x, y) &= ~1;
+  tile(x, y).type = Tile::ground;
 
   for (auto o : offs) {
-    if (!(designs(x+o.first, y+o.second) & 1))
+    if (!(designs(x + o.first, y + o.second) & 1))
       continue;
     int facings = 0;
     for (auto o2 : offs)
-      if (tile(x+o.first+o2.first, y+o.second+o2.second).walkable())
-        ++facings;
+    if (tile(x + o.first + o2.first, y + o.second + o2.second).walkable())
+      ++facings;
     if (facings == 1)
-      add_wall_dig_job(this, x, y, x+o.first, y+o.second);
+      add_wall_dig_job(this, x, y, x + o.first, y + o.second);
   }
 }

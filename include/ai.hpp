@@ -7,7 +7,7 @@
 using std::vector;
 
 struct AI : AspectStatic<Aspect::AI, AI> {
-  AI(struct AIScript* base) : scripts{{base, 0}} { }
+  AI(struct AIScript* base) : scripts(1, { base, 0 }) { }
 
   // Methods for the public
   void update();
@@ -29,7 +29,7 @@ struct AI : AspectStatic<Aspect::AI, AI> {
 
 struct AISystem : SubSystem<AISystem, AI> {
   inline void update(value_type& p) {
-    get<0>(p.second)->update();
+    p.second->update();
   }
 };
 extern AISystem aisystem;

@@ -1,4 +1,6 @@
 #include "foodstuff.hpp"
+#include "item.hpp"
+#include "position.hpp"
 
 ItemProperties breadprops = { "Bread", 1 };
 

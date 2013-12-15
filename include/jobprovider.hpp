@@ -2,19 +2,21 @@
 
 #include "entity.hpp"
 #include "subsystem.hpp"
+#include "job.hpp"
 
+#include <memory>
 #include <vector>
 using std::vector;
-
-struct Job;
+using std::shared_ptr;
 
 struct JobProvider : AspectStatic<Aspect::JobProvider, JobProvider> {
   ~JobProvider();
+
   // Public
   vector<Job*> to_provide_jobs;
 
   // Private
-  vector<Job*> provided_jobs;
+  vector<shared_ptr<Job>> provided_jobs;
 };
 
 struct JobProviderSystem : SubSystem<JobProviderSystem, JobProvider> {
