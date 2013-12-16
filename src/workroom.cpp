@@ -21,14 +21,21 @@ struct MakeWorkScript : AIScript {
     return 100;
   }
   virtual int update(AI* ai) {
+    Ent* room = ai->parent;
+    JobProvider* jobprov = room->assert_get<JobProvider>();
+
+
+    for (uint x = 0; x < jobprov->provided_jobs.size(); ++x) {
+      if (jobprov->provided_jobs[x]->completed())
+        jobprov->provided_jobs.erase(jobprov->provided_jobs.begin() + x--);
+    }
+
     if (rand() % 20 > 0)
       return 100;
 
-    Ent* room = ai->parent;
-    PositionComp* pos = room->get<PositionComp>();
-    JobProvider* jobprov = room->get<JobProvider>();
-    int x2 = pos->x();
-    int y2 = pos->y();
+    Room* pos = room->assert_get<Room>();
+    int x2 = pos->x;
+    int y2 = pos->y;
 
     int x = 1, y = 1;
 
@@ -38,17 +45,18 @@ struct MakeWorkScript : AIScript {
   }
 };
 
-Ent* make_workroom(City* c, int x, int y, int w, int h) {
+Ent* make_workroom(City& c, int x, int y, int w, int h) {
   Ent* r = new Ent;
   
   Room* room = new Room(c, x, y, w, h);
   r->add(room);
   room->init();
 
-  AIScript* script = new MakeWorkScript();
+  r->add(new AI(new MakeWorkScript));
+  r->add(new JobProvider);
 
-  AI* ai = new AI(script);
-  r->add(ai);
+  r->add(&aisystem);
+  r->add(&jpsystem);
   return r;
 }
 

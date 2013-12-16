@@ -72,47 +72,45 @@ wistream& operator>>(wistream& is, City& c) {
     for (int i = 0; i < c.getXSize(); ++i) {
       char ch = c.tile(i, j).type;
       if (ch == Tile::wall || ch == Tile::ground) {
-      }
-      else if (ch == 'E') {
+      } else if (ch == 'E') {
         // Citizen* e = new Citizen(i,j,Security::RED, c);
         // e->insert_after(c.ent(i,j));
         c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::RED));
         c.tile(i, j).type = Tile::ground;
-      }
-      else if (ch == 'O') {
+      } else if (ch == 'O') {
         // Citizen* e = new Citizen(i,j,Security::ORANGE, c);
         // e->insert_after(c.ent(i,j));
         c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::ORANGE));
         c.tile(i, j).type = Tile::ground;
-      }
-      else if (ch == 'D') {
+      } else if (ch == 'D') {
         // Dwarf* e = new Dwarf(i,j, c);
         // e->insert_after(c.ent(i,j));
         c.tile(i, j).type = Tile::ground;
-      }
-      else {
-        if (i > 0 && c.tile(i - 1, j).type == ch)
-          continue;
-        if (j > 0 && c.tile(i, j - 1).type == ch)
-          continue;
+      } else {
         // figure out how wide and high the room is
-        int k;
-        for (k = i + 1; k < c.getXSize(); ++k) {
-          if (c.tile(k, j).type != ch)
+        int kx, ky, w, h;
+        for (kx = i; kx < c.getXSize(); ++kx) {
+          if (c.tile(kx, j).type != ch)
             break;
         }
-        //int w = k - i;
-        for (k = j + 1; k < c.getYSize(); ++k) {
-          if (c.tile(i, k).type != ch)
-            break;
+        for (ky = j; ky < c.getYSize(); ++ky) {
+          for (int x = i; x < kx; ++x) {
+            if (c.tile(x, ky).type != ch)
+              goto finish_loop;
+          }
         }
-        //int h = k - j;
+        finish_loop:
+        w = kx - i;
+        h = ky - j;
+
+        for (int y = j; y < ky; ++y) {
+          for (int x = i; x < kx; ++x) {
+            c.tile(x, y).type = Tile::ground;
+          }
+        }
 
         // room's top-left is i,j and dimensions are w x h
-        // if (ch == 'C')
-        //   c.rooms.push_back(new CleaningRoom(i,j,w,h));
-        // else
-        //   c.rooms.push_back(new WorkRoom(i,j,w,h,ch));
+        c.rooms.push_back(make_workroom(c, i, j, w, h)->assert_get<Room>());
       }
     }
   }

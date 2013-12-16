@@ -28,6 +28,7 @@
 #include "mainview.hpp"
 #include "ai.hpp"
 #include "movable.hpp"
+#include "jobprovider.hpp"
 
 #include <map>
 
@@ -43,7 +44,7 @@ bool paused = false;
 
 Graphics *gfx;
 
-vector<System*> systems = { &aisystem, &smsystem };
+vector<System*> systems = { &aisystem, &smsystem, &jpsystem };
 
 int main(int argc, char *argv[]) {
   try {

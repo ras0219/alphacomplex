@@ -21,3 +21,5 @@ void JobProviderSystem::update(value_type& p) {
 
   jp.to_provide_jobs.clear();
 }
+
+JobProviderSystem jpsystem;
