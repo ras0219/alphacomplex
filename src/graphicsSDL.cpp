@@ -167,7 +167,7 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context g
   }
 
    int w = 0, h = 0;
-   int errcode = TTF_SizeText(best_font, (string(buff)).c_str(), &w, &h);
+   int errcode = TTF_SizeText(best_font, buff, &w, &h);
    if (errcode == -1) assert(false);
    SDL_Rect dstRect = {x, y - 12, w, h};
    sdl_last_call = SDL_RenderCopy(ren, cached_textures[ch], NULL, &dstRect);

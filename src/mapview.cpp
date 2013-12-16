@@ -25,7 +25,7 @@ void MapView::render(Graphics& g) {
       }
 
       if (mode == DEFAULT) {
-        auto s = city->ent(x, y);
+        set<Ent*>& s = city->ent(x, y);
         auto it = s.begin();
         while (it != s.end()) {
           if ((*it)->has<Renderable>()) {

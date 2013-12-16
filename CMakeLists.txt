@@ -4,12 +4,24 @@ project (citysim)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-option (BUILD_X11 "Build a version linked against X11" ON)
-option (BUILD_SDL2 "Build a version linked against SDL2" ON)
+if (WIN32)
+  # X11 disabled by default for WIN32 (not cygwin)
+  option (BUILD_X11 "Build a version linked against X11" OFF)
+else ()
+  option (BUILD_X11 "Build a version linked against X11" ON)
+endif ()
+
+
+if (CYGWIN)
+  # SDL disabled by default for cygwin
+  option (BUILD_SDL2 "Build a version linked against SDL2" OFF)
+else ()
+  option (BUILD_SDL2 "Build a version linked against SDL2" ON)
+endif ()
 
 include_directories(include)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
