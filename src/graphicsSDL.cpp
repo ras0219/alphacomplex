@@ -11,6 +11,7 @@
 #include <vector>
 #include <chrono>
 #include <deque>
+#include <array>
 
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
@@ -37,9 +38,9 @@ struct GraphicsImpl : Graphics {
   void repaint();
   void destroy();
 
-//temp
-SDL_Texture (*cached_textures[256]);
-//temp
+  //<temp>
+  std::array<SDL_Texture*, 256> cached_textures;
+  //</temp>
 
   // Data
   int s;
@@ -58,6 +59,7 @@ GraphicsImpl::GraphicsImpl()
     ttf_texture(nullptr), font_color({0,0,0}),
     sdl_last_call(0)
 {
+  memset(&cached_textures[0], 0, sizeof(SDL_Texture*) * cached_textures.size());
   int slc = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS); 
 
   if(slc == -1) {
