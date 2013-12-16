@@ -23,6 +23,7 @@ int FONT_WIDTH = 6;
 using namespace std;
 using namespace chrono;
 
+
 struct GraphicsImpl : Graphics {
   GraphicsImpl();
 
@@ -35,6 +36,10 @@ struct GraphicsImpl : Graphics {
   void LoadText(const std::string msg, const std::string font_file);
   void repaint();
   void destroy();
+
+//temp
+SDL_Texture (*cached_textures[256]);
+//temp
 
   // Data
   int s;
@@ -149,8 +154,20 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context g
   char buff[2];
   buff[0]=ch;
   buff[1]=0;
-  drawString(x,y,buff,gc);
+  // old drawString(x,y,buff,gc);
+  if(cached_textures[ch] == NULL) //can't load entry, load it
+  {
+   LoadText(buff,TEMP_FONT_PATH);
+   cached_textures[ch]=ttf_texture;
+   ttf_texture=NULL; //we manage memory now
 
+  }
+
+   int w = 0, h = 0;
+   int errcode = TTF_SizeText(best_font, (string(buff)).c_str(), &w, &h);
+   if (errcode == -1) assert(false);
+   SDL_Rect dstRect = {x, y - 12, w, h};
+   sdl_last_call = SDL_RenderCopy(ren, cached_textures[ch], NULL, &dstRect);
 }
 
 void GraphicsImpl::repaint() {
