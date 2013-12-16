@@ -25,7 +25,7 @@ struct SubSystem : System {
     tickcount = (tickcount + 1) % tickrate;
     if (tickcount == 0)
       for (auto node : nodes)
-        static_cast<Derived*>(this)->update(node);
+        static_cast<Derived*>(this)->update_item(node);
   }
 
   int tickcount;

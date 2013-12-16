@@ -28,7 +28,7 @@ struct AI : AspectStatic<Aspect::AI, AI> {
 };
 
 struct AISystem : SubSystem<AISystem, AI> {
-  inline void update(value_type& p) {
+  inline void update_item(value_type& p) {
     p.second->update();
   }
 };

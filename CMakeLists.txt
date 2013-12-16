@@ -4,6 +4,9 @@ project (citysim)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
+set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+
 if (WIN32)
   # X11 disabled by default for WIN32 (not cygwin)
   option (BUILD_X11 "Build a version linked against X11" OFF)

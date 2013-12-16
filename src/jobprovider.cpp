@@ -11,7 +11,7 @@ JobProvider::~JobProvider() {
       j->complete();
 }
 
-void JobProviderSystem::update(value_type& p) {
+void JobProviderSystem::update_item(value_type& p) {
   JobProvider& jp = *p.second;
 
   for (auto j : jp.to_provide_jobs) {
