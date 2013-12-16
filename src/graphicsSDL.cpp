@@ -12,6 +12,7 @@
 #include <chrono>
 #include <deque>
 #include <array>
+#include <cstring>
 
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
