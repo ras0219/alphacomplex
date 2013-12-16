@@ -7,19 +7,43 @@
 include(FindSDL2)
 
 if (SDL2_FOUND)
-  # if (APPLE)
-  #   set (SDL2_ttf_INCLUDE_DIR "/Library/Frameworks/SDL2_ttf.framework/Headers/" ${SDL2_INCLUDE_DIRS})
-  #   set (SDL2_ttf_LIBRARIES "-framework SDL2_ttf" ${SDL2_LIBRARIES})
+  if (APPLE)
+    find_package(PkgConfig)
 
-  #   include (FindPackageHandleStandardArgs)
+    pkg_search_module (PC_SDL2_ttf sdl2_ttf SDL2_ttf)
 
-  #   find_package_handle_standard_args (SDL2_ttf DEFAULT_MSG SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIR)
-  #   mark_as_advanced (SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIR)
-  include(FindPkgConfig)
-  pkg_search_module (SDL2_ttf sdl2_ttf SDL2_ttf)
+    find_path (SDL2_ttf_INCLUDE_DIR SDL_ttf.h
+      PATHS
+      ${PC_SDL2_ttf_INCLUDEDIR}
+      ~/Library/Frameworks
+      /Library/Frameworks
+      )
 
-  include(FindPackageHandleStandardArgs)
+    find_library (SDL2_ttf_LIBRARY SDL2_ttf
+      PATH_SUFFIXES lib64 lib
+      PATHS
+      ${PC_SDL2_ttf_LIBDIR}
+      ~/Library/Frameworks
+      /Library/Frameworks
+      )
 
-  find_package_handle_standard_args (SDL2_ttf DEFAULT_MSG SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIRS)
-  mark_as_advanced (SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIRS)
+    include(FindPackageHandleStandardArgs)
+
+    find_package_handle_standard_args (SDL2_ttf DEFAULT_MSG SDL2_ttf_LIBRARY SDL2_ttf_INCLUDE_DIR)
+    set (SDL2_ttf_INCLUDE_DIRS ${SDL2_ttf_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
+    set (SDL2_ttf_LIBRARIES ${SDL2_ttf_LIBRARY} ${SDL2_LIBRARIES})
+    mark_as_advanced (SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIRS)
+
+    set (SDL2_ttf_FOUND ${SDL2_TTF_FOUND})
+
+  else ()
+
+    include(FindPkgConfig)
+    pkg_search_module (SDL2_ttf sdl2_ttf SDL2_ttf)
+
+    include(FindPackageHandleStandardArgs)
+
+    find_package_handle_standard_args (SDL2_ttf DEFAULT_MSG SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIRS)
+    mark_as_advanced (SDL2_ttf_LIBRARIES SDL2_ttf_INCLUDE_DIRS)
+  endif ()
 endif ()

@@ -54,6 +54,7 @@ set(SOURCES
   "src/citizenname.cpp"
   "src/ai.cpp"
   "src/movable.cpp"
+  "src/jobprovider.cpp"
   )
 
 if (BUILD_X11)
