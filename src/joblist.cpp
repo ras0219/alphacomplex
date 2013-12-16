@@ -40,12 +40,12 @@ void JobListing::render(Graphics& g) {
     if (j->completed())
       continue;
 
-    char buf[25];
     // Mark in-progress jobs
-    *buf = (j->available() ? ' ' : '~');
+    if (j->unavailable())
+      g.drawChar(g.getWidth() - 200, yoffset, '~');
 
-    j->description(buf+1, 24);
-    g.drawString(g.getWidth() - 200, yoffset, string(buf));
+    auto desc = j->description();
+    g.drawString(g.getWidth() - 188, yoffset, desc);
     yoffset += 10;
   }
 }

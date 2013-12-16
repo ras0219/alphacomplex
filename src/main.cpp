@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
 
     srand((uint)time(NULL));
     if (argc < 2)
-      wcin >> city;
+      //wcin >> city;
+      wfstream("../cities/city02.txt") >> city;
     else
       wfstream(argv[1]) >> city;
 

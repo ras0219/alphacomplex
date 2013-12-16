@@ -13,8 +13,8 @@ struct Job {
     : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
   ~Job() { if (scr) delete scr; }
 
-  inline int description(char* buf, size_t n) const {
-    return snprintf(buf, n, "%s", desc.c_str());
+  inline const string& description() const {
+    return desc;
   }
   inline Clearance clearance() const { return clear; }
 

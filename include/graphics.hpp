@@ -28,13 +28,13 @@ enum : char {
   CORNER_NE = '#',
   CORNER_NW = '#',
   CORNER_SW = '#',
-  CROSS = '#',
-  HBAR = '#',
+  CROSS = '+',
+  HBAR = '-',
   TEE_E = '#',
   TEE_W = '#',
   TEE_N = '#',
   TEE_S = '#',
-  VBAR = '#'
+  VBAR = '|'
 };
 #endif
 

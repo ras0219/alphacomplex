@@ -270,4 +270,17 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cmake\Modules\FindSDL2.cmake">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\cmake\Modules\FindSDL2_ttf.cmake">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
