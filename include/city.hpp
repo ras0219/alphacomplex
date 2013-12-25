@@ -9,7 +9,6 @@
 #include "defs.hpp"
 #include "graphics.hpp"
 #include "tile.hpp"
-#include "component.hpp"
 
 using namespace std;
 

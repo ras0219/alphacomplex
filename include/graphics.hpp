@@ -38,7 +38,7 @@ enum : char {
 };
 #endif
 
-struct Component;
+struct Widget;
 
 struct GraphicsImpl;
 
@@ -70,7 +70,7 @@ struct Graphics : debug_policy_t {
 
   int width, height;
 
-  deque<Component*> c;
+  deque<Widget*> c;
 
   bool destroyed = false;
 

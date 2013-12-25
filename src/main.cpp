@@ -16,19 +16,17 @@
 #endif
 
 #include "city.hpp"
-#include "pathfind.hpp"
 #include "graphics.hpp"
 #include "tile.hpp"
 #include "joblist.hpp"
-#include "entity.hpp"
-#include "room.hpp"
 #include "log.hpp"
 #include "clock.hpp"
-#include "viewstack.hpp"
-#include "mainview.hpp"
-#include "ai.hpp"
-#include "movable.hpp"
-#include "jobprovider.hpp"
+#include "entities/entity.hpp"
+#include "views/viewstack.hpp"
+#include "views/mainview.hpp"
+#include "components/ai/ai.hpp"
+#include "components/movable.hpp"
+#include "components/jobprovider.hpp"
 
 #include <map>
 
