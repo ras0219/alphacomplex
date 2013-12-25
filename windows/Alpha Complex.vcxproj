@@ -111,6 +111,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\job.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\jobprovider.cpp" />
+    <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\mainview.cpp" />
     <ClCompile Include="..\src\mapview.cpp" />
@@ -159,6 +160,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\jobprovider.hpp" />
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
+    <ClInclude Include="..\include\logger.hpp" />
     <ClInclude Include="..\include\mainview.hpp" />
     <ClInclude Include="..\include\mapview.hpp" />
     <ClInclude Include="..\include\movable.hpp" />
