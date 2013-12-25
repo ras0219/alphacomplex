@@ -75,6 +75,8 @@ GraphicsImpl::GraphicsImpl() {
 }
 void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
 {
+  (void)msg;
+  (void)font_file;
   return;
 }
 void GraphicsImpl::handle_events(Controller* c) {

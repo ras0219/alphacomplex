@@ -43,7 +43,8 @@ struct AIScript {
   inline AIScript* get_prev() { return prev; }
 
   virtual int start(AI* ai) = 0;
-  virtual void suspend(AI* ai) { }
+  //this statement prevents unused argument, but has no effect.
+  virtual void suspend(AI* ai) {(void)ai; }
   virtual int resume(AI* ai) { return start(ai); }
   virtual int update(AI* ai) { return complete(ai); }
 

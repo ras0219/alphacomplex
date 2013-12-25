@@ -1,3 +1,4 @@
+#include "logger.hpp"
 #include "graphics.hpp"
 #include "component.hpp"
 #include "controller.hpp"
@@ -53,14 +54,22 @@ struct GraphicsImpl : Graphics {
   TTF_Font* best_font;
   SDL_Color font_color;
   int sdl_last_call;
+  Logger *graphics_log;
 };
 
 GraphicsImpl::GraphicsImpl()
   : win(nullptr), ren(nullptr), main_texture(nullptr),
-    ttf_texture(nullptr), font_color({0,0,0}),
-    sdl_last_call(0)
+    ttf_texture(nullptr), font_color({0,0,0,0}),
+    sdl_last_call(0), graphics_log(nullptr)
 {
   memset(&cached_textures[0], 0, sizeof(SDL_Texture*) * cached_textures.size());
+  graphics_log = new Logger("graphics.txt");
+  graphics_log->Write("%s","Initializing graphics file for SDL");
+  SDL_version compiled,linked;
+  SDL_VERSION(&compiled);
+  SDL_GetVersion(&linked);
+  graphics_log->Write("SDL Version compiled against:%d.%d.%d\nSDL Version linked against:%d.%d.%d",
+    compiled.major, compiled.minor,compiled.patch,linked.major,linked.minor,linked.patch);
   int slc = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS); 
 
   if(slc == -1) {
@@ -100,10 +109,27 @@ GraphicsImpl::GraphicsImpl()
     exit(-1); //to-do: use a logger.
   }
   SDL_RenderClear(ren);
+  //debug times.
+  //following is not supported on SDL 2.0.0
+//  graphics_log->Write("%s. We have %i MB of RAM","Finished initializing graphics for SDL!",SDL_GetSystemRAM());
+  int num_drivers = SDL_GetNumVideoDrivers();
+  if(num_drivers<0)
+  {
+   graphics_log->Write("%s\n%s","Error! Unable to figure out how many drivers we got",SDL_GetError());
+   return;
+  }
+  graphics_log->Write("We have %i drivers available",num_drivers);
+  for(int driX=0; driX<num_drivers; driX++)
+  {
+   graphics_log->Write("%i:%s",driX,SDL_GetVideoDriver(driX));
+  }
+  graphics_log->Write("%s:%s", "Current driver is",SDL_GetCurrentVideoDriver());
 }
 
+//maybe rename function?
 void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
 {
+ (void) font_file;
   if(ttf_texture!=NULL)
    {
     SDL_DestroyTexture(ttf_texture);

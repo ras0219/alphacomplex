@@ -92,9 +92,9 @@ struct SkillsPolicy {
   static inline string title() { return "Units Roster (Skills)"; }
   static inline const Skill::List_t& col_list() { return Skill::List; }
   static inline string col_label(Skill::Category& d) { return Skill::shortname(d); }
-  static inline void entry(CitizenName* cn, Skill::Category, string& buf) { }
+  static inline void entry(CitizenName* cn, Skill::Category, string& buf) {(void)cn; (void)buf; }
 
-  static inline void toggle(CitizenName::iterator it, int col_num) { }
+  static inline void toggle(CitizenName::iterator it, int col_num) {(void)it;(void)col_num; }
 };
 void UnitListing::toggle() {
   if (check()) return;

@@ -4,6 +4,7 @@ namespace Skill {
   Skillset random_skills(Security::Mask s) {
     // For now, ignore the clearance
 
+    (void)s;
     Skillset r;
     for (uint c = 0; c < r.skills.size(); ++c) {
       r.get((Category)c) = Skill(rand() % 10);

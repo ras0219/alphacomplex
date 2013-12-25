@@ -18,9 +18,11 @@ Job* make_fetch_job(int x1, int y1, int x2, int y2, Ent* p);
 
 struct MakeWorkScript : AIScript {
   virtual int start(AI* ai) {
+    (void) ai;
     return 100;
   }
   virtual int update(AI* ai) {
+    (void) ai;
     Ent* room = ai->parent;
     JobProvider* jobprov = room->assert_get<JobProvider>();
 
@@ -61,6 +63,7 @@ Ent* make_workroom(City& c, int x, int y, int w, int h) {
 }
 
 Job* make_fetch_job(int x1, int y1, int x2, int y2, Ent* p) {
+  (void) p;
   AIScript* script = new SequenceAI({
     new PathAI(point(x1, y1)),
     new PathAI(point(x2, y2)),
