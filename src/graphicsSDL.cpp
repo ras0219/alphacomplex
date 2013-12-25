@@ -124,6 +124,35 @@ GraphicsImpl::GraphicsImpl()
    graphics_log->Write("%i:%s",driX,SDL_GetVideoDriver(driX));
   }
   graphics_log->Write("%s:%s", "Current driver is",SDL_GetCurrentVideoDriver());
+
+  SDL_RendererInfo ren_info;
+  memset(&ren_info,0,sizeof(ren_info));
+
+  int num_render = SDL_GetNumRenderDrivers();
+  if(num_render<0)
+  {
+   graphics_log->Write("%s\n%s","Error! Unable to figure out how many renderers we got",SDL_GetError());
+   return;
+  }
+  graphics_log->Write("We have %i renderers available",num_render);
+  for(int driR=0; driR<num_render; driR++)
+  {
+   if(SDL_GetRenderDriverInfo(driR,&ren_info)!=0)
+   {
+    graphics_log->Write("%i:%s\n%s", driR,"Failed to get any info.",SDL_GetError());
+   }
+   else
+   {
+
+    graphics_log->Write("%i: Name:%s\n Flags: %i\n Num of Texture Formats: %i\n Max_Wid: %i\n Max_H: %i",
+      driR,ren_info.name, ren_info.flags, ren_info.num_texture_formats, ren_info.max_texture_width, 
+      ren_info.max_texture_height);
+   }
+  }
+  SDL_GetRendererInfo(ren,&ren_info);
+  graphics_log->Write("%s:%s", "Current renderer is",ren_info.name);
+
+
 }
 
 //maybe rename function?
