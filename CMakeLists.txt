@@ -55,6 +55,9 @@ set(SOURCES
   "src/ai.cpp"
   "src/movable.cpp"
   "src/jobprovider.cpp"
+  ## Support files
+  #src/cache
+  "src/logger.cpp"
   )
 
 if (BUILD_X11)
