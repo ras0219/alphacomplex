@@ -57,7 +57,7 @@ struct GraphicsImpl : Graphics {
 
 GraphicsImpl::GraphicsImpl()
   : win(nullptr), ren(nullptr), main_texture(nullptr),
-    ttf_texture(nullptr), font_color({0,0,0}),
+    ttf_texture(nullptr), font_color({0,0,0,0}),
     sdl_last_call(0)
 {
   memset(&cached_textures[0], 0, sizeof(SDL_Texture*) * cached_textures.size());
@@ -102,8 +102,10 @@ GraphicsImpl::GraphicsImpl()
   SDL_RenderClear(ren);
 }
 
+//maybe rename function?
 void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
 {
+ (void) font_file;
   if(ttf_texture!=NULL)
    {
     SDL_DestroyTexture(ttf_texture);

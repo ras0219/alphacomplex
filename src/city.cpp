@@ -23,6 +23,7 @@ Room* City::find_room(const char* rawname) {
   //   if (r->rawname() == rawname)
   //     return r;
   // }
+  (void) rawname;
   return nullptr;
 }
 
