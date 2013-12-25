@@ -147,6 +147,14 @@ GraphicsImpl::GraphicsImpl()
     graphics_log->Write("%i: Name:%s\n Flags: %i\n Num of Texture Formats: %i\n Max_Wid: %i\n Max_H: %i",
       driR,ren_info.name, ren_info.flags, ren_info.num_texture_formats, ren_info.max_texture_width, 
       ren_info.max_texture_height);
+    for(unsigned int driF=0;driF<ren_info.num_texture_formats;driF++)
+    {
+     uint32_t inf = ren_info.texture_formats[driF];
+    graphics_log->Write("\n\tFormat:%i\n\tPixelFlag:%i\n\tPixelType:%i\n\tPixelOrder:%i\n\tPixelLayout:%i\n\tBitsPerPixel:%i\n\tBytesPerPixel:%i\n\tPixelFormatIndexed:%s\n\tPixelFormatAlpha:%s\n\tFourCC:%s",
+      driF, SDL_PIXELFLAG(inf), SDL_PIXELTYPE(inf), SDL_PIXELORDER(inf), SDL_PIXELLAYOUT(inf), 
+      SDL_BITSPERPIXEL(inf), SDL_BYTESPERPIXEL(inf), SDL_ISPIXELFORMAT_INDEXED(inf) ? "True" : "False", 
+      SDL_ISPIXELFORMAT_ALPHA(inf) ? "True" : "False", SDL_ISPIXELFORMAT_FOURCC(inf) ? "True" :"False");
+    }
    }
   }
   SDL_GetRendererInfo(ren,&ren_info);
