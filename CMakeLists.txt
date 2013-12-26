@@ -24,7 +24,7 @@ endif ()
 
 include_directories(include)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
@@ -32,32 +32,36 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
 set(CMAKE_CXX_FLAGS_RELEASESTATIC "-O4 -DNDEBUG -static-libstdc++ -static-libgcc")
 
 set(SOURCES
-  "src/main.cpp"
   "src/city.cpp"
-  "src/pathfind.cpp"
-  "src/garbage.cpp"
-  "src/joblist.cpp"
-  "src/job.cpp"
-  "src/citizen.cpp"
-  "src/room.cpp"
-  "src/hud.cpp"
-  "src/workroom.cpp"
-  "src/mapview.cpp"
-  "src/viewstack.cpp"
-  "src/mainview.cpp"
-  "src/helpview.cpp"
-  "src/unitview.cpp"
-  "src/announceview.cpp"
-  "src/designview.cpp"
   "src/clock.cpp"
-  "src/skills.cpp"
-  "src/statustext.cpp"
-  ## Entity Component Systems
-  "src/entity.cpp"
-  "src/citizenname.cpp"
-  "src/ai.cpp"
-  "src/movable.cpp"
-  "src/jobprovider.cpp"
+  "src/joblist.cpp"
+  "src/logger.cpp"
+  "src/main.cpp"
+  ## Components
+  "src/components/ai.cpp"
+  "src/components/citizenname.cpp"
+  "src/components/foodstuff.cpp"
+  "src/components/furniture.cpp"
+  "src/components/jobprovider.cpp"
+  "src/components/movable.cpp"
+  "src/components/pathfind.cpp"
+  "src/components/room.cpp"
+  "src/components/skills.cpp"
+  ## Entities
+  "src/entities/citizen.cpp"
+  "src/entities/entity.cpp"
+  "src/entities/garbage.cpp"
+  "src/entities/workroom.cpp"
+  ## Views
+  "src/views/hud.cpp"
+  "src/views/mapview.cpp"
+  "src/views/viewstack.cpp"
+  "src/views/mainview.cpp"
+  "src/views/helpview.cpp"
+  "src/views/unitview.cpp"
+  "src/views/announceview.cpp"
+  "src/views/designview.cpp"
+  "src/views/statustext.cpp"
   )
 
 if (BUILD_X11)
@@ -65,7 +69,7 @@ if (BUILD_X11)
 
   if (X11_FOUND)
     include_directories(${X11_INCLUDE_DIR})
-    add_executable(alphacomplex-x11 ${SOURCES} "src/graphicsX.cpp")
+    add_executable(alphacomplex-x11 ${SOURCES} "src/graphics/graphicsX.cpp")
     target_link_libraries(alphacomplex-x11 ${X11_LIBRARIES})
     set_target_properties(alphacomplex-x11 PROPERTIES COMPILE_DEFINITIONS "GRAPHICS_X11=1")
   else ()
@@ -77,7 +81,7 @@ if (BUILD_SDL2)
   find_package(SDL2_ttf)
   if (SDL2_ttf_FOUND)
     include_directories(${SDL2_ttf_INCLUDE_DIRS})
-    add_executable(alphacomplex-sdl ${SOURCES} "src/graphicsSDL.cpp")
+    add_executable(alphacomplex-sdl ${SOURCES} "src/graphics/graphicsSDL.cpp")
     target_link_libraries(alphacomplex-sdl ${SDL2_ttf_LIBRARIES})
     set_target_properties(alphacomplex-sdl PROPERTIES COMPILE_DEFINITIONS "GRAPHICS_SDL=1")
   else ()

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "defs.hpp"
-#include "component.hpp"
-#include "clearance.hpp"
-#include "job.hpp"
+#include "views/widget.hpp"
+#include "components/clearance.hpp"
+#include "components/ai/job.hpp"
 
 #include <list>
 #include <string>
@@ -26,7 +26,7 @@ struct JobList {
   list_t jlist;
 };
 
-struct JobListing : Component {
+struct JobListing : Widget {
   JobList* jlist;
   int y;
   string title;

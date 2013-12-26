@@ -18,9 +18,9 @@ enum Direction {
   NORTH
 };
 
-#include "security.hpp"
-#include "department.hpp"
-#include "faction.hpp"
+#include "components/security.hpp"
+#include "components/department.hpp"
+#include "components/faction.hpp"
 
 typedef DebugPolicy<true> debug_policy_t;
 
