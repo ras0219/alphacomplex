@@ -20,7 +20,7 @@ struct JobProvider : AspectStatic<Aspect::JobProvider, JobProvider> {
 };
 
 struct JobProviderSystem : SubSystem<JobProviderSystem, JobProvider> {
-  void update_item(value_type& p);
+  void update_item(Ent*, JobProvider*);
 };
 
 extern JobProviderSystem jpsystem;

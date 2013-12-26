@@ -145,6 +145,9 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\logger.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
+    <ClInclude Include="..\include\utilities\apply_tuple.hpp" />
+    <ClInclude Include="..\include\utilities\curry.hpp" />
+    <ClInclude Include="..\include\utilities\thunk_func.hpp" />
     <ClInclude Include="..\include\views\announceview.hpp" />
     <ClInclude Include="..\include\views\designview.hpp" />
     <ClInclude Include="..\include\views\helpview.hpp" />

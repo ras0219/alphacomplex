@@ -28,8 +28,8 @@ struct AI : AspectStatic<Aspect::AI, AI> {
 };
 
 struct AISystem : SubSystem<AISystem, AI> {
-  inline void update_item(value_type& p) {
-    p.second->update();
+  inline void update_item(Ent* e, AI* ai) {
+    ai->update();
   }
 };
 extern AISystem aisystem;

@@ -11,15 +11,13 @@ JobProvider::~JobProvider() {
       j->complete();
 }
 
-void JobProviderSystem::update_item(value_type& p) {
-  JobProvider& jp = *p.second;
-
-  for (auto j : jp.to_provide_jobs) {
-    jp.provided_jobs.emplace_back(j);
-    jobs.add_job(jp.provided_jobs.back());
+void JobProviderSystem::update_item(Ent* e, JobProvider* jp) {
+  for (auto j : jp->to_provide_jobs) {
+    jp->provided_jobs.emplace_back(j);
+    jobs.add_job(jp->provided_jobs.back());
   }
 
-  jp.to_provide_jobs.clear();
+  jp->to_provide_jobs.clear();
 }
 
 JobProviderSystem jpsystem;
