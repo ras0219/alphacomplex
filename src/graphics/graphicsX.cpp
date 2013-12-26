@@ -1,6 +1,6 @@
 #include "graphics.hpp"
+#include "controller.hpp"
 #include "views/widget.hpp"
-#include "components/controller.hpp"
 #include "log.hpp"
 
 #include <unistd.h> //let mingw handle it if needed
