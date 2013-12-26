@@ -2,7 +2,6 @@
 
 #include "system.hpp"
 #include "entity.hpp"
-#include "utilities/curry.hpp"
 #include "utilities/apply_tuple.hpp"
 #include "utilities/thunk_func.hpp"
 #include <unordered_map>
@@ -27,8 +26,8 @@ struct SubSystem : System {
   virtual void update() override {
     tickcount = (tickcount + 1) % tickrate;
     if (tickcount == 0)
-    for (auto& node : nodes)
-      apply_tuple(curry_func(thunk(&Derived::update_item), static_cast<Derived*>(this), node.first), node.second);
+    for (auto node : nodes)
+      apply_tuple(thunk(&Derived::update_item), std::tuple_cat(make_tuple(*static_cast<Derived*>(this), node.first), node.second));
   }
 
   int tickcount;

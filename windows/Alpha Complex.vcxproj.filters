@@ -37,7 +37,7 @@
     <Filter Include="Source Files\graphics">
       <UniqueIdentifier>{a0744eba-6988-4c9a-b135-c0f856c93929}</UniqueIdentifier>
     </Filter>
-    <Filter Include="utilities">
+    <Filter Include="Header Files\utilities">
       <UniqueIdentifier>{9adb99f9-5d6e-4683-a479-6372f39d2cc0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -224,13 +224,10 @@
       <Filter>Header Files\views</Filter>
     </ClInclude>
     <ClInclude Include="..\include\utilities\apply_tuple.hpp">
-      <Filter>utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utilities\curry.hpp">
-      <Filter>utilities</Filter>
+      <Filter>Header Files\utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\include\utilities\thunk_func.hpp">
-      <Filter>utilities</Filter>
+      <Filter>Header Files\utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
