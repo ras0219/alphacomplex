@@ -1,5 +1,5 @@
 #include "graphics.hpp"
-#include "components/component.hpp"
+#include "views/widget.hpp"
 #include "components/controller.hpp"
 #include "log.hpp"
 

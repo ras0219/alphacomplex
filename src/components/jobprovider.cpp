@@ -11,7 +11,7 @@ JobProvider::~JobProvider() {
       j->complete();
 }
 
-void JobProviderSystem::update_item(Ent* e, JobProvider* jp) {
+void JobProviderSystem::update_item(Ent*, JobProvider* jp) {
   for (auto j : jp->to_provide_jobs) {
     jp->provided_jobs.emplace_back(j);
     jobs.add_job(jp->provided_jobs.back());
