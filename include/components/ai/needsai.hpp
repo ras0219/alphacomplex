@@ -19,11 +19,5 @@ struct NeedsAI : AspectStatic<Aspect::NeedsAI, NeedsAI> {
 struct NeedsSystem : SubSystem<NeedsSystem, NeedsAI, AI> {
   NeedsSystem() : SubSystem(100) { }
 
-  inline void update(Ent* e, NeedsAI* nai, AI* ai) {
-    if (nai->food <= nai->max_food / 5 && ai->priority() < 5) {
-      //ai.interrupt(new SeekFoodAI, 5);
-      announce("Hunger...");
-      return;
-    }
-  }
+  void update_item(Ent* e, NeedsAI* nai, AI* ai);
 };

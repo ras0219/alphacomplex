@@ -189,6 +189,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
     <ClCompile Include="..\src\views\viewstack.cpp" />
+    <ClCompile Include="needsai.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

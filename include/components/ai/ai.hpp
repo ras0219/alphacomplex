@@ -7,24 +7,24 @@
 using std::vector;
 
 struct AI : AspectStatic<Aspect::AI, AI> {
+  using priority_t = int;
+
   AI(struct AIScript* base) : scripts(1, { base, 0 }) { }
 
   // Methods for the public
   void update();
-  inline void interrupt(AIScript* s) { push_script(s); }
+  inline bool interrupt(AIScript* ais, priority_t prior);
 
   // Methods for private
   inline int get_timer() { return timer; }
   int push_script(AIScript* ais);
-
-  void interrupt(AIScript* ais, int prior);
 
   inline int priority() const { return scripts.back().second; }
   inline struct AIScript*& script() { return scripts.back().first; }
 
   // Data
   int timer;
-  vector< pair<struct AIScript*, int> > scripts;
+  vector< pair<struct AIScript*, priority_t> > scripts;
 };
 
 struct AISystem : SubSystem<AISystem, AI> {
@@ -59,17 +59,23 @@ struct AIScript {
   AIScript* prev;
 };
 
+// These are just some inline method calls, no worries
+
 inline int AI::push_script(AIScript* ais) {
   script()->suspend(this);
   ais->set_prev(script());
   script() = ais;
   return ais->start(this);
 }
-inline void AI::interrupt(AIScript* ais, int prior) {
+inline bool AI::interrupt(AIScript* ais, int prior) {
+  if (prior <= priority())
+    return false;
+
   script()->suspend(this);
   ais->set_prev(nullptr);
   scripts.emplace_back(ais, prior);
   timer = ais->start(this);
+  return true;
 }
 
 inline void AI::update() {
