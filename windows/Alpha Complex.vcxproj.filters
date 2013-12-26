@@ -315,7 +315,7 @@
     <ClCompile Include="..\src\graphics\graphicsSDL.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="needsai.cpp">
+    <ClCompile Include="..\src\components\needsai.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
   </ItemGroup>

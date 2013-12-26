@@ -169,6 +169,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\furniture.cpp" />
     <ClCompile Include="..\src\components\jobprovider.cpp" />
     <ClCompile Include="..\src\components\movable.cpp" />
+    <ClCompile Include="..\src\components\needsai.cpp" />
     <ClCompile Include="..\src\components\pathfind.cpp" />
     <ClCompile Include="..\src\components\room.cpp" />
     <ClCompile Include="..\src\components\skills.cpp" />
@@ -189,7 +190,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
     <ClCompile Include="..\src\views\viewstack.cpp" />
-    <ClCompile Include="needsai.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
