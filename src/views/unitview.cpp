@@ -121,7 +121,7 @@ void UnitListing::render(Graphics& g) {
 template<class P>
 void UnitListing::render_policy(Graphics& g) {
   uint row_off = 12;
-  uint col_off = 42;
+  uint col_off = 48;
   uint left = 124;
   uint top_row = 42;
 
