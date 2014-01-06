@@ -3,28 +3,33 @@
 #include "entities/entity.hpp"
 #include "entities/subsystem.hpp"
 
+#include <memory>
 #include <vector>
 using std::vector;
 
 struct AI : AspectStatic<Aspect::AI, AI> {
   using priority_t = int;
+  using script_ptr = std::shared_ptr<struct AIScript>;
+  using timer_t = int;
 
-  AI(struct AIScript* base) : scripts(1, { base, 0 }) { }
+  AI(script_ptr base) : scripts(1, { base, 0 }) { }
 
   // Methods for the public
   void update();
-  inline bool interrupt(AIScript* ais, priority_t prior);
+  bool interrupt(script_ptr ais, priority_t prior);
 
-  // Methods for private
-  inline int get_timer() { return timer; }
-  int push_script(AIScript* ais);
+  // Methods for AIScripts
+  inline timer_t get_timer() { return timer; }
+  timer_t replace_script(script_ptr ais);
+  timer_t push_script(script_ptr ais);
+  timer_t pop_script();
 
-  inline int priority() const { return scripts.back().second; }
-  inline struct AIScript*& script() { return scripts.back().first; }
+  inline priority_t priority() const { return scripts.back().second; }
+  inline script_ptr& script() { return scripts.back().first; }
 
   // Data
-  int timer;
-  vector< pair<struct AIScript*, priority_t> > scripts;
+  timer_t timer;
+  vector< pair<script_ptr, priority_t> > scripts;
 };
 
 struct AISystem : SubSystem<AISystem, AI> {
@@ -36,51 +41,39 @@ extern AISystem aisystem;
 
 
 struct AIScript {
-  AIScript() : prev(nullptr) {}
   virtual ~AIScript() { }
 
-  inline void set_prev(AIScript* ais) { prev = ais; }
-  inline AIScript* get_prev() { return prev; }
-
-  virtual int start(AI* ai) = 0;
+  virtual AI::timer_t start(AI* ai) = 0;
   //this statement prevents unused argument, but has no effect.
   virtual void suspend(AI* ai) {(void)ai; }
-  virtual int resume(AI* ai) { return start(ai); }
-  virtual int update(AI* ai) { return complete(ai); }
+  virtual AI::timer_t resume(AI* ai) { return start(ai); }
+  virtual AI::timer_t update(AI* ai) { return complete(ai); }
 
-  inline int complete(AI* ai) {
-    if (prev != nullptr)
-      ai->script() = prev;
-    else
-      ai->scripts.pop_back();
-    return ai->script()->resume(ai);
+  inline AI::timer_t complete(AI* ai) {
+    return ai->pop_script();
   }
-
-  AIScript* prev;
 };
 
 // These are just some inline method calls, no worries
-
-inline int AI::push_script(AIScript* ais) {
-  script()->suspend(this);
-  ais->set_prev(script());
-  script() = ais;
-  return ais->start(this);
+inline AI::timer_t AI::pop_script() {
+  assert(scripts.size() > 1);
+  scripts.pop_back();
+  return script()->resume(this);
 }
-inline bool AI::interrupt(AIScript* ais, int prior) {
-  if (prior <= priority())
-    return false;
 
+inline AI::timer_t AI::push_script(AI::script_ptr ais) {
   script()->suspend(this);
-  ais->set_prev(nullptr);
-  scripts.emplace_back(ais, prior);
-  timer = ais->start(this);
-  return true;
+  scripts.emplace_back(std::move(ais), priority());
+  return script()->start(this);
+}
+
+inline AI::timer_t AI::replace_script(AI::script_ptr ais) {
+  script() = std::move(ais);
+  return script()->start(this);
 }
 
 inline void AI::update() {
   --timer;
 
-  if (timer <= 0)
-    timer = script()->update(this);
+  if (timer <= 0) timer = script()->update(this);
 }

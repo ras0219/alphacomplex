@@ -15,4 +15,4 @@ struct DeleteAI : AIScript {
 };
 
 template<class T>
-inline DeleteAI<T>* new_deleteai(T* t) { return new DeleteAI<T>(t); }
+inline std::shared_ptr<DeleteAI<T>> make_deleteai(T* t) { return make_shared<DeleteAI<T>>(t); }

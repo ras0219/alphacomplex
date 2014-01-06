@@ -14,18 +14,16 @@
 
 extern int influence;
 
-Job* make_fetch_job(int x1, int y1, int x2, int y2, Ent* p);
+std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent* p);
 
 struct MakeWorkScript : AIScript {
   virtual int start(AI* ai) {
-    (void) ai;
+    (void)ai;
     return 100;
   }
   virtual int update(AI* ai) {
-    (void) ai;
     Ent* room = ai->parent;
     JobProvider* jobprov = room->assert_get<JobProvider>();
-
 
     for (uint x = 0; x < jobprov->provided_jobs.size(); ++x) {
       if (jobprov->provided_jobs[x]->completed())
@@ -49,12 +47,12 @@ struct MakeWorkScript : AIScript {
 
 Ent* make_workroom(City& c, int x, int y, int w, int h) {
   Ent* r = new Ent;
-  
+
   Room* room = new Room(c, x, y, w, h);
   r->add(room);
   room->init();
 
-  r->add(new AI(new MakeWorkScript));
+  r->add(new AI(make_shared<MakeWorkScript>()));
   r->add(new JobProvider);
 
   r->add(&aisystem);
@@ -62,20 +60,16 @@ Ent* make_workroom(City& c, int x, int y, int w, int h) {
   return r;
 }
 
-Job* make_fetch_job(int x1, int y1, int x2, int y2, Ent* p) {
-  (void) p;
-  AIScript* script = new SequenceAI({
-    new PathAI(point(x1, y1)),
-    new PathAI(point(x2, y2)),
-    new_callbackai([=]() {
-      ++influence;
-    })
-  });
+std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
+  std::shared_ptr<SequenceAI> script = make_shared<SequenceAI>();
 
-  Job* r = new Job{
+  script->add_task(make_shared<PathAI>(point(x1, y1)));
+  script->add_task(make_shared<PathAI>(point(x2, y2)));
+  script->add_task(make_callbackai([=]() { ++influence; }));
+
+  return make_shared<Job>(
     "Fetch Documents",
-    { Security::ALL, Department::RESEARCH },
+    Clearance{ Security::ALL, Department::RESEARCH },
     script
-  };
-  return r;
+    );
 }

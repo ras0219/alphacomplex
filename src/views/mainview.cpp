@@ -14,11 +14,7 @@
 extern Graphics* gfx;
 extern bool paused;
 
-MapView *mv = nullptr;
-
-MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c) {
-  if (mv == nullptr)
-    mv = new MapView(city.getXSize(), city.getYSize(), &city);
+MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c), mv(c.getXSize(), c.getYSize(), c) {
   hview = new HelpView(vs);
   uview = new UnitView(vs);
   aview = new AnnounceView(vs);
@@ -27,17 +23,11 @@ MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c) {
 
 JobListing pendinglist(20, &jobs, "Pending Jobs");
 
-struct HelpText : Widget {
-  virtual void render(Graphics& g);
-};
-
-extern HelpText helptext;
-
 void MainView::render(Graphics& g) {
-  mv->render(g);
+  mv.render(g);
   hud.render(g);
   pendinglist.render(g);
-  helptext.render(g);
+  HelpText::instance.render(g);
   statustext.render(g);
 }
 
@@ -58,9 +48,7 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
-      // Citizen* e = new Citizen(1,1,Security::RED, city);
-      // e->insert_after(city.ent(1,1));
-      city.ent(1,1).insert(new_citizen({1,1,&city}, Security::RED));
+      city.ent(1, 1).insert(new_citizen({ 1, 1, &city }, Security::RED));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
@@ -68,15 +56,13 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_e:
     if (influence >= 5) {
       influence -= 5;
-      // Citizen* e = new Citizen(1,1,Security::INFRARED, city);
-      // e->insert_after(city.ent(1,1));
-      city.ent(1,1).insert(new_citizen({1,1,&city}, Security::INFRARED));
+      city.ent(1, 1).insert(new_citizen({ 1, 1, &city }, Security::INFRARED));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }
     break;
   case KEY_Tab:
-    mv->next_mode();
+    mv.next_mode();
     break;
   case KEY_space:
     paused = !paused;

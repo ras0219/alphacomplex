@@ -9,20 +9,15 @@
 #include <vector>
 
 struct Job {
-  Job(string d, Clearance c, AIScript* ais)
-    : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
-  ~Job() { if (scr) delete scr; }
+  Job(string d, Clearance c, AI::script_ptr ais) : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
 
   inline const string& description() const {
     return desc;
   }
   inline Clearance clearance() const { return clear; }
 
-  inline AIScript* script() {
-    assert(scr != nullptr);
-    AIScript* r = scr;
-    scr = nullptr;
-    return r;
+  inline AI::script_ptr script() {
+    return scr;
   }
 
   inline bool available() const { return state == UNRESERVED; }
@@ -34,7 +29,7 @@ struct Job {
 
   string desc;
   Clearance clear;
-  AIScript* scr;
+  AI::script_ptr scr;
 
   enum State {
     UNRESERVED,

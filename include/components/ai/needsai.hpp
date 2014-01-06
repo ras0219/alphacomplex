@@ -6,14 +6,14 @@
 #include "components/foodstuff.hpp"
 
 struct NeedsAI : AspectStatic<Aspect::NeedsAI, NeedsAI> {
-  int food = 100;
-  int max_food = 100;
+  int food = 20;
+  int max_food = 20;
 
-  int sleep = 100;
-  int max_sleep = 100;
+  int sleep = 20;
+  int max_sleep = 20;
 
-  int happy = 100;
-  int max_happy = 100;
+  int happy = 20;
+  int max_happy = 20;
 };
 
 struct NeedsSystem : SubSystem<NeedsSystem, NeedsAI, AI> {
@@ -21,3 +21,5 @@ struct NeedsSystem : SubSystem<NeedsSystem, NeedsAI, AI> {
 
   void update_item(Ent* e, NeedsAI* nai, AI* ai);
 };
+
+extern NeedsSystem needssystem;

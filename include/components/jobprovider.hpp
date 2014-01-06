@@ -13,7 +13,7 @@ struct JobProvider : AspectStatic<Aspect::JobProvider, JobProvider> {
   ~JobProvider();
 
   // Public
-  vector<Job*> to_provide_jobs;
+  vector<shared_ptr<Job>> to_provide_jobs;
 
   // Private
   vector<shared_ptr<Job>> provided_jobs;

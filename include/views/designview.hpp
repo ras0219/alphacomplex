@@ -2,14 +2,16 @@
 
 #include "city.hpp"
 #include "view.hpp"
+#include "mapview.hpp"
 
 struct DesignView : View {
-  DesignView(struct ViewStack* vs, struct MapView* m, City& c);
+  DesignView(struct ViewStack* vs, MapView& mv, City& c)
+  : vstk(vs), mv(mv), city(c) {}
 
   virtual void render(Graphics& g);
   virtual void handle_keypress(KeySym ks);
 
   struct ViewStack* vstk;
-  struct MapView* mv;
+  MapViewCursor mv;
   City& city;
 };

@@ -4,28 +4,25 @@
 
 template<class CB>
 struct IfScript : AIScript {
-  IfScript(const CB& f, AIScript* s)
+  IfScript(const CB& f, AI::script_ptr s)
     : cb(f), script(s) { }
 
-  virtual ~IfScript() { delete script; }
+  ~IfScript() {}
 
   virtual int start(AI* ai) override {
     if (cb()) {
-      AIScript* s = script;
-      script = nullptr;
-      return ai->push_script(s);
+      return ai->replace_script(script);
     }
     return complete(ai);
   }
-  virtual int resume(AI* ai) override { return complete(ai); }
 
   CB cb;
-  AIScript* script;
+  AI::script_ptr script;
 };
 
 template<class CB>
-inline IfScript<CB>* new_ifscript(const CB& f, AIScript* s) {
-  return new IfScript<CB>(f, s);
+inline std::shared_ptr<IfScript<CB>> new_ifscript(const CB& f, AI::script_ptr s) {
+  return make_shared<IfScript<CB>>(f, s);
 }
 
 template<class CB>

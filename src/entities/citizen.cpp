@@ -3,6 +3,8 @@
 #include "city.hpp"
 #include "clock.hpp"
 #include "components/ai/ai.hpp"
+#include "components/ai/job.hpp"
+#include "components/ai/needsai.hpp"
 #include "windows.hpp"
 #include "components/renderable.hpp"
 #include "components/citizenname.hpp"
@@ -62,13 +64,15 @@ Ent* new_citizen(Position pos, Security::Mask sec) {
   Ent* e = new Ent;
   e->add(new PositionComp(pos));
   e->add(new Movable(pos));
-  e->add(new AI(new IdleAI));
+  e->add(new AI(make_shared<IdleAI>()));
   e->add(new ClearanceComp(Clearance{ sec, Department::random_dept() }));
   e->add(new Renderable(Security::mask_to_dcode(sec)[0]));
   e->add(random_citizenname());
+  e->add(new NeedsAI());
 
   e->add(&aisystem);
   e->add(&smsystem);
+  e->add(&needssystem);
   return e;
 }
 

@@ -1,8 +1,8 @@
 #include "components/ai/needsai.hpp"
 #include "components/ai/activityai.hpp"
 
-AIScript* make_seek_food_script(Ent* e) {
-  return new ActivityAI(100);
+std::shared_ptr<AIScript> make_seek_food_script(Ent* e) {
+  return make_shared<ActivityAI>(100);
 }
 
 void NeedsSystem::update_item(Ent* e, NeedsAI* nai, AI* ai) {
@@ -11,4 +11,9 @@ void NeedsSystem::update_item(Ent* e, NeedsAI* nai, AI* ai) {
     announce("Hunger...");
     return;
   }
+
+  if (nai->food > 0)
+    --nai->food;
 }
+
+NeedsSystem needssystem;

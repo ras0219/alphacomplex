@@ -3,6 +3,8 @@
 #include "city.hpp"
 #include "view.hpp"
 
+#include "mapview.hpp"
+
 struct MainView : View {
   MainView(struct ViewStack* vs, City& c);
 
@@ -16,4 +18,5 @@ struct MainView : View {
   struct AnnounceView* aview;
   struct DesignView* dview;
   City& city;
+  MapView mv;
 };

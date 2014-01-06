@@ -27,6 +27,7 @@
 #include "components/ai/ai.hpp"
 #include "components/movable.hpp"
 #include "components/jobprovider.hpp"
+#include "components/ai/needsai.hpp"
 
 #include <map>
 
@@ -42,7 +43,7 @@ bool paused = false;
 
 Graphics *gfx;
 
-vector<System*> systems = { &aisystem, &smsystem, &jpsystem };
+vector<System*> systems = { &aisystem, &smsystem, &jpsystem, &needssystem };
 
 int main(int argc, char *argv[]) {
   try {
@@ -50,7 +51,6 @@ int main(int argc, char *argv[]) {
 
     srand((uint)time(NULL));
     if (argc < 2)
-      //wcin >> city;
       wfstream("../cities/city02.txt") >> city;
     else
       wfstream(argv[1]) >> city;

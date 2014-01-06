@@ -5,6 +5,13 @@
 
 #include <iostream>
 
+JobList::iterator JobList::add_job(Job* j) { return add_job(shared_ptr<Job>(j)); }
+
+JobList::iterator JobList::add_job(const shared_ptr<Job>& j) {
+  jlist.push_back(j);
+  return --jlist.end();
+}
+
 void JobList::remove_jobs() {
   auto it = jlist.begin();
   while (it != jlist.end()) {
@@ -32,10 +39,10 @@ Job* JobList::find_job(Clearance c) {
 }
 
 void JobListing::render(Graphics& g) {
-  g.drawString(g.getWidth() - 200, y+10, title, Graphics::DEFAULT);
-  g.drawString(g.getWidth() - 200, y+20, "---------", Graphics::DEFAULT);
+  g.drawString(g.getWidth() - 200, y + 10, title, Graphics::DEFAULT);
+  g.drawString(g.getWidth() - 200, y + 20, "---------", Graphics::DEFAULT);
 
-  int yoffset = y+30;
+  int yoffset = y + 30;
   for (auto j : jlist->jlist) {
     if (j->completed())
       continue;

@@ -15,4 +15,4 @@ struct CallbackAI : AIScript {
 };
 
 template<class F>
-inline CallbackAI<F>* new_callbackai(const F& f) { return new CallbackAI<F>(f); }
+inline std::shared_ptr<CallbackAI<F>> make_callbackai(const F& f) { return make_shared<CallbackAI<F>>(f); }

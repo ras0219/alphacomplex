@@ -3,19 +3,17 @@
 #include "ai.hpp"
 
 struct SequenceAI : AIScript {
-  SequenceAI(initializer_list<AIScript*> il) : subs(il), i(0) { }
-  ~SequenceAI() {
-    while (i != subs.size())
-      delete subs[i++];
+  SequenceAI() : i(0) {}
+  SequenceAI(initializer_list<AI::script_ptr> il) : subs(il), i(0) { }
+  ~SequenceAI() { }
+
+  virtual AI::timer_t start(AI* ai);
+  inline void add_task(AI::script_ptr s) {
+    subs.push_back(std::move(s));
   }
 
-  inline virtual int start(AI* ai) {
-    if (i == subs.size())
-      return complete(ai);
-    else
-      return ai->push_script(subs[i++]);
-  }
+  using ptr = std::shared_ptr<SequenceAI>;
 
-  vector<AIScript*> subs;
+  vector<AI::script_ptr> subs;
   uint i;
 };

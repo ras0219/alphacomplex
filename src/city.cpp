@@ -174,17 +174,15 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   };
   auto dig_cb = [=]() { city->remove_wall(digx, digy); };
 
-  AIScript* s1 = new SequenceAI{
-    new ActivityAI(100),
-    new_ifscript(wall_cb, new_callbackai(dig_cb))
-  };
+  SequenceAI::ptr s1 = make_shared<SequenceAI>();
+  s1->add_task(make_shared<ActivityAI>(100));
+  s1->add_task(new_ifscript(wall_cb, make_callbackai(dig_cb)));
 
-  AIScript* s2 = new SequenceAI{
-    new PathAI(point(x1, y1)),
-    new_ifscript(wall_cb, s1)
-  };
+  SequenceAI::ptr s2 = make_shared<SequenceAI>();
+  s2->add_task(make_shared<PathAI>(point(x1, y1)));
+  s2->add_task(new_ifscript(wall_cb, s1));
 
-  Job* job = new Job("Dig", c, s2);
+  std::shared_ptr<Job> job = make_shared<Job>("Dig", c, s2);
   jobs.add_job(job);
 }
 

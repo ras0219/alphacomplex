@@ -10,3 +10,9 @@ struct HelpView : View {
 
   struct ViewStack* vstk;
 };
+
+struct HelpText : Widget {
+  virtual void render(Graphics& g);
+
+  static HelpText instance;
+};

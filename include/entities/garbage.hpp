@@ -14,4 +14,4 @@
 // };
 
 Ent* make_garbage(Position p);
-Job* make_garbage_job(Ent* g);
+std::shared_ptr<Job> make_garbage_job(Ent* g);

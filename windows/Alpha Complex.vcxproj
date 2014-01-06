@@ -131,6 +131,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\security.hpp" />
     <ClInclude Include="..\include\components\skills.hpp" />
     <ClInclude Include="..\include\controller.hpp" />
+    <ClInclude Include="..\include\cursor.hpp" />
     <ClInclude Include="..\include\debug_policy.hpp" />
     <ClInclude Include="..\include\defs.hpp" />
     <ClInclude Include="..\include\entities\citizen.hpp" />
@@ -172,7 +173,9 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\needsai.cpp" />
     <ClCompile Include="..\src\components\pathfind.cpp" />
     <ClCompile Include="..\src\components\room.cpp" />
+    <ClCompile Include="..\src\components\sequenceai.cpp" />
     <ClCompile Include="..\src\components\skills.cpp" />
+    <ClCompile Include="..\src\cursor.cpp" />
     <ClCompile Include="..\src\entities\citizen.cpp" />
     <ClCompile Include="..\src\entities\entity.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />

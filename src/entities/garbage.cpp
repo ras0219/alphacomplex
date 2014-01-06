@@ -20,7 +20,7 @@ Ent* make_garbage(Position pos) {
 }
 
 
-Job* make_garbage_job(Ent* e) {
+std::shared_ptr<Job> make_garbage_job(Ent* e) {
   PositionComp* pos = e->assert_get<PositionComp>();
 
   Clearance c = {
@@ -29,31 +29,10 @@ Job* make_garbage_job(Ent* e) {
     Department::FACILITIES
   };
 
-  AIScript* ais = new SequenceAI
-    {
-      new PathAI(pos->as_point()),
-      new ActivityAI(100),
-      new_deleteai(e)
-    };
-  return new Job("Clean Garbage", c, ais);
+  SequenceAI::ptr ais = make_shared<SequenceAI>();
+  ais->add_task(make_shared<PathAI>(pos->as_point()));
+  ais->add_task(make_shared<ActivityAI>(100));
+  ais->add_task(make_deleteai(e));
+
+  return make_shared<Job>("Clean Garbage", c, std::move(ais));
 }
-  // if (e->clean_supplies > 0) {
-  //   --e->clean_supplies;
-  //   return WalkToJob<GarbageJob>::assign_task(e);
-  // } else {
-  //   Room* cleaning = g->city.find_room(CleaningRoom::RAWNAME);
-  //   if (cleaning == nullptr)
-  //     return WalkToJob<GarbageJob>::assign_task(e);
-      
-  //   e->job->as<MultiJob>().subjobs.push_front(new SupplyJob(cleaning->x, cleaning->y));
-  //   e->job->assign_task(e);
-  // }
-
-// int CleaningJob::description(char* buf, size_t n) const {
-//   return snprintf(buf, n, "Cleaning Garbage");
-// }
-
-// int SupplyJob::description(char* buf, size_t n) const {
-//   return snprintf(buf, n, "Fetch Cleaning Supplies");
-// }
-

@@ -4,11 +4,10 @@
 
 extern bool paused;
 
-struct HelpText : Widget {
-  virtual void render(Graphics& g) {
-    g.drawString(150, g.getHeight() - 5, "Press 'h' for help.", Graphics::DEFAULT);
-  }
-} helptext;
+void HelpText::render(Graphics& g) {
+  g.drawString(150, g.getHeight() - 5, "Press 'h' for help.", Graphics::DEFAULT);
+}
+HelpText HelpText::instance;
 
 vector<string> help_prgh = {
   "== All Modes ==",
@@ -40,11 +39,13 @@ struct HelpInfo : Widget {
       g.drawString(5, 12+5+12*x, help_prgh[x], Graphics::DEFAULT);
     }
   }
-} helpinfo;
+  static HelpInfo instance;
+};
+HelpInfo HelpInfo::instance;
 
 void HelpView::render(Graphics& g) {
-  helptext.render(g);
-  helpinfo.render(g);
+  HelpText::instance.render(g);
+  HelpInfo::instance.render(g);
 }
 
 void HelpView::handle_keypress(KeySym ks) {

@@ -7,119 +7,21 @@
 #include "windows.hpp"
 #include "components/citizenname.hpp"
 #include "views/statustext.hpp"
+#include "components/ai/needsai.hpp"
 
+#include <memory>
 #include <algorithm>
 
 extern bool paused;
 
-struct UnitListing : Widget {
-  UnitListing() : row(0), col(0), assign_mode(true) { }
-
-  virtual void render(Graphics& g);
-
-  template<class Policy>
-  void render_policy(Graphics&);
-
-  inline void down() {
-    if (row+1 < rows())
-      row++;
-  }
-  inline void right() {
-    if (assign_mode) {
-      if (col+1 < Department::List.size())
-        ++col;
-    } else {
-      if (col+1 < Skill::NUM_SKILLS)
-        ++col;
-    }
-  }
-  inline void up() {
-    if (row > 0)
-      --row;
-  }
-  inline void left() {
-    if (col > 0)
-      --col;
-  }
-
-  inline uint rows() const { return CitizenName::instances.size(); }
-
-  bool check() {
-    bool r = false;
-    if (row >= rows()) {
-      row = rows() - 1;
-      r = true;
-    }
-    if (assign_mode && col >= Department::List.size()) {
-      col = Department::List.size() - 1;
-      r = true;
-    }
-    if (!assign_mode && col >= Skill::NUM_SKILLS) {
-      col = Skill::NUM_SKILLS - 1;
-      r = true;
-    }
-    return r;
-  }
-
-  void toggle();
-
-  void mode_toggle() { assign_mode = !assign_mode; check(); }
-
-  uint row, col;
-  bool assign_mode;
-} ulist;
-
-#include <sstream>
-
-struct AssignPolicy {
-  static inline string title() { return "Units Roster (Dept)"; }
-  static inline const Department::List_t& col_list() { return Department::List; }
-  static inline string col_label(Department::Mask& d) { return Department::mask_to_local6(d); }
-  static inline void entry(CitizenName* cn, Department::Mask m, string& buf) {
-    ClearanceComp* cc = cn->parent->assert_get<ClearanceComp>();
-    if (!(cc->department() & m))
-      return;
-    buf[3] = 'X';
-    buf[4] = 'X';
-  }
-
-  static inline void toggle(CitizenName::iterator it, int col_num) {
-    ClearanceComp* cc = (*it)->parent->assert_get<ClearanceComp>();
-    cc->department() = Department::List[col_num];
-  }
+struct UnitListingMode {
+  virtual void render(Graphics& g, uint row, uint col) = 0;
+  virtual uint num_cols() = 0;
+  virtual void toggle(CitizenName::iterator it, uint col_num) = 0;
 };
-struct SkillsPolicy {
-  static inline string title() { return "Units Roster (Skills)"; }
-  static inline const Skill::List_t& col_list() { return Skill::List; }
-  static inline string col_label(Skill::Category& d) { return Skill::shortname(d); }
-  static inline void entry(CitizenName* cn, Skill::Category, string& buf) {(void)cn; (void)buf; }
-
-  static inline void toggle(CitizenName::iterator it, int col_num) {(void)it;(void)col_num; }
-};
-void UnitListing::toggle() {
-  if (check()) return;
-
-  auto it = CitizenName::instances.begin();
-  advance(it, row);
-
-  // announce("This unit is not a duty-assignable citizen.");
-  // return;
-
-  if (assign_mode)
-    AssignPolicy::toggle(it, col);
-  else
-    SkillsPolicy::toggle(it, col);
-}
-
-void UnitListing::render(Graphics& g) {
-  if (assign_mode)
-    render_policy<AssignPolicy>(g);
-  else
-    render_policy<SkillsPolicy>(g);
-}
 
 template<class P>
-void UnitListing::render_policy(Graphics& g) {
+void render_policy(Graphics& g, uint row, uint col) {
   uint row_off = 12;
   uint col_off = 48;
   uint left = 124;
@@ -159,6 +61,152 @@ void UnitListing::render_policy(Graphics& g) {
   g.drawString(left + 18 + col*col_off, 18, "VV", Graphics::DEFAULT);
 }
 
+struct AssignMode : UnitListingMode {
+  static inline string title() { return "Units Roster (Dept)"; }
+  static inline const Department::List_t& col_list() { return Department::List; }
+  static inline string col_label(Department::Mask& d) { return Department::mask_to_local6(d); }
+  static inline void entry(CitizenName* cn, Department::Mask m, string& buf) {
+    ClearanceComp* cc = cn->parent->assert_get<ClearanceComp>();
+    if (!(cc->department() & m))
+      return;
+    buf[3] = 'X';
+    buf[4] = 'X';
+  }
+
+  void render(Graphics& g, uint row, uint col) {
+    render_policy<AssignMode>(g, row, col);
+  }
+  uint num_cols() { return col_list().size(); }
+  void toggle(CitizenName::iterator it, uint col_num) {
+    ClearanceComp* cc = (*it)->parent->assert_get<ClearanceComp>();
+    cc->department() = Department::List[col_num];
+  }
+};
+
+struct SkillsMode : UnitListingMode {
+  static inline string title() { return "Units Roster (Skills)"; }
+  static inline const Skill::List_t& col_list() { return Skill::List; }
+  static inline string col_label(Skill::Category& d) { return Skill::shortname(d); }
+  static inline void entry(CitizenName* cn, Skill::Category, string& buf) { (void)cn; (void)buf; }
+
+
+  void render(Graphics& g, uint row, uint col) {
+    render_policy<SkillsMode>(g, row, col);
+  }
+  uint num_cols() { return col_list().size(); }
+  void toggle(CitizenName::iterator, uint) { }
+};
+
+struct NeedsMode : UnitListingMode {
+  static inline string title() { return "Units Roster (Needs)"; }
+  using List_t = std::array<std::string, 3>;
+  static List_t List;
+
+  static inline const List_t& col_list() { return List; }
+  static inline const string& col_label(const std::string& d) { return d; }
+  static inline void entry(CitizenName* cn, const std::string& l, string& buf) {
+    Ent* e = cn->parent;
+    if (!e->has<NeedsAI>()) {
+      buf = "N/A";
+      return;
+    }
+    NeedsAI* nai = e->get<NeedsAI>();
+    int val;
+    if (l == "Food") {
+      val = nai->food;
+    } else if (l == "Sleep") {
+      val = nai->sleep;
+    } else if (l == "Happy") {
+      val = nai->happy;
+    } else {
+      assert(false);
+    }
+    buf[5] = '0' + (val % 10);
+    buf[4] = '0' + ((val / 10) % 10);
+    buf[3] = '0' + ((val / 100) % 10);
+  }
+
+  void render(Graphics& g, uint row, uint col) {
+    render_policy<NeedsMode>(g, row, col);
+  }
+  uint num_cols() { return col_list().size(); }
+  void toggle(CitizenName::iterator, uint) { }
+};
+
+NeedsMode::List_t NeedsMode::List = { "Food", "Sleep", "Happy" };
+
+struct UnitListing : Widget {
+  UnitListing() : row(0), col(0), mode(modes.begin()) { }
+  virtual void render(Graphics& g) {
+    mode->get()->render(g, row, col);
+  }
+
+  inline void down() {
+    if (row + 1 < rows())
+      row++;
+  }
+  inline void right() {
+    if (col + 1 < mode->get()->num_cols())
+      ++col;
+  }
+  inline void up() {
+    if (row > 0)
+      --row;
+  }
+  inline void left() {
+    if (col > 0)
+      --col;
+  }
+
+  inline uint rows() const { return CitizenName::instances.size(); }
+
+  bool check();
+
+  void toggle();
+  void mode_switch() { ++mode; if (mode == modes.end()) mode = modes.begin(); check(); }
+
+  uint row, col;
+  using Mode_t = std::unique_ptr<UnitListingMode>;
+  using Modes_t = std::array<Mode_t, 3>;
+  static Modes_t modes;
+  Modes_t::iterator mode;
+} ulist;
+
+UnitListing::Modes_t UnitListing::modes = {
+  std::make_unique<AssignMode>(),
+  std::make_unique<SkillsMode>(),
+  std::make_unique<NeedsMode>()
+};
+
+#include <sstream>
+
+bool UnitListing::check() {
+  bool r = false;
+  if (row >= rows()) {
+    row = rows() - 1;
+    r = true;
+  }
+  uint x = mode->get()->num_cols();
+
+  if (col >= x) {
+    col = x - 1;
+    r = true;
+  }
+  return r;
+}
+
+void UnitListing::toggle() {
+  if (check()) return;
+
+  auto it = CitizenName::instances.begin();
+  advance(it, row);
+
+  // announce("This unit is not a duty-assignable citizen.");
+  // return;
+
+  mode->get()->toggle(it, col);
+}
+
 void UnitView::render(Graphics& g) {
   ulist.render(g);
   hud.render(g);
@@ -177,10 +225,8 @@ void UnitView::handle_keypress(KeySym ks) {
   case KEY_Right: return ulist.right();
   case KEY_Up: return ulist.up();
   case KEY_Down: return ulist.down();
-
   case KEY_Return: return ulist.toggle();
-
-  case KEY_Tab: return ulist.mode_toggle();
+  case KEY_Tab: return ulist.mode_switch();
 
   default: return; // maybe play an alert here?
   }

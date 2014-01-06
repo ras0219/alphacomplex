@@ -3,7 +3,6 @@
 #include "defs.hpp"
 #include "views/widget.hpp"
 #include "components/clearance.hpp"
-#include "components/ai/job.hpp"
 
 #include <list>
 #include <string>
@@ -11,15 +10,14 @@
 
 using namespace std;
 
+struct Job;
+
 struct JobList {
   using list_t = list<shared_ptr<Job>>;
   using iterator = list_t::iterator;
 
-  inline iterator add_job(Job* j) { return add_job(shared_ptr<Job>(j)); }
-  inline iterator add_job(const shared_ptr<Job>& j) {
-    jlist.push_back(j);
-    return --jlist.end();
-  }
+  iterator add_job(Job* j);
+  iterator add_job(const shared_ptr<Job>& j);
   void remove_jobs();
   Job* find_job(Clearance c);
 
