@@ -4,6 +4,7 @@
 #include "view.hpp"
 
 #include "mapview.hpp"
+#include "navhelper.hpp"
 
 struct MainView : View {
   MainView(struct ViewStack* vs, City& c);
@@ -19,4 +20,5 @@ struct MainView : View {
   struct DesignView* dview;
   City& city;
   MapView mv;
+  NavHelper nav;
 };

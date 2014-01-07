@@ -207,26 +207,28 @@ void UnitListing::toggle() {
   mode->get()->toggle(it, col);
 }
 
+UnitView::UnitView(ViewStack* vs) : vstk(vs) {
+  nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
+  nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
+  nav.register_key(KEY_Return, "[Ent] Toggle", [this]() { ulist.toggle(); });
+  nav.register_key(KEY_Tab, "[Tab] Mode", [this]() { ulist.mode_switch(); });
+}
+
 void UnitView::render(Graphics& g) {
   ulist.render(g);
   hud.render(g);
   statustext.render(g);
+  nav.render(g);
 }
 
 void UnitView::handle_keypress(KeySym ks) {
+  if (nav.handle_keypress(ks)) return;
+
   switch (ks) {
-  case KEY_Escape:
-    vstk->pop();
-    break;
-  case KEY_space:
-    paused = !paused;
-    break;
   case KEY_Left: return ulist.left();
   case KEY_Right: return ulist.right();
   case KEY_Up: return ulist.up();
   case KEY_Down: return ulist.down();
-  case KEY_Return: return ulist.toggle();
-  case KEY_Tab: return ulist.mode_switch();
 
   default: return; // maybe play an alert here?
   }

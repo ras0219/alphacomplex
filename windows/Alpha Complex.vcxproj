@@ -154,6 +154,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\hud.hpp" />
     <ClInclude Include="..\include\views\mainview.hpp" />
     <ClInclude Include="..\include\views\mapview.hpp" />
+    <ClInclude Include="..\include\views\navhelper.hpp" />
     <ClInclude Include="..\include\views\statustext.hpp" />
     <ClInclude Include="..\include\views\unitview.hpp" />
     <ClInclude Include="..\include\views\view.hpp" />
@@ -190,6 +191,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\hud.cpp" />
     <ClCompile Include="..\src\views\mainview.cpp" />
     <ClCompile Include="..\src\views\mapview.cpp" />
+    <ClCompile Include="..\src\views\navhelper.cpp" />
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
     <ClCompile Include="..\src\views\viewstack.cpp" />

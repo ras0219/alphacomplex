@@ -3,10 +3,10 @@
 #include "city.hpp"
 #include "view.hpp"
 #include "mapview.hpp"
+#include "navhelper.hpp"
 
 struct DesignView : View {
-  DesignView(struct ViewStack* vs, MapView& mv, City& c)
-  : vstk(vs), mv(mv), city(c) {}
+  DesignView(struct ViewStack* vs, MapView& mv, City& c);
 
   virtual void render(Graphics& g);
   virtual void handle_keypress(KeySym ks);
@@ -14,4 +14,5 @@ struct DesignView : View {
   struct ViewStack* vstk;
   MapViewCursor mv;
   City& city;
+  NavHelper nav;
 };

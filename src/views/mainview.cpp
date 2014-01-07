@@ -19,6 +19,14 @@ MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c), mv(c.getXSize(),
   uview = new UnitView(vs);
   aview = new AnnounceView(vs);
   dview = new DesignView(vs, mv, c);
+
+  nav.register_key(KEY_h, "[h] Help", [this]() { vstk->push(hview); });
+  nav.register_key(KEY_u, "[u] Unit View", [this]() { vstk->push(uview); });
+  nav.register_key(KEY_d, "[d] Designations", [this]() { vstk->push(dview); });
+  nav.register_key(KEY_a, "[a] Announcements", [this]() { vstk->push(aview); });
+  nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
+  nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() { mv.next_mode(); });
+  nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });
 }
 
 JobListing pendinglist(20, &jobs, "Pending Jobs");
@@ -29,22 +37,13 @@ void MainView::render(Graphics& g) {
   pendinglist.render(g);
   HelpText::instance.render(g);
   statustext.render(g);
+  nav.render(g);
 }
 
 void MainView::handle_keypress(KeySym ks) {
+  if (nav.handle_keypress(ks)) return;
+
   switch (ks) {
-  case KEY_h:
-    vstk->push(hview);
-    break;
-  case KEY_u:
-    vstk->push(uview);
-    break;
-  case KEY_d:
-    vstk->push(dview);
-    break;
-  case KEY_a:
-    vstk->push(aview);
-    break;
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
@@ -60,16 +59,6 @@ void MainView::handle_keypress(KeySym ks) {
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }
-    break;
-  case KEY_Tab:
-    mv.next_mode();
-    break;
-  case KEY_space:
-    paused = !paused;
-    break;
-  case KEY_q:
-    if (gfx)
-      gfx->destroy();
     break;
   default:
     cerr << ks << endl;
