@@ -13,6 +13,7 @@ if (SDL2_FOUND)
     pkg_search_module (PC_SDL2_ttf sdl2_ttf SDL2_ttf)
 
     find_path (SDL2_ttf_INCLUDE_DIR SDL_ttf.h
+      PATH_SUFFIXES include/SDL2 include
       PATHS
       ${PC_SDL2_ttf_INCLUDEDIR}
       ~/Library/Frameworks
