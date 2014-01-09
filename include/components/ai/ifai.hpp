@@ -27,24 +27,20 @@ inline std::shared_ptr<IfScript<CB>> new_ifscript(const CB& f, AI::script_ptr s)
 
 template<class CB>
 struct IfElseScript : AIScript {
-  IfElseScript(const CB& f, AIScript* ts, AIScript* fs)
+  IfElseScript(const CB& f, AI::script_ptr ts, AI::script_ptr fs)
     : cb(f), truescript(ts), falsescript(fs) { }
   virtual ~IfElseScript() { delete truescript; delete falsescript; }
 
   virtual int start(AI* ai) override {
-    AIScript* s;
     if (cb()) {
-      s = truescript;
-      truescript = nullptr;
+      return ai->push_script(truescript);
     } else {
-      s = falsescript;
-      falsescript = nullptr;
+      return ai->push_script(falsescript);
     }
-    return ai->push_script(s);
   }
   virtual int resume(AI* ai) override { return complete(ai); }
 
   CB cb;
-  AIScript* truescript;
-  AIScript* falsescript;
+  AI::script_ptr truescript;
+  AI::script_ptr falsescript;
 };
