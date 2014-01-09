@@ -32,11 +32,6 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
 set(CMAKE_CXX_FLAGS_RELEASESTATIC "-O4 -DNDEBUG -static-libstdc++ -static-libgcc")
 
 set(SOURCES
-  "src/city.cpp"
-  "src/clock.cpp"
-  "src/joblist.cpp"
-  "src/logger.cpp"
-  "src/main.cpp"
   ## Components
   "src/components/ai.cpp"
   "src/components/citizenname.cpp"
@@ -44,24 +39,38 @@ set(SOURCES
   "src/components/furniture.cpp"
   "src/components/jobprovider.cpp"
   "src/components/movable.cpp"
+  "src/components/needsai.cpp"
   "src/components/pathfind.cpp"
   "src/components/room.cpp"
+  "src/components/sequenceai.cpp"
   "src/components/skills.cpp"
   ## Entities
   "src/entities/citizen.cpp"
   "src/entities/entity.cpp"
   "src/entities/garbage.cpp"
   "src/entities/workroom.cpp"
+  ## UnitViews
+  "src/views/unitviews/assignview.cpp"
+  "src/views/unitviews/needsview.cpp"
+  "src/views/unitviews/skillsview.cpp"
   ## Views
-  "src/views/hud.cpp"
-  "src/views/mapview.cpp"
-  "src/views/viewstack.cpp"
-  "src/views/mainview.cpp"
-  "src/views/helpview.cpp"
-  "src/views/unitview.cpp"
   "src/views/announceview.cpp"
   "src/views/designview.cpp"
+  "src/views/helpview.cpp"
+  "src/views/hud.cpp"
+  "src/views/mainview.cpp"
+  "src/views/mapview.cpp"
+  "src/views/navhelper.cpp"
   "src/views/statustext.cpp"
+  "src/views/unitview.cpp"
+  "src/views/viewstack.cpp"
+  ## 
+  "src/city.cpp"
+  "src/clock.cpp"
+  "src/cursor.cpp"
+  "src/joblist.cpp"
+  "src/logger.cpp"
+  "src/main.cpp"
   )
 
 if (BUILD_X11)
