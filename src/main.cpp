@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     gfx = new_graphics();
     ViewStack vs;
-    MainView mv(&vs, city);
+    MainView mv(&vs, &city);
     vs.push(&mv);
 
     gfx->c.push_back(&vs);

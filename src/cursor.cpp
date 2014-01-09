@@ -3,12 +3,12 @@
 
 bool CityViewport::check() {
   bool r = true;
-  if (tlx >= city.getXSize()) {
-    tlx = city.getXSize() - 1;
+  if (tlx >= city->getXSize()) {
+    tlx = city->getXSize() - 1;
     r = false;
   }
-  if (tly >= city.getYSize()) {
-    tly = city.getYSize() - 1;
+  if (tly >= city->getYSize()) {
+    tly = city->getYSize() - 1;
     r = false;
   }
   return r;
@@ -46,8 +46,8 @@ bool CityViewport::move_to_include(int x, int y) {
 }
 
 bool CityCursor::check() {
-  int xsz = city.getXSize();
-  int ysz = city.getYSize();
+  int xsz = city->getXSize();
+  int ysz = city->getYSize();
   if (x < 1) {
     x = 1;
     return false;

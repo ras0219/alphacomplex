@@ -7,7 +7,7 @@
 #include "navhelper.hpp"
 
 struct MainView : View {
-  MainView(struct ViewStack* vs, City& c);
+  MainView(struct ViewStack* vs, City* c);
 
   virtual void render(Graphics& g);
   virtual void handle_keypress(KeySym ks);
@@ -18,7 +18,7 @@ struct MainView : View {
   struct UnitView* uview;
   struct AnnounceView* aview;
   struct DesignView* dview;
-  City& city;
+  City* city;
   MapView mv;
   NavHelper nav;
 };

@@ -18,13 +18,13 @@ void MapView::render(Graphics& g) {
 void MapView::prepare_buffer() {
   for (int y = vp.tly; y < vp.ysz; ++y) {
     for (int x = vp.tlx; x < vp.xsz; ++x) {
-      if (city.designs(x, y) & 1) {
+      if (city->designs(x, y) & 1) {
         putChar(x, y, '%');
         continue;
       }
 
       if (mode == DEFAULT) {
-        set<Ent*>& s = city.ent(x, y);
+        set<Ent*>& s = city->ent(x, y);
         auto it = s.begin();
         while (it != s.end()) {
           if ((*it)->has<Renderable>()) {
@@ -37,28 +37,28 @@ void MapView::prepare_buffer() {
         if (it != s.end())
           continue;
       } else if (mode == ENTCOUNT) {
-        if (city.ent(x, y).size() > 0) {
-          putChar(x, y, '0' + city.ent(x, y).size());
+        if (city->ent(x, y).size() > 0 && city->ent(x, y).size() <= 9) {
+          putChar(x, y, (char)('0' + city->ent(x, y).size()));
           continue;
         }
       }
 
-      if (city.tile(x, y).type == Tile::wall) {
+      if (city->tile(x, y).type == Tile::wall) {
         int i = 0;
-        if (x > 0 && !city.tile(x - 1, y).walkable())
+        if (x > 0 && !city->tile(x - 1, y).walkable())
           i += 1;
-        if (y > 0 && !city.tile(x, y - 1).walkable())
+        if (y > 0 && !city->tile(x, y - 1).walkable())
           i += 2;
-        if (x < city.getXSize() - 1 && !city.tile(x + 1, y).walkable())
+        if (x < city->getXSize() - 1 && !city->tile(x + 1, y).walkable())
           i += 4;
-        if (y < city.getYSize() - 1 && !city.tile(x, y + 1).walkable())
+        if (y < city->getYSize() - 1 && !city->tile(x, y + 1).walkable())
           i += 8;
 
         putChar(x, y, prettywalls[i]);
         continue;
       }
 
-      putChar(x, y, city.tile(x, y).type);
+      putChar(x, y, city->tile(x, y).type);
     }
   }
 }

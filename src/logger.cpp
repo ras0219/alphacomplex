@@ -6,7 +6,7 @@ Logger::Logger(const char* filename)
 	out_file=NULL;
 	file_location.append(LOG_PREFIX);
 	file_location.append(filename);
-	out_file=fopen(file_location.c_str(), "w"); //open for write-only
+	fopen_s(&out_file, file_location.c_str(), "w"); //open for write-only
 	if(out_file==NULL)
 	{
 		//print error

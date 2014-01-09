@@ -40,6 +40,12 @@
     <Filter Include="Header Files\utilities">
       <UniqueIdentifier>{9adb99f9-5d6e-4683-a479-6372f39d2cc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\views\unitviews">
+      <UniqueIdentifier>{d6588852-543e-4c32-a9a2-cf2f2070a12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\views\unitviews">
+      <UniqueIdentifier>{58fa75e7-f109-416f-ae7b-406f6ba7caaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">
@@ -235,6 +241,9 @@
     <ClInclude Include="..\include\views\navhelper.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\views\unitviews\unitviewmode.hpp">
+      <Filter>Header Files\views\unitviews</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -332,6 +341,15 @@
     </ClCompile>
     <ClCompile Include="..\src\views\navhelper.cpp">
       <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\unitviews\assignview.cpp">
+      <Filter>Source Files\views\unitviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\unitviews\skillsview.cpp">
+      <Filter>Source Files\views\unitviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\unitviews\needsview.cpp">
+      <Filter>Source Files\views\unitviews</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
 #include "components/ai/needsai.hpp"
 #include "components/ai/activityai.hpp"
 
-std::shared_ptr<AIScript> make_seek_food_script(Ent* e) {
+std::shared_ptr<AIScript> make_seek_food_script() {
   return make_shared<ActivityAI>(100);
 }
 
-void NeedsSystem::update_item(Ent* e, NeedsAI* nai, AI* ai) {
+void NeedsSystem::update_item(Ent*, NeedsAI* nai, AI* ai) {
   if (nai->food <= nai->max_food / 5 && ai->priority() < 5) {
-    ai->interrupt(make_seek_food_script(e), 5);
+    ai->interrupt(make_seek_food_script(), 5);
     announce("Hunger...");
     return;
   }

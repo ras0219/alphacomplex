@@ -14,11 +14,11 @@
 extern Graphics* gfx;
 extern bool paused;
 
-MainView::MainView(ViewStack* vs, City& c) : vstk(vs), city(c), mv(c.getXSize(), c.getYSize(), c) {
+MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize(), c->getYSize(), c) {
   hview = new HelpView(vs);
   uview = new UnitView(vs);
   aview = new AnnounceView(vs);
-  dview = new DesignView(vs, mv, c);
+  dview = new DesignView(vs, &mv, c);
 
   nav.register_key(KEY_h, "[h] Help", [this]() { vstk->push(hview); });
   nav.register_key(KEY_u, "[u] Unit View", [this]() { vstk->push(uview); });
@@ -47,7 +47,7 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_r:
     if (influence >= 15) {
       influence -= 15;
-      city.ent(1, 1).insert(new_citizen({ 1, 1, &city }, Security::RED));
+      city->ent(1, 1).insert(new_citizen({ 1, 1, city }, Security::RED));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
@@ -55,7 +55,7 @@ void MainView::handle_keypress(KeySym ks) {
   case KEY_e:
     if (influence >= 5) {
       influence -= 5;
-      city.ent(1, 1).insert(new_citizen({ 1, 1, &city }, Security::INFRARED));
+      city->ent(1, 1).insert(new_citizen({ 1, 1, city }, Security::INFRARED));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }

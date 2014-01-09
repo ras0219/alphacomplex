@@ -35,6 +35,8 @@ struct Aspect {
   Aspect(Kind k) : kind(k), parent(nullptr) { }
   virtual ~Aspect() {}
 
+  Aspect& operator=(const Aspect&) = delete;
+
   template<class T>
   T& as() {
     assert(kind == T::StaticKind);
@@ -49,6 +51,7 @@ struct Aspect {
   const Kind kind;
   struct Ent* parent;
 };
+
 template<Aspect::Kind K, class T>
 struct AspectStatic : Aspect {
   static const Aspect::Kind StaticKind = K;

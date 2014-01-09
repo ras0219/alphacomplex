@@ -9,12 +9,12 @@
 
 extern bool paused;
 
-DesignView::DesignView(ViewStack* vs, MapView& mapv, City& c)
+DesignView::DesignView(ViewStack* vs, MapView* mapv, City* c)
 : vstk(vs), mv(mapv), city(c)
 {
   nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
-  nav.register_key(KEY_Return, "[Ent] Dig", [this]() { city.toggle_dig_wall(mv.csr.x, mv.csr.y); });
+  nav.register_key(KEY_Return, "[Ent] Dig", [this]() { city->toggle_dig_wall(mv.csr.x, mv.csr.y); });
 }
 
 void DesignView::render(Graphics& g) {

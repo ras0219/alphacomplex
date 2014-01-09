@@ -3,7 +3,7 @@
 struct City;
 
 struct CityViewport {
-  CityViewport(City& city, int xsz = 1, int ysz = 1, int tlx = 0, int tly = 0)
+  CityViewport(City* city, int xsz = 1, int ysz = 1, int tlx = 0, int tly = 0)
   : city(city), xsz(xsz), ysz(ysz), tlx(tlx), tly(tly) {}
 
   bool resize(int nxsz, int nysz);
@@ -15,12 +15,12 @@ struct CityViewport {
   bool check();
 
   // Read only
-  City& city;
+  City* city;
   int xsz, ysz, tlx, tly;
 };
 
 struct CityCursor {
-  CityCursor(City& city, int x = 1, int y = 1)
+  CityCursor(City* city, int x = 1, int y = 1)
   : city(city), x(x), y(y) {}
 
   inline bool offset(int xoff, int yoff) { x += xoff; y += yoff; return check(); }
@@ -30,6 +30,6 @@ struct CityCursor {
   bool check();
 
   // Read only
-  City& city;
+  City* city;
   int x, y;
 };

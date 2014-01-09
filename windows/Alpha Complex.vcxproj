@@ -45,10 +45,11 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -73,9 +74,10 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -157,10 +159,14 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\navhelper.hpp" />
     <ClInclude Include="..\include\views\statustext.hpp" />
     <ClInclude Include="..\include\views\unitview.hpp" />
+    <ClInclude Include="..\include\views\unitviews\unitviewmode.hpp" />
     <ClInclude Include="..\include\views\view.hpp" />
     <ClInclude Include="..\include\views\viewstack.hpp" />
     <ClInclude Include="..\include\views\widget.hpp" />
     <ClInclude Include="..\include\windows.hpp" />
+    <ClCompile Include="..\src\views\unitviews\needsview.cpp">
+      <FileType>CppHeader</FileType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\city.cpp" />
@@ -194,6 +200,8 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\navhelper.cpp" />
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
+    <ClCompile Include="..\src\views\unitviews\assignview.cpp" />
+    <ClCompile Include="..\src\views\unitviews\skillsview.cpp" />
     <ClCompile Include="..\src\views\viewstack.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

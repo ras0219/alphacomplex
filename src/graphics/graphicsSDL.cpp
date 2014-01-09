@@ -205,7 +205,7 @@ void GraphicsImpl::handle_events(Controller* c) {
   //all done with events! :)
 }
 
-void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsImpl::Context gc) {
+void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsImpl::Context) {
   LoadText(str, TEMP_FONT_PATH);
   int w = 0, h = 0;
   int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
@@ -215,7 +215,7 @@ void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsIm
 //  main_texture
 }
 
-void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context gc) {
+void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context) {
   //ugh. XXX
   char buff[2];
   buff[0]=ch;
