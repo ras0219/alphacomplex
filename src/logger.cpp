@@ -6,7 +6,12 @@ Logger::Logger(const char* filename)
 	out_file=NULL;
 	file_location.append(LOG_PREFIX);
 	file_location.append(filename);
-	fopen_s(&out_file, file_location.c_str(), "w"); //open for write-only
+#ifdef _MSC_VER 
+	if(fopen_s(&out_file, file_location.c_str(), "w")!=0)
+		out_file=NULL;
+#else
+	out_file = fopen(file_location.c_str(), "w");
+#endif
 	if(out_file==NULL)
 	{
 		//print error
