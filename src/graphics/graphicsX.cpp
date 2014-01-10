@@ -95,8 +95,13 @@ void GraphicsImpl::handle_events(Controller* c) {
       break;
     case KeyPress: {
       auto keycode = event.xkey.keycode;
-      auto keysym = XKeycodeToKeysym(display, keycode, 0);
-      c->handle_keypress(keysym);
+      int keysyms_per_keycode_return;
+      auto keysyms = XGetKeyboardMapping(display,
+					 keycode,
+					 0,
+					 &keysyms_per_keycode_return);
+      c->handle_keypress(keysyms[0]);
+      XFree(keysyms);
       if (destroyed) return;
       break;
     }
