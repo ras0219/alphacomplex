@@ -8,7 +8,7 @@ struct ItemProperties {
   float mass;
 };
 
-struct Item : AspectStatic<Aspect::Item, Item>, private global_set<Item> {
+struct Item : AspectStatic<Aspect::Item, Item> {
   Item(const ItemProperties& p) : prop(p), locked(false) { }
 
   inline void lock() { assert(!locked); locked = true; }

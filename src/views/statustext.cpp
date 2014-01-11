@@ -32,7 +32,7 @@ void StatusText::render(Graphics& g) {
     }
 
     if (retval & EMIT) {
-      g.drawString(g.getWidth() - ((s.text.size() + 1) * 6) - 5, 15, s.text, Graphics::DEFAULT);
+      g.drawString(g.getWidth() - (s.text.size() + 1) - 1, 0, s.text, Graphics::DEFAULT);
       break;
     }
   }

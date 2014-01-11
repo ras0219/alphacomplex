@@ -1,0 +1,36 @@
+# - Try to find NCURSES
+# Once done this will define
+#  NCURSES_FOUND - System has NCURSES
+#  NCURSES_INCLUDE_DIR - The NCURSES include directories
+#  NCURSES_LIBRARIES - The libraries needed to use NCURSES
+
+FIND_PATH ( NCURSES_INCLUDE_DIR ncurses.h
+    PATH_SUFFIXES include/ncurses include
+    PATHS
+    ${NCURSES_INCLUDE_DIR}
+    /usr/local/include
+    /usr/include
+)
+
+FIND_LIBRARY ( NCURSES_LIBRARIES ncurses
+    PATH_SUFFIXES lib64 lib
+    PATHS
+    ${NCURSES_LIBRARY_DIR}
+    /usr/local/lib
+    /usr/lib
+)
+
+GET_FILENAME_COMPONENT( NCURSES_LIBRARY_DIR ${NCURSES_LIBRARIES} PATH )
+
+SET ( NCURSES_FOUND "NO" )
+IF ( NCURSES_INCLUDE_DIR )
+    IF ( NCURSES_LIBRARIES )
+        SET ( NCURSES_FOUND "YES" )
+    ENDIF ( NCURSES_LIBRARIES )
+ENDIF ( NCURSES_INCLUDE_DIR )
+
+MARK_AS_ADVANCED(
+    NCURSES_LIBRARY_DIR
+    NCURSES_INCLUDE_DIR
+    NCURSES_LIBRARIES
+)

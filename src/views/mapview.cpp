@@ -66,7 +66,7 @@ void MapView::prepare_buffer() {
 void MapView::blit_buffer(Graphics& g) {
   for (int y = 0; y < vp.ysz; ++y) {
     for (int x = 0; x < vp.xsz; ++x)
-      g.drawChar(5 + x * 6, 15 + y * 12, buf[y * vp.xsz + x], Graphics::DEFAULT);
+      g.drawChar(2 + x, 1 + y, buf[y * vp.xsz + x], Graphics::DEFAULT);
   }
 }
 

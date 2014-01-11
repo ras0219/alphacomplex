@@ -34,7 +34,7 @@ MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize()
   nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });
 }
 
-JobListing pendinglist(20, &jobs, "Pending Jobs");
+JobListing pendinglist(0, &jobs, "Pending Jobs");
 
 void MainView::render(Graphics& g) {
   mv.render(g);

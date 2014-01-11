@@ -14,23 +14,22 @@ struct UnitViewMode {
 
 template<class P>
 void render_policy(Graphics& g, uint row, uint col) {
-  uint row_off = 12;
-  uint col_off = 48;
-  uint left = 124;
-  uint top_row = 42;
+  uint col_off = 7;
+  uint left = 12;
+  uint top_row = 2;
 
-  g.drawString(6, 18, P::title());
+  g.drawString(0, 0, P::title());
 
   uint c = 0;
   for (auto d : P::col_list()) {
-    g.drawString(left + 6 + c*col_off, top_row, P::col_label(d));
+    g.drawString(left + (c + 1)*col_off + 1, top_row, P::col_label(d));
     ++c;
   }
 
   uint r = 0;
 
   for (auto e : CitizenName::instances) {
-    g.drawString(18, top_row + 12 + r*row_off, get_full_name(e->parent));
+    g.drawString(2, top_row + 1 + r, get_full_name(e->parent));
 
     c = 0;
     for (auto d : P::col_list()) {
@@ -41,7 +40,7 @@ void render_policy(Graphics& g, uint row, uint col) {
       }
       P::entry(e, d, buf2);
 
-      g.drawString(left + c*col_off, top_row + 12 + r*row_off, buf2);
+      g.drawString(left + (c + 1)*col_off, top_row + 1 + r, buf2);
       ++c;
     }
 
@@ -49,7 +48,7 @@ void render_policy(Graphics& g, uint row, uint col) {
   }
 
   // Render cursor
-  g.drawChar(6, top_row + 12 + row*row_off, '>', Graphics::DEFAULT);
-  g.drawString(left + 18 + col*col_off, 18, "VV", Graphics::DEFAULT);
+  g.drawChar(0, top_row + 1 + row, '>', Graphics::DEFAULT);
+  g.drawString(left + 3 + (col + 1)*col_off, 0, "VV", Graphics::DEFAULT);
 }
 

@@ -20,8 +20,6 @@
 
 //#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
 #define TEMP_FONT_PATH "../resources/font/Anonymous_Pro.ttf"
-int FONT_HEIGHT = 12; //notice how this is NOT a define. hacky hacky.
-int FONT_WIDTH = 6;
 
 using namespace std;
 using namespace chrono;
@@ -84,11 +82,11 @@ GraphicsImpl::GraphicsImpl()
   }
 
   font_color = {0,255,0,0};
-  width = 80*FONT_WIDTH; //to-do
-  height= 40*FONT_HEIGHT;
+  width = 80; //to-do
+  height= 40;
 
   //to-do: center on screen
-  win = SDL_CreateWindow("", 100, 100, width, height,
+  win = SDL_CreateWindow("", 100, 100, width*FONT_WIDTH, height*FONT_HEIGHT,
                                 SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if(win == nullptr) {
     std::cout << "Failed to make window. "<<SDL_GetError() << std::endl;
@@ -210,7 +208,7 @@ void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsIm
   int w = 0, h = 0;
   int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
   if (errcode == -1) assert(false);
-  SDL_Rect dstRect = {x, y - 12, w, h};
+  SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
   sdl_last_call = SDL_RenderCopy(ren,ttf_texture, NULL, &dstRect);
 //  main_texture
 }
@@ -232,7 +230,7 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context) 
    int w = 0, h = 0;
    int errcode = TTF_SizeText(best_font, buff, &w, &h);
    if (errcode == -1) assert(false);
-   SDL_Rect dstRect = {x, y - 12, w, h};
+   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
    sdl_last_call = SDL_RenderCopy(ren, cached_textures[ch], NULL, &dstRect);
 }
 

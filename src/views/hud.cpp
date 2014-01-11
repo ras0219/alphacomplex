@@ -12,14 +12,14 @@ int influence = 0;
 void Hud::render(Graphics& g) {
   stringstream out;
   out << "Influence: " << influence;
-  g.drawString(5, g.getHeight()-5, out.str(), Graphics::DEFAULT);
-
-  g.drawString(g.getWidth() - 150, g.getHeight()-5, format_time(gametime), Graphics::DEFAULT);
+  
+  g.drawString(1, g.getHeight()-2, out.str(), Graphics::DEFAULT);
+  g.drawString(g.getWidth() - 25, g.getHeight()-2, format_time(gametime), Graphics::DEFAULT);
 
   auto sz = a11s.msgs.size();
 
   for (int x=1;x<4;++x)
-    g.drawString(5, g.getHeight()-5-10*x, a11s.msgs[sz-x], Graphics::DEFAULT);
+    g.drawString(1, g.getHeight()-2-x, a11s.msgs[sz-x], Graphics::DEFAULT);
 
 }
 

@@ -7,21 +7,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
 set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 
-if (WIN32)
-  # X11 disabled by default for WIN32 (not cygwin)
-  option (BUILD_X11 "Build a version linked against X11" OFF)
-else ()
-  option (BUILD_X11 "Build a version linked against X11" ON)
-endif ()
-
-
-if (CYGWIN)
-  # SDL disabled by default for cygwin
-  option (BUILD_SDL2 "Build a version linked against SDL2" OFF)
-else ()
-  option (BUILD_SDL2 "Build a version linked against SDL2" ON)
-endif ()
-
 include_directories(include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++11")
@@ -74,6 +59,43 @@ set(SOURCES
   "src/main.cpp"
   )
 
+
+##
+#  Build Ncurses version (alphacomplex-nc)
+##
+
+if (WIN32)
+  # Ncurses disabled by default for WIN32 (not cygwin)
+  option (BUILD_NCURSES "Build a ncurses version" OFF)
+else ()
+  option (BUILD_NCURSES "Build a ncurses version" ON)
+endif ()
+
+if (BUILD_NCURSES)
+  find_package(Ncurses)
+
+  if (NCURSES_FOUND)
+    include_directories(${NCURSES_INCLUDE_DIR})
+    add_executable(alphacomplex-nc ${SOURCES} "src/graphics/graphicsNcurses.cpp")
+    target_link_libraries(alphacomplex-nc ${NCURSES_LIBRARIES})
+    set_target_properties(alphacomplex-nc PROPERTIES COMPILE_DEFINITIONS "GRAPHICS_NCURSES=1")
+  else ()
+    message("WARNING!! Ncurses not found, will not build Ncurses executable.")
+  endif ()
+endif (BUILD_NCURSES)
+
+
+##
+#  Build X11 version (alphacomplex-x11)
+##
+
+if (WIN32)
+  # X11 disabled by default for WIN32 (not cygwin)
+  option (BUILD_X11 "Build a version linked against X11" OFF)
+else ()
+  option (BUILD_X11 "Build a version linked against X11" ON)
+endif ()
+
 if (BUILD_X11)
   find_package(X11)
 
@@ -87,6 +109,18 @@ if (BUILD_X11)
   endif ()
 endif (BUILD_X11)
 
+
+##
+#  Build SDL2 version (alphacomplex-sdl)
+##
+
+if (CYGWIN)
+  # SDL disabled by default for cygwin
+  option (BUILD_SDL2 "Build a version linked against SDL2" OFF)
+else ()
+  option (BUILD_SDL2 "Build a version linked against SDL2" ON)
+endif ()
+
 if (BUILD_SDL2)
   find_package(SDL2_ttf)
   if (SDL2_ttf_FOUND)
@@ -98,3 +132,27 @@ if (BUILD_SDL2)
     message("WARNING!! SDL2_ttf not found, will not build SDL executable.")
   endif ()
 endif (BUILD_SDL2)
+
+
+##
+#  Build Web version (alphacomplex-web)
+##
+
+if (WIN32)
+  # Web disabled by default for WIN32 (not cygwin)
+  option (BUILD_WEB "Build a web version" OFF)
+else ()
+  option (BUILD_WEB "Build a web version" ON)
+endif ()
+
+if (BUILD_WEB)
+  find_package(LibWebSockets)
+  if (LIBWEBSOCKETS_FOUND)
+    include_directories(${LIBWEBSOCKETS_INCLUDE_DIR})
+    add_executable(alphacomplex-web ${SOURCES} "src/graphics/graphicsWeb.cpp")
+    target_link_libraries(alphacomplex-web ${LIBWEBSOCKETS_LIBRARIES})
+    set_target_properties(alphacomplex-web PROPERTIES COMPILE_DEFINITIONS "GRAPHICS_WEB=1")
+  else ()
+    message("WARNING!! LibWebSockets not found, will not build web executable.")
+  endif ()
+endif (BUILD_WEB)
