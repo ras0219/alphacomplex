@@ -65,7 +65,7 @@ std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
 
   script->add_task(make_shared<PathAI>(point(x1, y1)));
   script->add_task(make_shared<PathAI>(point(x2, y2)));
-  script->add_task(make_callbackai([=]() { ++influence; }));
+  script->add_task(make_callbackai([=] (AI*) { ++influence; }));
 
   return make_shared<Job>(
     "Fetch Documents",

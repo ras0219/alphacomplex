@@ -22,10 +22,12 @@
 #define KEY_e XK_e
 #define KEY_d XK_d
 
+#define KEY_f XK_f
+
 #else
 #include "SDL.h"
 
-typedef unsigned long KeySym;
+using KeySym = unsigned long;
 
 #define KEY_Escape SDLK_ESCAPE
 #define KEY_space SDLK_SPACE
@@ -44,5 +46,7 @@ typedef unsigned long KeySym;
 #define KEY_q SDLK_q
 #define KEY_e SDLK_e
 #define KEY_d SDLK_d
+
+#define KEY_f SDLK_f
 
 #endif

@@ -10,7 +10,7 @@ struct IfScript : AIScript {
   ~IfScript() {}
 
   virtual int start(AI* ai) override {
-    if (cb()) {
+    if (cb(ai)) {
       return ai->replace_script(script);
     }
     return complete(ai);
@@ -32,7 +32,7 @@ struct IfElseScript : AIScript {
   virtual ~IfElseScript() { delete truescript; delete falsescript; }
 
   virtual int start(AI* ai) override {
-    if (cb()) {
+    if (cb(ai)) {
       return ai->push_script(truescript);
     } else {
       return ai->push_script(falsescript);

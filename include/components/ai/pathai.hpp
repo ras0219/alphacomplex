@@ -53,3 +53,6 @@ struct PathAI : AIScript {
   vector<point>::reverse_iterator pathp;
 };
 
+inline std::shared_ptr<PathAI> make_pathai(point p, int rate = 5) {
+  return make_shared<PathAI>(p, rate);
+}

@@ -169,10 +169,10 @@ wistream& operator>>(wistream& is, City& c) {
 
 void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   Clearance c = { Security::ALL, Department::ALL };
-  auto wall_cb = [=]() {
+  auto wall_cb = [=](AI*) {
     return city->designs(digx, digy) & 1 && city->tile(digx, digy).type == Tile::wall;
   };
-  auto dig_cb = [=]() { city->remove_wall(digx, digy); };
+  auto dig_cb = [=](AI*) { city->remove_wall(digx, digy); };
 
   SequenceAI::ptr s1 = make_shared<SequenceAI>();
   s1->add_task(make_shared<ActivityAI>(100));

@@ -7,5 +7,3 @@ struct Foodstuff : AspectStatic<Aspect::Foodstuff, Foodstuff> {
 
   int amount;
 };
-
-Ent* make_bread(const Position& p);

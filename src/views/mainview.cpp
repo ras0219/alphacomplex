@@ -11,6 +11,8 @@
 #include "joblist.hpp"
 #include "entities/citizen.hpp"
 
+#include "entities/foods.hpp"
+
 extern Graphics* gfx;
 extern bool paused;
 
@@ -24,6 +26,9 @@ MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize()
   nav.register_key(KEY_u, "[u] Unit View", [this]() { vstk->push(uview); });
   nav.register_key(KEY_d, "[d] Designations", [this]() { vstk->push(dview); });
   nav.register_key(KEY_a, "[a] Announcements", [this]() { vstk->push(aview); });
+  nav.register_key(KEY_f, "[f] Purchase Food", [this]() {
+    city->ent(1, 1).insert(make_bread({ 1, 1 }));
+  });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
   nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() { mv.next_mode(); });
   nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });

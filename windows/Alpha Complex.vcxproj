@@ -138,6 +138,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\defs.hpp" />
     <ClInclude Include="..\include\entities\citizen.hpp" />
     <ClInclude Include="..\include\entities\entity.hpp" />
+    <ClInclude Include="..\include\entities\foods.hpp" />
     <ClInclude Include="..\include\entities\garbage.hpp" />
     <ClInclude Include="..\include\entities\subsystem.hpp" />
     <ClInclude Include="..\include\entities\system.hpp" />
@@ -149,6 +150,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\logger.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
     <ClInclude Include="..\include\utilities\apply_tuple.hpp" />
+    <ClInclude Include="..\include\utilities\global_set.hpp" />
     <ClInclude Include="..\include\utilities\thunk_func.hpp" />
     <ClInclude Include="..\include\views\announceview.hpp" />
     <ClInclude Include="..\include\views\designview.hpp" />
@@ -164,9 +166,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\viewstack.hpp" />
     <ClInclude Include="..\include\views\widget.hpp" />
     <ClInclude Include="..\include\windows.hpp" />
-    <ClCompile Include="..\src\views\unitviews\needsview.cpp">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\city.cpp" />
@@ -185,6 +184,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\cursor.cpp" />
     <ClCompile Include="..\src\entities\citizen.cpp" />
     <ClCompile Include="..\src\entities\entity.cpp" />
+    <ClCompile Include="..\src\entities\foods.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
     <ClCompile Include="..\src\graphics\graphicsSDL.cpp" />
@@ -201,6 +201,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
     <ClCompile Include="..\src\views\unitviews\assignview.cpp" />
+    <ClCompile Include="..\src\views\unitviews\needsview.cpp" />
     <ClCompile Include="..\src\views\unitviews\skillsview.cpp" />
     <ClCompile Include="..\src\views\viewstack.cpp" />
   </ItemGroup>

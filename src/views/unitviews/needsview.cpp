@@ -10,11 +10,11 @@ struct NeedsMode : UnitViewMode {
   static inline const string& col_label(const std::string& d) { return d; }
   static inline void entry(CitizenName* cn, const std::string& l, string& buf) {
     Ent* e = cn->parent;
-    if (!e->has<NeedsAI>()) {
+    if (!e->has<Needs>()) {
       buf = "N/A";
       return;
     }
-    NeedsAI* nai = e->get<NeedsAI>();
+    Needs* nai = e->get<Needs>();
     int val;
     if (l == "Food") {
       val = nai->food;

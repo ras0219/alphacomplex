@@ -17,7 +17,7 @@ struct Aspect {
     Skilled,
     Renderable,
     AI,
-    NeedsAI,
+    Needs,
     Clearance,
     Descriptable,
     Position,

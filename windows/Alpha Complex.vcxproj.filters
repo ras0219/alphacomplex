@@ -244,6 +244,12 @@
     <ClInclude Include="..\include\views\unitviews\unitviewmode.hpp">
       <Filter>Header Files\views\unitviews</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\entities\foods.hpp">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utilities\global_set.hpp">
+      <Filter>Header Files\utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -350,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="..\src\views\unitviews\needsview.cpp">
       <Filter>Source Files\views\unitviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entities\foods.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
