@@ -16,4 +16,6 @@ struct Item : AspectStatic<Aspect::Item, Item>, private global_set<Item> {
 
   const ItemProperties& prop;
   bool locked;
+
+  template<class> friend struct global_set;
 };

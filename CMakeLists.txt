@@ -47,6 +47,7 @@ set(SOURCES
   ## Entities
   "src/entities/citizen.cpp"
   "src/entities/entity.cpp"
+  "src/entities/foods.cpp"
   "src/entities/garbage.cpp"
   "src/entities/workroom.cpp"
   ## UnitViews

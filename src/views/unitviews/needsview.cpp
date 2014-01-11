@@ -38,6 +38,6 @@ struct NeedsMode : UnitViewMode {
   void toggle(CitizenName::iterator, uint) { }
 };
 
-NeedsMode::List_t NeedsMode::List = { "Food", "Sleep", "Happy" };
+NeedsMode::List_t NeedsMode::List = {{ "Food", "Sleep", "Happy" }};
 
 NeedsMode needsmode;

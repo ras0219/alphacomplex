@@ -56,11 +56,11 @@ extern struct AssignMode assignmode;
 extern struct SkillsMode skillsmode;
 extern struct NeedsMode needsmode;
 
-UnitListing::Modes_t UnitListing::modes = {
+UnitListing::Modes_t UnitListing::modes = {{
   (UnitListing::Mode_t) &assignmode,
   (UnitListing::Mode_t) &needsmode,
   (UnitListing::Mode_t) &skillsmode
-};
+}};
 
 #include <sstream>
 

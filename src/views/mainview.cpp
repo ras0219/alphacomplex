@@ -27,7 +27,7 @@ MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize()
   nav.register_key(KEY_d, "[d] Designations", [this]() { vstk->push(dview); });
   nav.register_key(KEY_a, "[a] Announcements", [this]() { vstk->push(aview); });
   nav.register_key(KEY_f, "[f] Purchase Food", [this]() {
-    city->ent(1, 1).insert(make_bread({ 1, 1 }));
+    city->ent(1, 1).insert(make_bread({ 1, 1, city }));
   });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
   nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() { mv.next_mode(); });
