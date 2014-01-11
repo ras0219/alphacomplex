@@ -85,7 +85,7 @@
   #define KEY_Right   KEY_RIGHT
   #define KEY_Up      KEY_UP
   #define KEY_Down    KEY_DOWN
-  #define KEY_Return  KEY_ENTER
+  #define KEY_Return  '\n'
   #define KEY_Tab     '\t'
   #define KEY_h       'h'
   #define KEY_u       'u'

@@ -1,5 +1,7 @@
 
+#include <stdio.h>
 #include <ncurses.h>
+#include <string.h>
 
 #include "controller.hpp"
 #include "graphics.hpp"
@@ -19,6 +21,12 @@ struct GraphicsImpl : Graphics {
   void LoadText(const std::string msg, const std::string font_file);
   void repaint();
   void destroy();
+  
+private:
+  bool updateBuffer(int x, int y, char ch);
+  
+  char * buffer;
+  int buffer_size;
 };
 
 GraphicsImpl::GraphicsImpl()
@@ -27,12 +35,17 @@ GraphicsImpl::GraphicsImpl()
   initscr();
   
   // hide cursor
-  curs_set(0);
+  if (ERR == curs_set(0))
+  {
+    printf("ERROR: cannot hide cursor\n");
+  }
   
   // get screen size
   getmaxyx(stdscr, height, width);
   
-  printf("%d %d\n", height, width);
+  // create screen buffer
+  buffer_size = (width + 1) * (height + 1);
+  buffer = new char[buffer_size];
   
   // get input from main window
   keypad(stdscr, TRUE);
@@ -60,8 +73,21 @@ void GraphicsImpl::handle_events(
   if (ch != ERR)
   {
     c->handle_keypress(ch);
-    printf("%d\n", (int)ch);
   }
+  clrtoeol();
+}
+
+bool GraphicsImpl::updateBuffer(
+  int x,
+  int y,
+  char ch)
+{
+  if (buffer[y * (width + 1) + x] !=  ch)
+  {
+    buffer[y * (width + 1) + x] = ch;
+    return true;
+  }
+  return false;
 }
 
 void GraphicsImpl::drawString(
@@ -70,7 +96,17 @@ void GraphicsImpl::drawString(
   const string & str,
   const GraphicsImpl::Context /* context */)
 {
-  mvprintw(y, x, str.c_str());
+  for (const char ch : str)
+  {
+    if (x >= 0 && y >= 0 && x < width && y < height)
+    {
+      if (updateBuffer(x, y, ch))
+      {
+        mvwaddch(stdscr, y, x, ch);
+      }
+    }
+    x++;
+  }
 }
 
 void GraphicsImpl::drawChar(
@@ -79,16 +115,19 @@ void GraphicsImpl::drawChar(
   char ch,
   const GraphicsImpl::Context /* context */)
 {
-  char buffer[2] = { ch, '\0' };
-  mvprintw(y, x, buffer);
+  if (updateBuffer(x, y, ch))
+  {
+    mvwaddch(stdscr, y, x, ch);
+  }
 }
 
 void GraphicsImpl::repaint()
 {
   clear();
   
-  // OPTIMIZATION: create a buffer, render to buffer then draw buffer.
+  memset(buffer, ' ', buffer_size);
   
+  // fill the buffer
   for (auto p : c)
     p->render(*this);
   
@@ -100,6 +139,8 @@ void GraphicsImpl::destroy()
   if (destroyed) return;
   
   endwin();
+  
+  delete [] buffer;
   
   destroyed = true;
 }
