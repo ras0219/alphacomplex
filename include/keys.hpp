@@ -30,7 +30,7 @@
 #ifdef GRAPHICS_SDL
   #include "SDL.h"
 
-  typedef unsigned long KeySym;
+  using KeySym = unsigned long;
 
   #define KEY_Escape  SDLK_ESCAPE
   #define KEY_space   SDLK_SPACE
@@ -76,7 +76,7 @@
 #ifdef GRAPHICS_NCURSES
   #include <ncurses.h>
   
-  typedef unsigned long KeySym;
+  using KeySym = long;
   
   #define KEY_Escape  27
   #define KEY_space   ' '

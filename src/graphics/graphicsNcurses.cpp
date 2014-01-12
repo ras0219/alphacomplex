@@ -9,8 +9,8 @@
 
 using namespace std;
 
-struct GraphicsImpl : Graphics {
-  GraphicsImpl();
+struct Graphics_Ncurses : Graphics {
+  Graphics_Ncurses();
 
   // Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
@@ -29,7 +29,7 @@ private:
   int buffer_size;
 };
 
-GraphicsImpl::GraphicsImpl()
+Graphics_Ncurses::Graphics_Ncurses()
 {
   // start curses mode
   initscr();
@@ -57,14 +57,14 @@ GraphicsImpl::GraphicsImpl()
   nodelay(stdscr, TRUE);
 }
 
-void GraphicsImpl::LoadText(
+void Graphics_Ncurses::LoadText(
   const std::string /* msg */,
   const std::string /* font_file */)
 {
   // do nothing
 }
 
-void GraphicsImpl::handle_events(
+void Graphics_Ncurses::handle_events(
   Controller* c)
 {
   if (destroyed) return;
@@ -77,7 +77,7 @@ void GraphicsImpl::handle_events(
   clrtoeol();
 }
 
-bool GraphicsImpl::updateBuffer(
+bool Graphics_Ncurses::updateBuffer(
   int x,
   int y,
   char ch)
@@ -90,11 +90,11 @@ bool GraphicsImpl::updateBuffer(
   return false;
 }
 
-void GraphicsImpl::drawString(
+void Graphics_Ncurses::drawString(
   int x,
   int y,
   const string & str,
-  const GraphicsImpl::Context /* context */)
+  const Graphics_Ncurses::Context /* context */)
 {
   for (const char ch : str)
   {
@@ -109,11 +109,11 @@ void GraphicsImpl::drawString(
   }
 }
 
-void GraphicsImpl::drawChar(
+void Graphics_Ncurses::drawChar(
   int x,
   int y,
   char ch,
-  const GraphicsImpl::Context /* context */)
+  const Graphics_Ncurses::Context /* context */)
 {
   if (updateBuffer(x, y, ch))
   {
@@ -121,7 +121,7 @@ void GraphicsImpl::drawChar(
   }
 }
 
-void GraphicsImpl::repaint()
+void Graphics_Ncurses::repaint()
 {
   clear();
   
@@ -134,7 +134,7 @@ void GraphicsImpl::repaint()
   refresh();
 }
 
-void GraphicsImpl::destroy()
+void Graphics_Ncurses::destroy()
 {
   if (destroyed) return;
   
@@ -147,7 +147,7 @@ void GraphicsImpl::destroy()
 
 Graphics* new_graphics()
 {
-  return new GraphicsImpl();
+  return new Graphics_Ncurses();
 }
 
 void Graphics::drawString(
@@ -156,7 +156,7 @@ void Graphics::drawString(
   const std::string& str,
   Context gc)
 {
-  return static_cast<GraphicsImpl*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_Ncurses*>(this)->drawString(x,y,str,gc);
 }
 
 void Graphics::drawChar(
@@ -165,21 +165,21 @@ void Graphics::drawChar(
   char str,
   Context gc)
 {
-  return static_cast<GraphicsImpl*>(this)->drawChar(x,y,str,gc);
+  return static_cast<Graphics_Ncurses*>(this)->drawChar(x,y,str,gc);
 }
 
 void Graphics::handle_events(
   Controller* c)
 {
-  return static_cast<GraphicsImpl*>(this)->handle_events(c);
+  return static_cast<Graphics_Ncurses*>(this)->handle_events(c);
 }
 
 void Graphics::repaint()
 {
-  return static_cast<GraphicsImpl*>(this)->repaint();
+  return static_cast<Graphics_Ncurses*>(this)->repaint();
 }
 
 void Graphics::destroy()
 {
-  return static_cast<GraphicsImpl*>(this)->destroy();
+  return static_cast<Graphics_Ncurses*>(this)->destroy();
 }

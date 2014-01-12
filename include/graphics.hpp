@@ -40,8 +40,6 @@ enum : char {
 
 struct Widget;
 
-struct GraphicsImpl;
-
 struct Graphics : debug_policy_t {
   Graphics(const Graphics&) = delete;
   Graphics& operator=(const Graphics&) = delete;
@@ -74,8 +72,7 @@ struct Graphics : debug_policy_t {
 
   bool destroyed = false;
 
-private:
-  friend struct GraphicsImpl;
+protected:
 
   Graphics() { }
   ~Graphics() { destroy(); }

@@ -154,6 +154,8 @@ static struct libwebsocket_protocols protocols[] = {
     callback_http, /* callback */
     sizeof (struct per_session_data__http), /* per_session_data_size */
     0, /* max frame size / rx buffer */
+    0, /* owning_server */
+    0 /* protocol_index */
   },
   {
     "alphacomplex", /* name */
@@ -161,11 +163,11 @@ static struct libwebsocket_protocols protocols[] = {
     sizeof (struct per_session_data__alphacomplex), /* per_session_data_size */
     0, /* max frame size / rx buffer */
   },
-  { NULL, NULL, 0, 0 } /* terminator */
+  { NULL, NULL, 0, 0, 0, 0 } /* terminator */
 };
 
-struct GraphicsImpl : Graphics {
-  GraphicsImpl();
+struct Graphics_Web : Graphics {
+  Graphics_Web();
 
   // Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
@@ -185,8 +187,8 @@ private:
   bool updateBuffer(int x, int y, char ch);
 };
 
-GraphicsImpl::GraphicsImpl() :
-  server_thread(&GraphicsImpl::server, this)
+Graphics_Web::Graphics_Web() :
+  server_thread(&Graphics_Web::server, this)
 {
   server_thread.detach();
   
@@ -198,7 +200,7 @@ GraphicsImpl::GraphicsImpl() :
   s_buffer = new char[s_buffer_size];
 }
 
-bool GraphicsImpl::updateBuffer(
+bool Graphics_Web::updateBuffer(
   int x,
   int y,
   char ch)
@@ -211,7 +213,7 @@ bool GraphicsImpl::updateBuffer(
   return false;
 }
 
-void GraphicsImpl::server()
+void Graphics_Web::server()
 {
   struct libwebsocket_context * context;
   struct lws_context_creation_info info;
@@ -240,14 +242,14 @@ void GraphicsImpl::server()
   libwebsocket_context_destroy(context);
 }
 
-void GraphicsImpl::LoadText(
+void Graphics_Web::LoadText(
   const std::string /* msg */,
   const std::string /* font_file */)
 {
   //printf("LoadText\n");
 }
 
-void GraphicsImpl::handle_events(
+void Graphics_Web::handle_events(
   Controller* c)
 {
   if (destroyed) return;
@@ -263,11 +265,11 @@ void GraphicsImpl::handle_events(
   }
 }
 
-void GraphicsImpl::drawString(
+void Graphics_Web::drawString(
   int x,
   int y,
   const string & str,
-  const GraphicsImpl::Context /* context */)
+  const Graphics_Web::Context /* context */)
 {
   for (const char ch : str)
   {
@@ -279,16 +281,16 @@ void GraphicsImpl::drawString(
   }
 }
 
-void GraphicsImpl::drawChar(
+void Graphics_Web::drawChar(
   int x,
   int y,
   char ch,
-  const GraphicsImpl::Context /* context */)
+  const Graphics_Web::Context /* context */)
 {
   updateBuffer(x, y, ch);
 }
 
-void GraphicsImpl::repaint()
+void Graphics_Web::repaint()
 {
   if (destroyed) return;
   
@@ -305,7 +307,7 @@ void GraphicsImpl::repaint()
   libwebsocket_callback_on_writable_all_protocol(&protocols[1]);
 }
 
-void GraphicsImpl::destroy()
+void Graphics_Web::destroy()
 {
   server_thread.join();
   
@@ -317,7 +319,7 @@ void GraphicsImpl::destroy()
 
 Graphics* new_graphics()
 {
-  return new GraphicsImpl();
+  return new Graphics_Web();
 }
 
 void Graphics::drawString(
@@ -326,7 +328,7 @@ void Graphics::drawString(
   const std::string& str,
   Context gc)
 {
-  return static_cast<GraphicsImpl*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_Web*>(this)->drawString(x,y,str,gc);
 }
 
 void Graphics::drawChar(
@@ -335,21 +337,21 @@ void Graphics::drawChar(
   char str,
   Context gc)
 {
-  return static_cast<GraphicsImpl*>(this)->drawChar(x,y,str,gc);
+  return static_cast<Graphics_Web*>(this)->drawChar(x,y,str,gc);
 }
 
 void Graphics::handle_events(
   Controller* c)
 {
-  return static_cast<GraphicsImpl*>(this)->handle_events(c);
+  return static_cast<Graphics_Web*>(this)->handle_events(c);
 }
 
 void Graphics::repaint()
 {
-  return static_cast<GraphicsImpl*>(this)->repaint();
+  return static_cast<Graphics_Web*>(this)->repaint();
 }
 
 void Graphics::destroy()
 {
-  return static_cast<GraphicsImpl*>(this)->destroy();
+  return static_cast<Graphics_Web*>(this)->destroy();
 }
