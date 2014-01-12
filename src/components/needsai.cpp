@@ -86,8 +86,10 @@ void NeedsSystem::update_item(Ent*, Needs* nai, AI* ai) {
     return;
   }
 
+  /*
   if (nai->food > 0)
     --nai->food;
+  */
 }
 
 NeedsSystem needssystem;
