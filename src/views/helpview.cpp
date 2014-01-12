@@ -5,7 +5,7 @@
 extern bool paused;
 
 void HelpText::render(Graphics& g) {
-  g.drawString(150, g.getHeight() - 5, "Press 'h' for help.", Graphics::DEFAULT);
+  g.drawString(22, g.getHeight() - 2, "Press 'h' for help.", Graphics::DEFAULT);
 }
 HelpText HelpText::instance;
 
@@ -36,7 +36,7 @@ vector<string> help_prgh = {
 struct HelpInfo : Widget {
   virtual void render(Graphics& g) {
     for (uint x=0; x<help_prgh.size(); ++x) {
-      g.drawString(5, 12+5+12*x, help_prgh[x], Graphics::DEFAULT);
+      g.drawString(2, 1 + x, help_prgh[x], Graphics::DEFAULT);
     }
   }
   static HelpInfo instance;

@@ -2,11 +2,11 @@
 #include "graphics.hpp"
 
 void NavHelper::render(Graphics& g) {
-  int x = g.getWidth() - 200;
-  int y = g.getHeight() - nav_map.size() * 12 - 5;
+  int x = g.getWidth() - 25;
+  int y = g.getHeight() - nav_map.size() - 4;
   for (auto p : nav_map) {
     g.drawString(x, y, std::get<0>(p.second));
-    y += 12;
+    y++;
   }
 }
 

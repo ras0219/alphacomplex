@@ -51,11 +51,11 @@ GraphicsImpl::GraphicsImpl() {
   s = DefaultScreen(display);
 
   /* create window */
-  width = 800;
-  height = 600;
+  width = 80;
+  height = 40;
 
   window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10,
-                                      width, height, 1,
+                                      width * FONT_WIDTH, height * FONT_HEIGHT, 1,
                                       BlackPixel(display, s), WhitePixel(display, s));
 
   colormap = DefaultColormap(display, s);
@@ -96,18 +96,15 @@ void GraphicsImpl::handle_events(Controller* c) {
     case KeyPress: {
       auto keycode = event.xkey.keycode;
       int keysyms_per_keycode_return;
-      auto keysyms = XGetKeyboardMapping(display,
-					 keycode,
-					 0,
-					 &keysyms_per_keycode_return);
+      auto keysyms = XGetKeyboardMapping(display, keycode, 1, &keysyms_per_keycode_return);
       c->handle_keypress(keysyms[0]);
       XFree(keysyms);
       if (destroyed) return;
       break;
     }
     case ConfigureNotify:
-      width = event.xconfigure.width;
-      height = event.xconfigure.height;
+      width = event.xconfigure.width / FONT_WIDTH;
+      height = event.xconfigure.height / FONT_HEIGHT;
       break;
     default:
       cerr << "Unhandled event: " << event.type << endl;
@@ -130,7 +127,8 @@ void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsIm
   XDrawString(display,
               window,
               *t,
-              x, y,
+              x * FONT_WIDTH,
+              y * FONT_HEIGHT,
               str.c_str(),
               str.length());
 }
@@ -148,13 +146,14 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context g
   XDrawString(display,
               window,
               *t,
-              x, y,
+              x * FONT_WIDTH,
+              y * FONT_HEIGHT,
               &ch,
               1);
 }
 
 void GraphicsImpl::repaint() {
-  XFillRectangle(display, window, white_gc, 0, 0, getWidth(), getHeight());
+  XFillRectangle(display, window, white_gc, 0, 0, getWidth() * FONT_WIDTH, getHeight() * FONT_HEIGHT);
   
   for (auto p : c)
     p->render(*this);

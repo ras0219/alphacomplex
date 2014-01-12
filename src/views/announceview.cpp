@@ -15,7 +15,7 @@ AnnounceView::AnnounceView(ViewStack* vs) : vstk(vs) {
 void AnnounceView::render(Graphics& g) {
   auto it = a11s.msgs.rbegin();
   auto e = it;
-  const size_t num_lines = (g.getHeight() - 10) / 12;
+  const size_t num_lines = (g.getHeight() - 10);
   if (a11s.msgs.size() < num_lines)
     e = a11s.msgs.rend();
   else
@@ -23,7 +23,7 @@ void AnnounceView::render(Graphics& g) {
 
   int r = num_lines;
   while (it != e) {
-    g.drawString(5, 5+12+12*r, *it, Graphics::DEFAULT);
+    g.drawString(1, 2 + r, *it, Graphics::DEFAULT);
     --r;
     ++it;
   }
