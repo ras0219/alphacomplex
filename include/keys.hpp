@@ -77,7 +77,7 @@
   
   #include <ncurses.h>
   
-  using KeySym = unsigned long;
+  using KeySym = long;
   
   #define KEY_Escape  27
   #define KEY_space   ' '

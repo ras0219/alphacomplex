@@ -114,8 +114,10 @@ static struct libwebsocket_protocols protocols[] = {
     callback_http, /* callback */
     sizeof (struct per_session_data__http), /* per_session_data_size */
     0, /* max frame size / rx buffer */
+    0, /* owning_server */
+    0 /* protocol_index */
   },
-  { NULL, NULL, 0, 0 } /* terminator */
+  { NULL, NULL, 0, 0, 0, 0 } /* terminator */
 };
 
 struct Graphics_Web : Graphics {

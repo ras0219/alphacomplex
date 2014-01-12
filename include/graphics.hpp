@@ -74,8 +74,7 @@ struct Graphics : debug_policy_t {
 
   bool destroyed = false;
 
-private:
-  friend struct GraphicsImpl;
+protected:
 
   Graphics() { }
   ~Graphics() { destroy(); }
