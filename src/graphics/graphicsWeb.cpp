@@ -150,22 +150,24 @@ callback_alphacomplex(
 static struct libwebsocket_protocols protocols[] = {
   /* first protocol must always be HTTP handler */
   {
-    "http-only", /* name */
-    callback_http, /* callback */
-    sizeof (struct per_session_data__http), /* per_session_data_size */
-    0, /* max frame size / rx buffer */
-    0, /* owning_server */
-    0 /* protocol_index */
+    "http-only",
+    callback_http,
+    sizeof (struct per_session_data__http),
+    0,
+    0,
+    0,
+    0
   },
   {
-    "alphacomplex", /* name */
-    callback_alphacomplex, /* callback */
-    sizeof (struct per_session_data__alphacomplex), /* per_session_data_size */
-    0, /* max frame size / rx buffer */
-    0, /* owning_server */
-    0 /* protocol_index */
+    "alphacomplex",
+    callback_alphacomplex,
+    sizeof (struct per_session_data__alphacomplex),
+    0,
+    0,
+    0,
+    0
   },
-  { NULL, NULL, 0, 0, 0, 0 } /* terminator */
+  { NULL, NULL, 0, 0, 0, 0, 0 }
 };
 
 struct Graphics_Web : Graphics {
