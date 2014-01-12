@@ -18,8 +18,8 @@ using namespace chrono;
 struct _XDisplay;
 typedef struct _XDisplay Display;
 
-struct GraphicsImpl : Graphics {
-  GraphicsImpl();
+struct Graphics_X : Graphics {
+  Graphics_X();
 
   // Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
@@ -43,7 +43,7 @@ struct GraphicsImpl : Graphics {
 
 };
 
-GraphicsImpl::GraphicsImpl() {
+Graphics_X::Graphics_X() {
   /* open connection with the server */
   display = XOpenDisplay(NULL);
   assert(display != nullptr);
@@ -73,13 +73,13 @@ GraphicsImpl::GraphicsImpl() {
   /* map (show) the window */
   XMapWindow(display, window);
 }
-void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
+void Graphics_X::LoadText(const std::string msg, const std::string font_file)
 {
   (void)msg;
   (void)font_file;
   return;
 }
-void GraphicsImpl::handle_events(Controller* c) {
+void Graphics_X::handle_events(Controller* c) {
   XEvent event;
 
   int events = XPending(display);
@@ -114,7 +114,7 @@ void GraphicsImpl::handle_events(Controller* c) {
     events = XPending(display);
   }
 }
-void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsImpl::Context gc) {
+void Graphics_X::drawString(int x, int y, const string & str, const Graphics_X::Context gc) {
   GC* t;
   switch (gc) {
   case WHITE:
@@ -133,7 +133,7 @@ void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsIm
               str.length());
 }
 
-void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context gc) {
+void Graphics_X::drawChar(int x, int y, char ch, const Graphics_X::Context gc) {
   GC* t;
   switch (gc) {
   case WHITE:
@@ -152,34 +152,34 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context g
               1);
 }
 
-void GraphicsImpl::repaint() {
+void Graphics_X::repaint() {
   XFillRectangle(display, window, white_gc, 0, 0, getWidth() * FONT_WIDTH, getHeight() * FONT_HEIGHT);
   
   for (auto p : c)
     p->render(*this);
 }
 
-void GraphicsImpl::destroy() {
+void Graphics_X::destroy() {
   if (destroyed) return;
   XCloseDisplay(display);
   destroyed = true;
 }
 
-Graphics* new_graphics() { return new GraphicsImpl(); }
+Graphics* new_graphics() { return new Graphics_X(); }
 
 //// Now for the plug functions
 void Graphics::drawString(int x, int y, const std::string& str, Context gc) {
-  return static_cast<GraphicsImpl*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_X*>(this)->drawString(x,y,str,gc);
 }
 void Graphics::drawChar(int x, int y, char str, Context gc) {
-  return static_cast<GraphicsImpl*>(this)->drawChar(x,y,str,gc);
+  return static_cast<Graphics_X*>(this)->drawChar(x,y,str,gc);
 }
 void Graphics::handle_events(Controller* c) {
-  return static_cast<GraphicsImpl*>(this)->handle_events(c);
+  return static_cast<Graphics_X*>(this)->handle_events(c);
 }
 void Graphics::repaint() {
-  return static_cast<GraphicsImpl*>(this)->repaint();
+  return static_cast<Graphics_X*>(this)->repaint();
 }
 void Graphics::destroy() {
-  return static_cast<GraphicsImpl*>(this)->destroy();
+  return static_cast<Graphics_X*>(this)->destroy();
 }

@@ -25,8 +25,8 @@ using namespace std;
 using namespace chrono;
 
 
-struct GraphicsImpl : Graphics {
-  GraphicsImpl();
+struct Graphics_SDL : Graphics {
+  Graphics_SDL();
 
   // Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
@@ -55,7 +55,7 @@ struct GraphicsImpl : Graphics {
   Logger *graphics_log;
 };
 
-GraphicsImpl::GraphicsImpl()
+Graphics_SDL::Graphics_SDL()
   : win(nullptr), ren(nullptr), main_texture(nullptr),
     ttf_texture(nullptr), font_color({0,0,0,0}),
     sdl_last_call(0), graphics_log(nullptr)
@@ -162,7 +162,7 @@ GraphicsImpl::GraphicsImpl()
 }
 
 //maybe rename function?
-void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
+void Graphics_SDL::LoadText(const std::string msg, const std::string font_file)
 {
  (void) font_file;
   if(ttf_texture!=NULL)
@@ -175,7 +175,7 @@ void GraphicsImpl::LoadText(const std::string msg, const std::string font_file)
   SDL_FreeSurface(surf);
   return;
 }
-void GraphicsImpl::handle_events(Controller* c) {
+void Graphics_SDL::handle_events(Controller* c) {
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -203,7 +203,7 @@ void GraphicsImpl::handle_events(Controller* c) {
   //all done with events! :)
 }
 
-void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsImpl::Context) {
+void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
   LoadText(str, TEMP_FONT_PATH);
   int w = 0, h = 0;
   int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
@@ -213,7 +213,7 @@ void GraphicsImpl::drawString(int x, int y, const string & str, const GraphicsIm
 //  main_texture
 }
 
-void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context) {
+void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
   //ugh. XXX
   char buff[2];
   buff[0]=ch;
@@ -234,7 +234,7 @@ void GraphicsImpl::drawChar(int x, int y, char ch, const GraphicsImpl::Context) 
    sdl_last_call = SDL_RenderCopy(ren, cached_textures[ch], NULL, &dstRect);
 }
 
-void GraphicsImpl::repaint() {
+void Graphics_SDL::repaint() {
   SDL_RenderClear(ren);
  // SDL_RenderCopy(ren, main_texture, NULL,NULL); TBD
 
@@ -244,7 +244,7 @@ void GraphicsImpl::repaint() {
   SDL_RenderPresent(ren);
 }
 
-void GraphicsImpl::destroy() {
+void Graphics_SDL::destroy() {
   if (destroyed) return;
   if(!main_texture) SDL_DestroyTexture(main_texture);
   if(!ren) SDL_DestroyRenderer(ren);
@@ -254,21 +254,21 @@ void GraphicsImpl::destroy() {
   destroyed = true;
 }
 
-Graphics* new_graphics() { return new GraphicsImpl(); }
+Graphics* new_graphics() { return new Graphics_SDL(); }
 
 //// Now for the plug functions
 void Graphics::drawString(int x, int y, const std::string& str, Context gc) {
-  return static_cast<GraphicsImpl*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_SDL*>(this)->drawString(x,y,str,gc);
 }
 void Graphics::drawChar(int x, int y, char str, Context gc) {
-  return static_cast<GraphicsImpl*>(this)->drawChar(x,y,str,gc);
+  return static_cast<Graphics_SDL*>(this)->drawChar(x,y,str,gc);
 }
 void Graphics::handle_events(Controller* c) {
-  return static_cast<GraphicsImpl*>(this)->handle_events(c);
+  return static_cast<Graphics_SDL*>(this)->handle_events(c);
 }
 void Graphics::repaint() {
-  return static_cast<GraphicsImpl*>(this)->repaint();
+  return static_cast<Graphics_SDL*>(this)->repaint();
 }
 void Graphics::destroy() {
-  return static_cast<GraphicsImpl*>(this)->destroy();
+  return static_cast<Graphics_SDL*>(this)->destroy();
 }
