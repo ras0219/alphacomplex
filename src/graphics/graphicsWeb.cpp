@@ -8,10 +8,15 @@
 
 #include <thread>
 
+#include "controller.hpp"
 #include "graphics.hpp"
 #include "views/widget.hpp"
 
 using namespace std;
+
+static char * s_buffer = NULL;
+static int s_buffer_size = 0;
+static deque<KeySym> s_input_queue;
 
 struct per_session_data__http {
   int number;
@@ -107,6 +112,41 @@ static int callback_http(
   return 0;
 }
 
+struct per_session_data__alphacomplex {
+  int number;
+};
+
+static int
+callback_alphacomplex(
+  struct libwebsocket_context * /* context */,
+  struct libwebsocket * wsi,
+  enum libwebsocket_callback_reasons reason,
+  void * user,
+  void * in,
+  size_t /* len */)
+{
+  struct per_session_data__alphacomplex *pss = (struct per_session_data__alphacomplex *)user;
+
+  switch (reason) {
+    case LWS_CALLBACK_ESTABLISHED:
+      pss->number = 0;
+      break;
+    case LWS_CALLBACK_SERVER_WRITEABLE:
+      libwebsocket_write(wsi, (unsigned char *)s_buffer, s_buffer_size, LWS_WRITE_TEXT);
+      break;
+    case LWS_CALLBACK_RECEIVE:
+    {
+      KeySym key = (KeySym)atoi((char *)in);
+      s_input_queue.push_back(key);
+      break;
+    }
+    default:
+      break;
+  }
+
+  return 0;
+}
+
 static struct libwebsocket_protocols protocols[] = {
   /* first protocol must always be HTTP handler */
   {
@@ -116,6 +156,12 @@ static struct libwebsocket_protocols protocols[] = {
     0, /* max frame size / rx buffer */
     0, /* owning_server */
     0 /* protocol_index */
+  },
+  {
+    "alphacomplex", /* name */
+    callback_alphacomplex, /* callback */
+    sizeof (struct per_session_data__alphacomplex), /* per_session_data_size */
+    0, /* max frame size / rx buffer */
   },
   { NULL, NULL, 0, 0, 0, 0 } /* terminator */
 };
@@ -137,12 +183,34 @@ private:
   void server();
   
   thread server_thread;
+
+  bool updateBuffer(int x, int y, char ch);
 };
 
 Graphics_Web::Graphics_Web() :
   server_thread(&Graphics_Web::server, this)
 {
   server_thread.detach();
+  
+  width = 80;
+  height = 40;
+  
+  // create screen buffer
+  s_buffer_size = (width + 1) * (height + 1);
+  s_buffer = new char[s_buffer_size];
+}
+
+bool Graphics_Web::updateBuffer(
+  int x,
+  int y,
+  char ch)
+{
+  if (s_buffer[y * (width + 1) + x] !=  ch)
+  {
+    s_buffer[y * (width + 1) + x] = ch;
+    return true;
+  }
+  return false;
 }
 
 void Graphics_Web::server()
@@ -152,7 +220,7 @@ void Graphics_Web::server()
   
   memset(&info, 0, sizeof info);
 
-  info.port = 3000;
+  info.port = 21000;
   info.iface = NULL;
   info.protocols = protocols;
   info.extensions = libwebsocket_get_internal_extensions();
@@ -182,42 +250,71 @@ void Graphics_Web::LoadText(
 }
 
 void Graphics_Web::handle_events(
-  Controller* /* c */)
+  Controller* c)
 {
-  //printf("handle_events\n");
+  if (destroyed) return;
   
-  // c->handle_keypress(keysym);
+  while (!s_input_queue.empty())
+  {
+    KeySym key = s_input_queue.front();
+    if (key != KEY_q)
+    {
+      c->handle_keypress(key);
+    }
+    s_input_queue.pop_front();
+  }
 }
 
 void Graphics_Web::drawString(
-  int /* x */,
-  int /* y */,
-  const string & /* str */,
+  int x,
+  int y,
+  const string & str,
   const Graphics_Web::Context /* context */)
 {
-  //printf("drawString\n");
+  for (const char ch : str)
+  {
+    if (x >= 0 && y >= 0 && x < width && y < height)
+    {
+      updateBuffer(x, y, ch);
+    }
+    x++;
+  }
 }
 
 void Graphics_Web::drawChar(
-  int /* x */,
-  int /* y */,
-  char /* ch */,
+  int x,
+  int y,
+  char ch,
   const Graphics_Web::Context /* context */)
 {
-  //printf("drawChar\n");
+  updateBuffer(x, y, ch);
 }
 
 void Graphics_Web::repaint()
 {
-  //printf("repaint\n");
+  if (destroyed) return;
+  
+  memset(s_buffer, ' ', s_buffer_size);
   
   for (auto p : c)
     p->render(*this);
+    
+  for (int y = 0; y < height; y++)
+  {
+    s_buffer[(y + 1) * (width + 1)] = '\n';
+  }
+  
+  libwebsocket_callback_on_writable_all_protocol(&protocols[1]);
 }
 
 void Graphics_Web::destroy()
 {
   server_thread.join();
+  
+  if (s_buffer_size > 0)
+  {
+    delete [] s_buffer;
+  }
 }
 
 Graphics* new_graphics()

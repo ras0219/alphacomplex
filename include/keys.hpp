@@ -53,28 +53,27 @@
 #endif
 
 #ifdef GRAPHICS_WEB
-  enum KeySym {
-    KEY_Escape,
-    KEY_space,
-    KEY_Left,
-    KEY_Right,
-    KEY_Up,
-    KEY_Down,
-    KEY_Return,
-    KEY_Tab,
-    KEY_h,
-    KEY_u,
-    KEY_r,
-    KEY_a,
-    KEY_q,
-    KEY_e,
-    KEY_d,
-    KEY_f,
-  };
+  typedef unsigned long KeySym;
+  
+  #define KEY_Escape  27
+  #define KEY_space   32
+  #define KEY_Left    37
+  #define KEY_Right   39
+  #define KEY_Up      38
+  #define KEY_Down    40
+  #define KEY_Return  13
+  #define KEY_Tab     9
+  #define KEY_h       72
+  #define KEY_u       85
+  #define KEY_r       82
+  #define KEY_a       65
+  #define KEY_q       81
+  #define KEY_e       69
+  #define KEY_d       68
+  #define KEY_f       70
 #endif
 
 #ifdef GRAPHICS_NCURSES
-  
   #include <ncurses.h>
   
   using KeySym = long;

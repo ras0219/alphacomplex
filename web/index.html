@@ -2,7 +2,75 @@
 <html>
 <head>
   <title>alphacomplex</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+    }
+    pre {
+      margins: 5;
+    }
+  </style>
 </head>
 <body>
+  <center>
+    <h1>alphacomplex</h1>
+    <pre id="terminal-window"></pre>
+  </center>
+  <script>
+    var blank_contents = "";
+    for (var y = 0; y < 40; y++)
+    {
+      for (var x = 0; x < 80; x++)
+      {
+        blank_contents += '0';
+      }
+      blank_contents += '\n';
+    }
+    
+    var terminal = document.getElementById("terminal-window");
+    terminal.innerHTML = blank_contents;
+    
+    function get_ws_url()
+    {
+      var pcol;
+      var u = document.URL;
+
+      if (u.substring(0, 5) == "https") {
+        pcol = "wss://";
+        u = u.substr(8);
+      }
+      else {
+        pcol = "ws://";
+        if (u.substring(0, 4) == "http")
+          u = u.substr(7);
+      }
+
+      u = u.split('/');
+
+      return pcol + u[0];
+    }
+    
+    var socket = new WebSocket(get_ws_url(), "alphacomplex");
+    
+    try {
+      socket.onopen = function() {
+        window.onkeydown = function(evt) {
+          socket.send(evt.keyCode);
+          evt.cancelBubble = true;
+        };
+      } 
+      socket.onmessage =function got_packet(msg) {
+        terminal.innerHTML = msg.data;
+      } 
+      socket.onclose = function(){
+        window.onkeydown = null;
+        terminal.innerHTML = blank_contents;
+      }
+    }
+    catch(exception) {
+      alert('<p>Error' + exception);  
+    }
+  </script>
 </body>
 </html>
