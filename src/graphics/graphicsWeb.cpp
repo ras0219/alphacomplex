@@ -162,6 +162,8 @@ static struct libwebsocket_protocols protocols[] = {
     callback_alphacomplex, /* callback */
     sizeof (struct per_session_data__alphacomplex), /* per_session_data_size */
     0, /* max frame size / rx buffer */
+    0, /* owning_server */
+    0 /* protocol_index */
   },
   { NULL, NULL, 0, 0, 0, 0 } /* terminator */
 };
