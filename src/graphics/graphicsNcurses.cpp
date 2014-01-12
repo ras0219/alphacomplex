@@ -23,9 +23,10 @@ struct Graphics_Ncurses : Graphics {
   void destroy();
   
 private:
-  bool updateBuffer(int x, int y, char ch);
+  void updateBuffer(int x, int y, char ch);
   
-  char * buffer;
+  char * view_buffer;
+  char * back_buffer;
   int buffer_size;
 };
 
@@ -43,9 +44,13 @@ Graphics_Ncurses::Graphics_Ncurses()
   // get screen size
   getmaxyx(stdscr, height, width);
   
-  // create screen buffer
-  buffer_size = (width + 1) * (height + 1);
-  buffer = new char[buffer_size];
+  // create view + back buffer
+  buffer_size = width * height;
+  
+  view_buffer = new char[buffer_size];
+  back_buffer = new char[buffer_size];
+  
+  memset(view_buffer, ' ', buffer_size);
   
   // get input from main window
   keypad(stdscr, TRUE);
@@ -77,17 +82,12 @@ void Graphics_Ncurses::handle_events(
   clrtoeol();
 }
 
-bool Graphics_Ncurses::updateBuffer(
+void Graphics_Ncurses::updateBuffer(
   int x,
   int y,
   char ch)
 {
-  if (buffer[y * (width + 1) + x] !=  ch)
-  {
-    buffer[y * (width + 1) + x] = ch;
-    return true;
-  }
-  return false;
+  back_buffer[y * width + x] = ch;
 }
 
 void Graphics_Ncurses::drawString(
@@ -100,10 +100,7 @@ void Graphics_Ncurses::drawString(
   {
     if (x >= 0 && y >= 0 && x < width && y < height)
     {
-      if (updateBuffer(x, y, ch))
-      {
-        mvwaddch(stdscr, y, x, ch);
-      }
+      updateBuffer(x, y, ch);
     }
     x++;
   }
@@ -115,23 +112,33 @@ void Graphics_Ncurses::drawChar(
   char ch,
   const Graphics_Ncurses::Context /* context */)
 {
-  if (updateBuffer(x, y, ch))
-  {
-    mvwaddch(stdscr, y, x, ch);
-  }
+  updateBuffer(x, y, ch);
 }
 
 void Graphics_Ncurses::repaint()
 {
-  clear();
-  
-  memset(buffer, ' ', buffer_size);
+  memset(back_buffer, ' ', buffer_size);
   
   // fill the buffer
   for (auto p : c)
     p->render(*this);
   
-  refresh();
+  int index = 0;
+  for (int y = 0; y < height; y++)
+  {
+    for (int x = 0; x < width; x++)
+    {
+      if (back_buffer[index] != view_buffer[index])
+      {
+        mvwaddch(stdscr, y, x, back_buffer[index]);
+      }
+      index++;
+    }
+  }
+  
+  char * tmp = view_buffer;
+  view_buffer = back_buffer;
+  back_buffer = tmp;
 }
 
 void Graphics_Ncurses::destroy()
@@ -140,7 +147,8 @@ void Graphics_Ncurses::destroy()
   
   endwin();
   
-  delete [] buffer;
+  delete [] view_buffer;
+  delete [] back_buffer;
   
   destroyed = true;
 }
