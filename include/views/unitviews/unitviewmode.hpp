@@ -19,9 +19,11 @@ struct UnitViewModeInstance : UnitViewMode, Scrollable {
   uint csr_row_cache;
   uint csr_col_cache;
 
+  using Scrollable::render;
+
   virtual uint num_rows() const override { return CitizenName::instances.size(); }
 
-  virtual void render_row(Graphics& g, uint rownum, const box& pos) {
+  virtual void render_row(Graphics& g, uint rownum, const render_box& pos) {
     uint col_off = 8;
 
     auto e = CitizenName::instances[rownum];

@@ -1,6 +1,6 @@
 #pragma once
 
-struct box {
+struct render_box {
   int x, y, w, h;
 };
 

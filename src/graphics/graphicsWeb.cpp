@@ -147,27 +147,31 @@ callback_alphacomplex(
   return 0;
 }
 
+libwebsocket_protocols http_proto() {
+  libwebsocket_protocols lp = {};
+
+  lp.name = "http-only";
+  lp.callback = callback_http;
+  lp.per_session_data_size = sizeof (per_session_data__http);
+
+  return lp;
+}
+
+libwebsocket_protocols alphacomplex_proto() {
+  libwebsocket_protocols lp = {};
+
+  lp.name = "alphacomplex";
+  lp.callback = callback_alphacomplex;
+  lp.per_session_data_size = sizeof (per_session_data__alphacomplex);
+
+  return lp;
+}
+
 static struct libwebsocket_protocols protocols[] = {
   /* first protocol must always be HTTP handler */
-  {
-    "http-only",
-    callback_http,
-    sizeof (struct per_session_data__http),
-    0,
-    0,
-    0,
-    0
-  },
-  {
-    "alphacomplex",
-    callback_alphacomplex,
-    sizeof (struct per_session_data__alphacomplex),
-    0,
-    0,
-    0,
-    0
-  },
-  { NULL, NULL, 0, 0, 0, 0, 0 }
+  http_proto(),
+  alphacomplex_proto(),
+  {}
 };
 
 struct Graphics_Web : Graphics {

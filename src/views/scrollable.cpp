@@ -26,7 +26,7 @@ void Scrollable::render(Graphics& g) {
   if (offset < 0)
     offset = 0;
 
-  box rowbox = pos;
+  render_box rowbox = pos;
   rowbox.w -= 2;
   rowbox.h = 1;
 
