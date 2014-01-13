@@ -1,4 +1,6 @@
 #include "views/mainview.hpp"
+
+#include "city.hpp"
 #include "views/viewstack.hpp"
 #include "views/mapview.hpp"
 #include "views/helpview.hpp"
@@ -15,7 +17,7 @@
 extern Graphics* gfx;
 extern bool paused;
 
-MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize(), c->getYSize(), c) {
+MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSize(), c->getYSize(), c) {
   hview = new HelpView(vs);
   uview = new UnitView(vs);
   aview = new AnnounceView(vs);
@@ -35,8 +37,8 @@ MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize()
 
 JobListing pendinglist(&jobs, "Pending Jobs");
 
-void MainView::render(Graphics& g, render_box const& pos) {
-  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+void MainView::render_body(Graphics& g, render_box const& pos) {
+  render_box pos2 = pos;
 
   pos2.shrink_right(30);
   mv.render(g, pos2);

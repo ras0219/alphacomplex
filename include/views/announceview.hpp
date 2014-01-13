@@ -1,14 +1,9 @@
 #pragma once
 
-#include "view.hpp"
-#include "navhelper.hpp"
+#include "baseview.hpp"
 
-struct AnnounceView : View {
+struct AnnounceView : BaseView {
   AnnounceView(struct ViewStack* vs);
 
-  virtual void render(Graphics& g, render_box const& pos) override;
-  virtual void handle_keypress(KeySym ks) override;
-
-  struct ViewStack* vstk;
-  NavHelper nav;
+  virtual void render_body(Graphics& g, render_box const& pos) override;
 };

@@ -1,15 +1,10 @@
 #pragma once
 
-#include "view.hpp"
-#include "navhelper.hpp"
+#include "baseview.hpp"
 
-struct UnitView : View {
+struct UnitView : BaseView {
   UnitView(struct ViewStack* vs);
 
-  virtual void render(Graphics& g, render_box const& pos) override;
-
+  virtual void render_body(Graphics& g, render_box const& pos) override;
   virtual void handle_keypress(KeySym ks) override;
-
-  struct ViewStack* vstk;
-  NavHelper nav;
 };

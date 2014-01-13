@@ -8,17 +8,15 @@
 
 #include <algorithm>
 
-AnnounceView::AnnounceView(ViewStack* vs) : vstk(vs) {
+AnnounceView::AnnounceView(ViewStack* vs) : BaseView(vs) {
   nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
 }
 
-void AnnounceView::render(Graphics& g, render_box const& pos) {
-  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
-
+void AnnounceView::render_body(Graphics& g, render_box const& pos) {
   auto it = A11s::instance.msgs.rbegin();
   auto e = it;
-  const size_t num_lines = pos2.h;
+  const size_t num_lines = pos.h;
   if (A11s::instance.msgs.size() < num_lines)
     e = A11s::instance.msgs.rend();
   else
@@ -26,12 +24,8 @@ void AnnounceView::render(Graphics& g, render_box const& pos) {
 
   int r = num_lines;
   while (it != e) {
-    g.drawString(pos2.x, pos2.y + r - 1, *it, Graphics::DEFAULT);
+    g.drawString(pos.x, pos.y + r - 1, *it, Graphics::DEFAULT);
     --r;
     ++it;
   }
-}
-
-void AnnounceView::handle_keypress(KeySym ks) {
-  if (nav.handle_keypress(ks)) return;
 }

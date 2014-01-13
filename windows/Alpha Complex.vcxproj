@@ -154,6 +154,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\utilities\global_set.hpp" />
     <ClInclude Include="..\include\utilities\thunk_func.hpp" />
     <ClInclude Include="..\include\views\announceview.hpp" />
+    <ClInclude Include="..\include\views\baseview.hpp" />
     <ClInclude Include="..\include\views\defaultlayout.hpp" />
     <ClInclude Include="..\include\views\designview.hpp" />
     <ClInclude Include="..\include\views\helpview.hpp" />
@@ -195,6 +196,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\views\announceview.cpp" />
+    <ClCompile Include="..\src\views\baseview.cpp" />
     <ClCompile Include="..\src\views\designview.cpp" />
     <ClCompile Include="..\src\views\helpview.cpp" />
     <ClCompile Include="..\src\views\hud.cpp" />

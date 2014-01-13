@@ -90,17 +90,15 @@ void UnitListing::toggle() {
   getmode().toggle(it, csr_col);
 }
 
-UnitView::UnitView(ViewStack* vs) : vstk(vs) {
+UnitView::UnitView(ViewStack* vs) : BaseView(vs) {
   nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
   nav.register_key(KEY_Return, "[Ent] Toggle", [this]() { ulist.toggle(); });
   nav.register_key(KEY_Tab, "[Tab] Mode", [this]() { ulist.mode_switch(); });
 }
 
-void UnitView::render(Graphics& g, render_box const& pos) {
-  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
-
-  ulist.render(g, pos2);
+void UnitView::render_body(Graphics& g, render_box const& pos) {
+  ulist.render(g, pos);
 }
 
 void UnitView::handle_keypress(KeySym ks) {
