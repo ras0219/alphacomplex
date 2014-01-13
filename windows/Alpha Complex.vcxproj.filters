@@ -253,6 +253,9 @@
     <ClInclude Include="..\include\utilities\global_set.hpp">
       <Filter>Header Files\utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\views\scrollable.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -362,6 +365,9 @@
     </ClCompile>
     <ClCompile Include="..\src\entities\foods.cpp">
       <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\scrollable.cpp">
+      <Filter>Source Files\views</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

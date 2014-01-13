@@ -9,6 +9,7 @@
 #include <cassert>
 #include <unordered_set>
 #include <unordered_map>
+#include <algorithm>
 
 using std::list;
 
@@ -56,11 +57,11 @@ template<Aspect::Kind K, class T>
 struct AspectStatic : Aspect {
   static const Aspect::Kind StaticKind = K;
   AspectStatic() : Aspect(K) {
-    instances.insert(&this->as<T>());
+    instances.push_back(&this->as<T>());
   }
-  ~AspectStatic() { instances.erase(&this->as<T>()); }
+  ~AspectStatic() { instances.erase(std::find(instances.begin(), instances.end(), &this->as<T>())); }
 
-  typedef std::unordered_set<T*> set_t;
+  typedef std::vector<T*> set_t;
   typedef typename set_t::iterator iterator;
   static set_t instances;
 };

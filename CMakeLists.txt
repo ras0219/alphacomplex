@@ -47,6 +47,7 @@ set(SOURCES
   "src/views/mainview.cpp"
   "src/views/mapview.cpp"
   "src/views/navhelper.cpp"
+  "src/views/scrollable.cpp"
   "src/views/statustext.cpp"
   "src/views/unitview.cpp"
   "src/views/viewstack.cpp"

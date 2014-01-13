@@ -1,7 +1,7 @@
 #include "views/unitviews/unitviewmode.hpp"
 #include "components/ai/needsai.hpp"
 
-struct NeedsMode : UnitViewMode {
+struct NeedsMode : UnitViewModeInstance<NeedsMode> {
   static inline string title() { return "Units Roster (Needs)"; }
   using List_t = std::array<std::string, 3>;
   static List_t List;
@@ -31,11 +31,8 @@ struct NeedsMode : UnitViewMode {
     buf[3] = '0' + ((val / 100) % 10);
   }
 
-  void render(Graphics& g, uint row, uint col) {
-    render_policy<NeedsMode>(g, row, col);
-  }
-  uint num_cols() { return col_list().size(); }
-  void toggle(CitizenName::iterator, uint) { }
+  virtual uint num_cols() const override { return col_list().size(); }
+  virtual void toggle(CitizenName::iterator, uint) override { }
 };
 
 NeedsMode::List_t NeedsMode::List = {{ "Food", "Sleep", "Happy" }};

@@ -50,8 +50,8 @@ void MainView::handle_keypress(KeySym ks) {
 
   switch (ks) {
   case KEY_r:
-    if (influence >= 15) {
-      influence -= 15;
+    if (influence >= 0) {
+      //influence -= 15;
       city->ent(1, 1).insert(new_citizen({ 1, 1, city }, Security::RED));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");

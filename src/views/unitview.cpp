@@ -8,44 +8,44 @@
 #include "components/citizenname.hpp"
 #include "views/statustext.hpp"
 #include "views/unitviews/unitviewmode.hpp"
+#include "views/scrollable.hpp"
 
 #include <memory>
 #include <algorithm>
 
 extern bool paused;
 
+struct UnitListing {
+  UnitListing() : csr_row(0), csr_col(0), mode(modes.begin()) { }
 
-struct UnitListing : Widget {
-  UnitListing() : row(0), col(0), mode(modes.begin()) { }
-  virtual void render(Graphics& g) {
-    getmode().render(g, row, col);
-  }
+  void render(Graphics& g) { return getmode().render(g, csr_row, csr_col); }
 
   inline void down() {
-    if (row + 1 < rows())
-      row++;
+    if (csr_row + 1 < CitizenName::instances.size())
+      csr_row++;
   }
   inline void right() {
-    if (col + 1 < getmode().num_cols())
-      ++col;
+    if (csr_col + 1 < getmode().num_cols())
+      ++csr_col;
   }
   inline void up() {
-    if (row > 0)
-      --row;
+    if (csr_row > 0)
+      --csr_row;
   }
   inline void left() {
-    if (col > 0)
-      --col;
+    if (csr_col > 0)
+      --csr_col;
   }
 
-  inline uint rows() const { return CitizenName::instances.size(); }
+  inline uint num_rows() const { return CitizenName::instances.size(); }
 
   bool check();
   inline UnitViewMode& getmode() { return **mode; }
   void toggle();
   void mode_switch() { ++mode; if (mode == modes.end()) mode = modes.begin(); check(); }
 
-  uint row, col;
+  uint csr_row, csr_col;
+
   using Mode_t = UnitViewMode*;
   using Modes_t = std::array<Mode_t, 3>;
   static Modes_t modes;
@@ -62,18 +62,16 @@ UnitListing::Modes_t UnitListing::modes = {{
   (UnitListing::Mode_t) &skillsmode
 }};
 
-#include <sstream>
-
 bool UnitListing::check() {
   bool r = false;
-  if (row >= rows()) {
-    row = rows() - 1;
+  if (csr_row >= CitizenName::instances.size()) {
+    csr_row = CitizenName::instances.size() - 1;
     r = true;
   }
   uint x = getmode().num_cols();
 
-  if (col >= x) {
-    col = x - 1;
+  if (csr_col >= x) {
+    csr_col = x - 1;
     r = true;
   }
   return r;
@@ -83,12 +81,12 @@ void UnitListing::toggle() {
   if (check()) return;
 
   auto it = CitizenName::instances.begin();
-  advance(it, row);
+  advance(it, csr_row);
 
   // announce("This unit is not a duty-assignable citizen.");
   // return;
 
-  getmode().toggle(it, col);
+  getmode().toggle(it, csr_col);
 }
 
 UnitView::UnitView(ViewStack* vs) : vstk(vs) {
