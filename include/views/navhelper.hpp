@@ -12,7 +12,7 @@ struct NavHelper : Widget {
 
   void register_key(KeySym, const std::string&, cb_t cb);
 
-  virtual void render(Graphics& g) override;
+  virtual void render(Graphics& g, render_box const& pos) override;
   bool handle_keypress(KeySym ks);
 
   nav_map_t nav_map;

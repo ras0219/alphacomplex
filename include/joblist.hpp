@@ -24,15 +24,13 @@ struct JobList {
   list_t jlist;
 };
 
-struct JobListing : Widget {
+struct JobListing : StaticWidget<JobListing> {
   JobList* jlist;
-  int y;
   string title;
 
-  JobListing(int y_, JobList* l, const char* t)
-    : jlist(l), y(y_), title(t) { }
+  JobListing(JobList* l, const char* t) : jlist(l), title(t) { }
 
-  virtual void render(Graphics& g);
+  void render(Graphics& g, render_box const& pos);
 };
 
 extern JobList jobs;

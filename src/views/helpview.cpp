@@ -1,13 +1,9 @@
 #include "views/helpview.hpp"
 #include "views/viewstack.hpp"
 #include "graphics.hpp"
+#include "views/defaultlayout.hpp"
 
 extern bool paused;
-
-void HelpText::render(Graphics& g) {
-  g.drawString(22, g.getHeight() - 2, "Press 'h' for help.", Graphics::DEFAULT);
-}
-HelpText HelpText::instance;
 
 vector<string> help_prgh = {
   "== All Modes ==",
@@ -33,30 +29,27 @@ vector<string> help_prgh = {
   "Good Luck!"
 };
 
-struct HelpInfo : Widget {
-  virtual void render(Graphics& g) {
+struct HelpInfo : StaticWidget<HelpInfo> {
+  void render(Graphics& g, render_box const& pos) {
     for (uint x=0; x<help_prgh.size(); ++x) {
-      g.drawString(2, 1 + x, help_prgh[x], Graphics::DEFAULT);
+      g.drawString(pos.x, pos.y + x, help_prgh[x], Graphics::DEFAULT);
     }
   }
   static HelpInfo instance;
 };
 HelpInfo HelpInfo::instance;
 
-void HelpView::render(Graphics& g) {
-  HelpText::instance.render(g);
-  HelpInfo::instance.render(g);
+HelpView::HelpView(ViewStack* vs) : vstk(vs) {
+  nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
+  nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
+}
+
+void HelpView::render(Graphics& g, render_box const& pos) {
+  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+
+  HelpInfo::instance.render(g, pos2);
 }
 
 void HelpView::handle_keypress(KeySym ks) {
-  switch (ks) {
-  case KEY_Escape:
-    vstk->pop();
-    break;
-  case KEY_space:
-    paused = !paused;
-    break;
-  default:
-    break;
-  }
+  nav.handle_keypress(ks);
 }

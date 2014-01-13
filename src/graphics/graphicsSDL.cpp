@@ -239,7 +239,7 @@ void Graphics_SDL::repaint() {
  // SDL_RenderCopy(ren, main_texture, NULL,NULL); TBD
 
   for(auto p : c)
-    p->render(*this);
+    p->render(*this, { 0, 0, getWidth(), getHeight() });
   
   SDL_RenderPresent(ren);
 }

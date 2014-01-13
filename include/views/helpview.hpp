@@ -1,18 +1,14 @@
 #pragma once
 
 #include "view.hpp"
+#include "navhelper.hpp"
 
 struct HelpView : View {
-  HelpView(struct ViewStack* vs) : vstk(vs) { }
+  HelpView(struct ViewStack* vs);
 
-  virtual void render(Graphics& g);
-  virtual void handle_keypress(KeySym ks);
+  virtual void render(Graphics& g, render_box const& pos) override;
+  virtual void handle_keypress(KeySym ks) override;
 
   struct ViewStack* vstk;
-};
-
-struct HelpText : Widget {
-  virtual void render(Graphics& g);
-
-  static HelpText instance;
+  NavHelper nav;
 };

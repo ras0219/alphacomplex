@@ -10,8 +10,8 @@ namespace rasutil {
 
     thunk_func(func_type f) : f(f) {}
 
-    inline R operator()(C& c, Args...args) {
-      return (c.*f)(std::forward<Args>(args)...);
+    inline R operator()(C* c, Args...args) {
+      return (c->*f)(std::forward<Args>(args)...);
     }
 
   private:

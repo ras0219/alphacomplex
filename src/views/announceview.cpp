@@ -4,6 +4,7 @@
 #include "views/hud.hpp"
 #include "graphics.hpp"
 #include "views/statustext.hpp"
+#include "views/defaultlayout.hpp"
 
 #include <algorithm>
 
@@ -12,27 +13,25 @@ AnnounceView::AnnounceView(ViewStack* vs) : vstk(vs) {
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
 }
 
-void AnnounceView::render(Graphics& g) {
-  auto it = a11s.msgs.rbegin();
+void AnnounceView::render(Graphics& g, render_box const& pos) {
+  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+
+  auto it = A11s::instance.msgs.rbegin();
   auto e = it;
-  const size_t num_lines = (g.getHeight() - 10);
-  if (a11s.msgs.size() < num_lines)
-    e = a11s.msgs.rend();
+  const size_t num_lines = pos2.h;
+  if (A11s::instance.msgs.size() < num_lines)
+    e = A11s::instance.msgs.rend();
   else
     advance(e, num_lines);
 
   int r = num_lines;
   while (it != e) {
-    g.drawString(1, 2 + r, *it, Graphics::DEFAULT);
+    g.drawString(pos2.x, pos2.y + r - 1, *it, Graphics::DEFAULT);
     --r;
     ++it;
   }
-
-  statustext.render(g);
-  nav.render(g);
 }
 
 void AnnounceView::handle_keypress(KeySym ks) {
   if (nav.handle_keypress(ks)) return;
 }
-

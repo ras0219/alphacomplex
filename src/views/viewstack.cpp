@@ -1,8 +1,8 @@
 #include "views/viewstack.hpp"
 #include <cassert>
 
-void ViewStack::render(Graphics& g) {
-  vstack.back()->render(g);
+void ViewStack::render(Graphics& g, render_box const& pos) {
+  vstack.back()->render(g, pos);
 }
 
 void ViewStack::handle_keypress(KeySym ks) {

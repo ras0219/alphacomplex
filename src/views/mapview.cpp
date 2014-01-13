@@ -12,9 +12,11 @@ const char prettywalls[16] = {
   CORNER_NW, TEE_S, TEE_E, CROSS
 };
 
-void MapView::render(Graphics& g) {
-  prepare_buffer(); blit_buffer(g);
+void MapView::render(Graphics& g, render_box const& pos) {
+  prepare_buffer();
+  blit_buffer(g, pos);
 }
+
 void MapView::prepare_buffer() {
   for (int y = vp.tly; y < vp.ysz; ++y) {
     for (int x = vp.tlx; x < vp.xsz; ++x) {
@@ -63,10 +65,11 @@ void MapView::prepare_buffer() {
   }
 }
 
-void MapView::blit_buffer(Graphics& g) {
+void MapView::blit_buffer(Graphics& g, render_box const& pos) {
+  // TODO: actually obey pos's w & h
   for (int y = 0; y < vp.ysz; ++y) {
     for (int x = 0; x < vp.xsz; ++x)
-      g.drawChar(2 + x, 1 + y, buf[y * vp.xsz + x], Graphics::DEFAULT);
+      g.drawChar(pos.x + x, pos.y + y, buf[y * vp.xsz + x]);
   }
 }
 

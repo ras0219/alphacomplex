@@ -1,16 +1,15 @@
 #include "views/mainview.hpp"
 #include "views/viewstack.hpp"
 #include "views/mapview.hpp"
-#include "views/hud.hpp"
 #include "views/helpview.hpp"
 #include "views/unitview.hpp"
 #include "views/announceview.hpp"
 #include "views/designview.hpp"
-#include "views/statustext.hpp"
+
+#include "views/defaultlayout.hpp"
 
 #include "joblist.hpp"
 #include "entities/citizen.hpp"
-
 #include "entities/foods.hpp"
 
 extern Graphics* gfx;
@@ -34,15 +33,18 @@ MainView::MainView(ViewStack* vs, City* c) : vstk(vs), city(c), mv(c->getXSize()
   nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });
 }
 
-JobListing pendinglist(0, &jobs, "Pending Jobs");
+JobListing pendinglist(&jobs, "Pending Jobs");
 
-void MainView::render(Graphics& g) {
-  mv.render(g);
-  hud.render(g);
-  pendinglist.render(g);
-  HelpText::instance.render(g);
-  statustext.render(g);
-  nav.render(g);
+void MainView::render(Graphics& g, render_box const& pos) {
+  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+
+  pos2.shrink_right(30);
+  mv.render(g, pos2);
+
+  pos2.set_width(30, render_box::right);
+  pos2.x += 30;
+  pendinglist.render(g, pos2);
+  //HelpText::instance.render(g);
 }
 
 void MainView::handle_keypress(KeySym ks) {

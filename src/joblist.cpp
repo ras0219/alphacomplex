@@ -38,21 +38,21 @@ Job* JobList::find_job(Clearance c) {
   return nullptr;
 }
 
-void JobListing::render(Graphics& g) {
-  g.drawString(g.getWidth() - 25, y + 1, title, Graphics::DEFAULT);
-  g.drawString(g.getWidth() - 25, y + 2, "---------", Graphics::DEFAULT);
+void JobListing::render(Graphics& g, render_box const& pos) {
+  g.drawString(pos.x, pos.y, title, Graphics::DEFAULT);
+  g.drawString(pos.x, pos.y + 1, "---------", Graphics::DEFAULT);
 
-  int yoffset = y + 3;
+  int yoffset = 3;
   for (auto j : jlist->jlist) {
     if (j->completed())
       continue;
 
     // Mark in-progress jobs
     if (j->unavailable())
-      g.drawChar(g.getWidth() - 25, yoffset, '~');
+      g.drawChar(pos.x, pos.y + yoffset, '~');
 
     auto desc = j->description();
-    g.drawString(g.getWidth() - 25, yoffset, desc);
+    g.drawString(pos.x + 1, pos.y + yoffset, desc);
     yoffset++;
   }
 }

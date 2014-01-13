@@ -11,11 +11,11 @@ using std::deque;
 
 extern int influence;
 
-struct Hud : Widget {
-  virtual void render(struct Graphics& g);
-};
+struct Hud : StaticWidget<Hud> {
+  void render(struct Graphics& g, render_box const& pos);
 
-extern Hud hud;
+  static Hud instance;
+};
 
 struct A11s {
   A11s() : msgs{ { "", "", "" } } { }
@@ -23,6 +23,6 @@ struct A11s {
   void announce(const string&);
 
   deque<string> msgs;
-};
 
-extern A11s a11s;
+  static A11s instance;
+};

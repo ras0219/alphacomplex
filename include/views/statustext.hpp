@@ -20,7 +20,7 @@ public:
   virtual bool operator<(const StatusMsg& rhs) const;
 };
 
-class StatusText : Widget {
+class StatusText : StaticWidget<StatusText> {
 protected:
   std::priority_queue<StatusMsg> status_queue;
 public:
@@ -35,8 +35,8 @@ public:
 
   StatusText();
 
-  virtual void render(Graphics& g);
+  void render(Graphics& g, render_box const& pos);
   void add(const StatusMsg& status);
-};
 
-extern StatusText statustext;
+  static StatusText instance;
+};

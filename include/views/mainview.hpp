@@ -9,8 +9,8 @@
 struct MainView : View {
   MainView(struct ViewStack* vs, City* c);
 
-  virtual void render(Graphics& g);
-  virtual void handle_keypress(KeySym ks);
+  virtual void render(Graphics& g, render_box const& pos) override;
+  virtual void handle_keypress(KeySym ks) override;
 
   struct ViewStack* vstk;
 
@@ -18,6 +18,7 @@ struct MainView : View {
   struct UnitView* uview;
   struct AnnounceView* aview;
   struct DesignView* dview;
+
   City* city;
   MapView mv;
   NavHelper nav;

@@ -19,11 +19,11 @@ struct MapView : Widget {
     : city(c), buf(x*y, '\0'), mode(DEFAULT), vp(c, x, y) {}
 
   // This is just prepare_buffer() followed by blit_buffer(g)
-  virtual void render(Graphics&);
+  virtual void render(Graphics& g, render_box const& pos);
   // Fill buf with the text to draw
   void prepare_buffer();
   // Copy buf to graphics
-  void blit_buffer(Graphics&);
+  void blit_buffer(Graphics& g, render_box const& pos);
 
   void putChar(int x, int y, char c);
 
@@ -42,10 +42,10 @@ struct MapView : Widget {
 struct MapViewCursor {
   MapViewCursor(MapView* mv) : mv(mv), csr(mv->city) {}
 
-  inline void render(Graphics& g) {
+  inline void render(Graphics& g, render_box const& pos) {
     mv->prepare_buffer();
     mv->putChar(csr.x, csr.y, 'X');
-    mv->blit_buffer(g);
+    mv->blit_buffer(g, pos);
   }
 
   inline void right() { csr.offset(1, 0); update_vp(); }

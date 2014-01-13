@@ -8,8 +8,8 @@
 struct DesignView : View {
   DesignView(struct ViewStack* vs, MapView* mv, City* c);
 
-  virtual void render(Graphics& g);
-  virtual void handle_keypress(KeySym ks);
+  virtual void render(Graphics& g, render_box const& pos) override;
+  virtual void handle_keypress(KeySym ks) override;
 
   struct ViewStack* vstk;
   MapViewCursor mv;

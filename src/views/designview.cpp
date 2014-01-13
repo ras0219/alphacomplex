@@ -4,6 +4,7 @@
 #include "views/mapview.hpp"
 #include "views/hud.hpp"
 #include "views/statustext.hpp"
+#include "views/defaultlayout.hpp"
 
 #include "entities/citizen.hpp"
 
@@ -17,12 +18,10 @@ DesignView::DesignView(ViewStack* vs, MapView* mapv, City* c)
   nav.register_key(KEY_Return, "[Ent] Dig", [this]() { city->toggle_dig_wall(mv.csr.x, mv.csr.y); });
 }
 
-void DesignView::render(Graphics& g) {
-  mv.render(g);
-  hud.render(g);
-  //helptext.render(g);
-  statustext.render(g);
-  nav.render(g);
+void DesignView::render(Graphics& g, render_box const& pos) {
+  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+
+  mv.render(g, pos2);
 }
 
 void DesignView::handle_keypress(KeySym ks) {

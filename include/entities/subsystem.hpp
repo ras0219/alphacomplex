@@ -25,9 +25,14 @@ struct SubSystem : System {
 
   virtual void update() override {
     tickcount = (tickcount + 1) % tickrate;
-    if (tickcount == 0)
-    for (auto node : nodes)
-      apply_tuple(thunk(&Derived::update_item), std::tuple_cat(make_tuple(*static_cast<Derived*>(this), node.first), node.second));
+    if (tickcount == 0) {
+      for (auto&& node : nodes) {
+        auto tup1 = std::make_tuple(static_cast<Derived*>(this), node.first);
+        auto tup = std::tuple_cat(std::move(tup1), node.second);
+        auto th = thunk(&Derived::update_item);
+        apply_tuple(std::move(th), std::move(tup));
+      }
+    }
   }
 
   int tickcount;

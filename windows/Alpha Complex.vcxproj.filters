@@ -256,6 +256,9 @@
     <ClInclude Include="..\include\views\scrollable.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\views\defaultlayout.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">

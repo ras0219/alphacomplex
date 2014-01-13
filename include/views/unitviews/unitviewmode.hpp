@@ -8,7 +8,7 @@
 struct Graphics;
 
 struct UnitViewMode {
-  virtual void render(Graphics& g, uint csr_row, uint csr_col) = 0;
+  virtual void render(Graphics& g, render_box const& pos, uint csr_row, uint csr_col) = 0;
 
   virtual uint num_cols() const = 0;
   virtual void toggle(CitizenName::iterator it, uint col_num) = 0;
@@ -23,14 +23,14 @@ struct UnitViewModeInstance : UnitViewMode, Scrollable {
 
   virtual uint num_rows() const override { return CitizenName::instances.size(); }
 
-  virtual void render_row(Graphics& g, uint rownum, const render_box& pos) {
+  virtual void render_row(Graphics& g, uint rownum, const render_box& pos) override {
     uint col_off = 8;
 
-    auto e = CitizenName::instances[rownum];
-    g.drawString(pos.x, pos.y, get_full_name(e->parent));
+    auto&& e = CitizenName::instances[rownum];
+    g.drawString(pos.x + 2, pos.y, get_full_name(e->parent));
 
     uint c = 0;
-    for (auto d : P::col_list()) {
+    for (auto&& d : P::col_list()) {
       string buf2 = "|      ";
       if (c == csr_col_cache && rownum == csr_row_cache) {
         buf2[1] = '>';
@@ -41,35 +41,37 @@ struct UnitViewModeInstance : UnitViewMode, Scrollable {
       g.drawString(pos.x + 19 + c*col_off, pos.y, buf2);
       ++c;
     }
+
+    if (csr_row_cache == rownum) {
+      // This row should have the cursor on it
+      g.drawChar(pos.x, pos.y, '>');
+    }
   }
 
-  virtual void render(Graphics& g, uint csr_row, uint csr_col) override {
+  virtual void render(Graphics& g, render_box const& pos, uint csr_row, uint csr_col) override {
+    Scrollable::move_to_include(csr_row);
+
     csr_row_cache = csr_row;
     csr_col_cache = csr_col;
 
     uint col_off = 8;
-    const uint left_reserve = 2;
     const uint left_col_width = 15;
-    const uint left = left_reserve + left_col_width;
-    uint top_row = 2;
+    const uint left = left_col_width;
 
-    g.drawString(0, 0, P::title());
+    g.drawString(pos.x, pos.y, P::title());
 
     uint c = 0;
     for (auto d : P::col_list()) {
-      g.drawString(left + c*col_off + 5, top_row, P::col_label(d));
+      g.drawString(pos.x + left + c*col_off + 5, pos.y + 1, P::col_label(d));
       ++c;
     }
 
-    pos.x = left_reserve;
-    pos.y = top_row + 1;
-    pos.h = g.getHeight() - 20;
-    pos.w = g.getWidth() - left_reserve;
-    Scrollable::render(g);
+    render_box pos2 = pos;
+    pos2.shrink_top(2);
+    Scrollable::render(g, pos2);
 
     // Render cursor
-    g.drawChar(0, top_row + 1 + csr_row, '>', Graphics::DEFAULT);
-    g.drawString(left + 2 + 5 + csr_col*col_off, 0, "VV", Graphics::DEFAULT);
+    g.drawString(pos.x + left + 2 + 5 + csr_col*col_off, pos.y, "VV", Graphics::DEFAULT);
 
   }
 };

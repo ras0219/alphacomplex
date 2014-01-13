@@ -9,16 +9,17 @@
 #include "views/statustext.hpp"
 #include "views/unitviews/unitviewmode.hpp"
 #include "views/scrollable.hpp"
+#include "views/defaultlayout.hpp"
 
 #include <memory>
 #include <algorithm>
 
 extern bool paused;
 
-struct UnitListing {
+struct UnitListing : StaticWidget<UnitListing> {
   UnitListing() : csr_row(0), csr_col(0), mode(modes.begin()) { }
 
-  void render(Graphics& g) { return getmode().render(g, csr_row, csr_col); }
+  void render(Graphics& g, render_box const& pos) { return getmode().render(g, pos, csr_row, csr_col); }
 
   inline void down() {
     if (csr_row + 1 < CitizenName::instances.size())
@@ -56,11 +57,11 @@ extern struct AssignMode assignmode;
 extern struct SkillsMode skillsmode;
 extern struct NeedsMode needsmode;
 
-UnitListing::Modes_t UnitListing::modes = {{
+UnitListing::Modes_t UnitListing::modes = { {
   (UnitListing::Mode_t) &assignmode,
   (UnitListing::Mode_t) &needsmode,
   (UnitListing::Mode_t) &skillsmode
-}};
+} };
 
 bool UnitListing::check() {
   bool r = false;
@@ -96,11 +97,10 @@ UnitView::UnitView(ViewStack* vs) : vstk(vs) {
   nav.register_key(KEY_Tab, "[Tab] Mode", [this]() { ulist.mode_switch(); });
 }
 
-void UnitView::render(Graphics& g) {
-  ulist.render(g);
-  hud.render(g);
-  statustext.render(g);
-  nav.render(g);
+void UnitView::render(Graphics& g, render_box const& pos) {
+  render_box pos2 = DefaultLayout::render_layout(this, g, pos);
+
+  ulist.render(g, pos2);
 }
 
 void UnitView::handle_keypress(KeySym ks) {

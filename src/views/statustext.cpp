@@ -5,7 +5,8 @@
 using namespace std;
 
 extern bool paused;
-StatusText statustext;
+
+StatusText StatusText::instance;
 
 StatusMsg::StatusMsg(unsigned int p, std::function<int()> c, const std::string& t)
   : priority(p), callback(c), text(t) { }
@@ -19,7 +20,7 @@ StatusText::StatusText() {
   add({ 10, []() { return paused ? KEEP | EMIT : KEEP | PASS; }, "**PAUSED**" });
 }
 
-void StatusText::render(Graphics& g) {
+void StatusText::render(Graphics& g, render_box const& pos) {
   vector<StatusMsg> keep_queue;
 
   while (!status_queue.empty()) {
@@ -32,7 +33,7 @@ void StatusText::render(Graphics& g) {
     }
 
     if (retval & EMIT) {
-      g.drawString(g.getWidth() - (s.text.size() + 1) - 1, 0, s.text, Graphics::DEFAULT);
+      g.drawString(pos.x + pos.w - (s.text.size() + 1) - 1, pos.y, s.text, Graphics::DEFAULT);
       break;
     }
   }

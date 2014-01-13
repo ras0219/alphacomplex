@@ -1,9 +1,10 @@
 #include "views/scrollable.hpp"
 #include "graphics.hpp"
 
-void Scrollable::render(Graphics& g) {
+void Scrollable::render(Graphics& g, render_box const& pos) {
   uint nrows = num_rows();
   uint rowcap = pos.h;
+  cached_rowcap = rowcap;
 
   //// Layout: ////////////
   // row9999999    ^
@@ -53,22 +54,22 @@ void Scrollable::render(Graphics& g) {
 }
 
 void Scrollable::page_up() {
-  offset -= pos.h;
+  offset -= cached_rowcap;
   if (offset < 0) {
     offset = 0;
   }
 }
 
 void Scrollable::page_down() {
-  offset += pos.h;
-  if (offset + pos.h > (int)num_rows()) {
-    offset = num_rows() - pos.h;
+  offset += cached_rowcap;
+  if (offset + cached_rowcap >(int)num_rows()) {
+    offset = num_rows() - cached_rowcap;
   }
 }
 
 void Scrollable::move_to_include(uint row) {
   if ((int)row < offset)
     offset = row;
-  if (offset + pos.h < (int)row + 1)
-    offset = row - pos.h + 1;
+  if (offset + cached_rowcap < row + 1)
+    offset = row - cached_rowcap + 1;
 }
