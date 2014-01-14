@@ -26,18 +26,19 @@ void MapView::prepare_buffer() {
       }
 
       if (mode == DEFAULT) {
-        set<Ent*>& s = city->ent(x, y);
+        auto& s = city->ent(x, y);
         auto it = s.begin();
-        while (it != s.end()) {
+        auto end = s.end();
+        for (; it != end; ++it) {
           if ((*it)->has<Renderable>()) {
             putChar(x, y, (*it)->get<Renderable>()->render());
             break;
           }
-          ++it;
         }
 
-        if (it != s.end())
+        if (it != end) {
           continue;
+        }
       } else if (mode == ENTCOUNT) {
         if (city->ent(x, y).size() > 0 && city->ent(x, y).size() <= 9) {
           putChar(x, y, (char)('0' + city->ent(x, y).size()));

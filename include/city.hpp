@@ -3,7 +3,7 @@
 #include <array>
 #include <cassert>
 #include <iostream>
-#include <set>
+#include <unordered_set>
 #include <algorithm>
 
 #include "defs.hpp"
@@ -39,10 +39,12 @@ struct Overlay {
 };
 
 struct City {
+  using ents_t = unordered_set<Ent*>;
+
   int xsz;
   int ysz;
   vector<Tile> tiles;
-  vector< set<Ent*> > ents;
+  vector< ents_t > ents;
   vector<struct Room*> rooms;
   Overlay<char> designs;
 
@@ -52,8 +54,8 @@ struct City {
   inline Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
   inline Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
 
-  inline const set<Ent*>& ent(int x, int y) const { return ents[xsz*y + x]; }
-  inline set<Ent*>& ent(int x, int y) { return ents[xsz*y + x]; }
+  inline const ents_t& ent(int x, int y) const { return ents[xsz*y + x]; }
+  inline ents_t& ent(int x, int y) { return ents[xsz*y + x]; }
 
   inline void add_ent(int x, int y, Ent* e) {
     ent(x, y).insert(e);

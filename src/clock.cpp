@@ -22,10 +22,11 @@ string format_time(unsigned int t) {
   unsigned int days = t;
 
   stringstream ss;
+
   ss << setfill('0') << setw(2) << hours
      << ":" << setw(2) << mins
      << ":" << setw(2) << secs
      << " Daycycle " << days;
-  string ret = ss.str();
-  return ret;
+
+  return ss.str();
 }
