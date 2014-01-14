@@ -305,7 +305,7 @@ void Graphics_Web::repaint()
   memset(s_buffer, ' ', s_buffer_size);
   
   for (auto p : c)
-    p->render(*this);
+    p->render(*this, { 0, 0, getWidth(), getHeight() });
     
   for (int y = 0; y < height; y++)
   {

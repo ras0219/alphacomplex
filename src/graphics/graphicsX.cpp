@@ -156,7 +156,7 @@ void Graphics_X::repaint() {
   XFillRectangle(display, window, white_gc, 0, 0, getWidth() * FONT_WIDTH, getHeight() * FONT_HEIGHT);
   
   for (auto p : c)
-    p->render(*this);
+    p->render(*this, { 0, 0, getWidth(), getHeight() });
 }
 
 void Graphics_X::destroy() {
