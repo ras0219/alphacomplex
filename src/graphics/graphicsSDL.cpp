@@ -24,7 +24,6 @@
 using namespace std;
 using namespace chrono;
 
-
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
 
@@ -34,7 +33,7 @@ struct Graphics_SDL : Graphics {
 
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string msg, const std::string font_file);
+  void LoadText(const std::string& msg, const std::string& font_file);
   void repaint();
   void destroy();
 
@@ -162,9 +161,8 @@ Graphics_SDL::Graphics_SDL()
 }
 
 //maybe rename function?
-void Graphics_SDL::LoadText(const std::string msg, const std::string font_file)
+void Graphics_SDL::LoadText(const std::string& msg, const std::string&)
 {
- (void) font_file;
   if(ttf_texture!=NULL)
    {
     SDL_DestroyTexture(ttf_texture);
@@ -203,13 +201,22 @@ void Graphics_SDL::handle_events(Controller* c) {
   //all done with events! :)
 }
 
-void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
-  LoadText(str, TEMP_FONT_PATH);
+/// CURRENTLY DISPATCHES TO drawChar()!!! TODO: make fast and good and not just fast
+void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context gc) {
+  // PERF TOO BAD, LETS MAKE IT GOOD!
+  for (auto ch : str)
+    // Look at this performance
+    drawChar(x++, y, ch, gc);
+  // It's so good.
+
+
+  /* LoadText(str, TEMP_FONT_PATH);
   int w = 0, h = 0;
   int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
   if (errcode == -1) assert(false);
   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
   sdl_last_call = SDL_RenderCopy(ren,ttf_texture, NULL, &dstRect);
+  */
 //  main_texture
 }
 
