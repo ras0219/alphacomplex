@@ -41,6 +41,7 @@ set(SOURCES
   "src/views/unitviews/skillsview.cpp"
   ## Views
   "src/views/announceview.cpp"
+  "src/views/baseview.cpp"
   "src/views/designview.cpp"
   "src/views/helpview.cpp"
   "src/views/hud.cpp"
