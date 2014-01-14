@@ -7,19 +7,35 @@
 
 struct Graphics;
 
-struct UnitViewMode {
+struct UnitViewMode : Scrollable {
+  using Scrollable::render;
+
   virtual void render(Graphics& g, render_box const& pos, uint csr_row, uint csr_col) = 0;
+
+  inline void page_up(uint& csr_row) {
+    if (csr_row < cached_rowcap) {
+      csr_row = 0;
+    } else {
+      csr_row -= cached_rowcap;
+    }
+  }
+
+  inline void page_down(uint& csr_row) {
+    if (csr_row + cached_rowcap > num_rows()) {
+      csr_row = num_rows() - 1;
+    } else {
+      csr_row += cached_rowcap;
+    }
+  }
 
   virtual uint num_cols() const = 0;
   virtual void toggle(CitizenName::iterator it, uint col_num) = 0;
 };
 
 template<class P>
-struct UnitViewModeInstance : UnitViewMode, Scrollable {
+struct UnitViewModeInstance : UnitViewMode {
   uint csr_row_cache;
   uint csr_col_cache;
-
-  using Scrollable::render;
 
   virtual uint num_rows() const override { return CitizenName::instances.size(); }
 

@@ -37,6 +37,12 @@ struct UnitListing : StaticWidget<UnitListing> {
     if (csr_col > 0)
       --csr_col;
   }
+  inline void page_up() {
+    getmode().page_up(csr_row);
+  }
+  inline void page_down() {
+    getmode().page_down(csr_row);
+  }
 
   inline uint num_rows() const { return CitizenName::instances.size(); }
 
@@ -109,6 +115,10 @@ void UnitView::handle_keypress(KeySym ks) {
   case KEY_Right: return ulist.right();
   case KEY_Up: return ulist.up();
   case KEY_Down: return ulist.down();
+#ifdef KEY_Pageup
+  case KEY_Pageup: return ulist.page_up();
+  case KEY_Pagedown: return ulist.page_down();
+#endif
 
   default: return; // maybe play an alert here?
   }

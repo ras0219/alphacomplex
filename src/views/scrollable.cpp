@@ -53,20 +53,6 @@ void Scrollable::render(Graphics& g, render_box const& pos) {
   }
 }
 
-void Scrollable::page_up() {
-  offset -= cached_rowcap;
-  if (offset < 0) {
-    offset = 0;
-  }
-}
-
-void Scrollable::page_down() {
-  offset += cached_rowcap;
-  if ((int)(offset + cached_rowcap) >(int)num_rows()) {
-    offset = num_rows() - cached_rowcap;
-  }
-}
-
 void Scrollable::move_to_include(uint row) {
   if ((int)row < offset)
     offset = row;

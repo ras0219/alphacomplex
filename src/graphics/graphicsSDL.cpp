@@ -215,7 +215,7 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
   int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
   if (errcode == -1) assert(false);
   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
-  sdl_last_call = SDL_RenderCopy(ren,ttf_texture, NULL, &dstRect);
+  sdl_last_call = SDL_RenderCopy(ren, ttf_texture, NULL, &dstRect);
   */
 //  main_texture
 }

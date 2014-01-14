@@ -50,6 +50,10 @@
   #define KEY_e       SDLK_e
   #define KEY_d       SDLK_d
   #define KEY_f       SDLK_f
+
+  #define KEY_Pageup  SDLK_PAGEUP
+  #define KEY_Pagedown SDLK_PAGEDOWN
+
 #endif
 
 #ifdef GRAPHICS_WEB
