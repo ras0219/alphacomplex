@@ -62,7 +62,7 @@ void Scrollable::page_up() {
 
 void Scrollable::page_down() {
   offset += cached_rowcap;
-  if (offset + cached_rowcap >(int)num_rows()) {
+  if ((int)(offset + cached_rowcap) >(int)num_rows()) {
     offset = num_rows() - cached_rowcap;
   }
 }

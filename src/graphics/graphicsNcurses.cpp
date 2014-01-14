@@ -121,7 +121,7 @@ void Graphics_Ncurses::repaint()
   
   // fill the buffer
   for (auto p : c)
-    p->render(*this);
+    p->render(*this, { 0, 0, getWidth(), getHeight() });
   
   int index = 0;
   for (int y = 0; y < height; y++)
