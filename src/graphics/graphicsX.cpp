@@ -27,7 +27,7 @@ struct Graphics_X : Graphics {
 
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string msg, const std::string font_file);
+  void LoadText(const std::string font_file);
   void repaint();
   void destroy();
 
@@ -73,9 +73,8 @@ Graphics_X::Graphics_X() {
   /* map (show) the window */
   XMapWindow(display, window);
 }
-void Graphics_X::LoadText(const std::string msg, const std::string font_file)
+void Graphics_X::LoadText(const std::string font_file)
 {
-  (void)msg;
   (void)font_file;
   return;
 }

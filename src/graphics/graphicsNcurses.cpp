@@ -18,7 +18,7 @@ struct Graphics_Ncurses : Graphics {
 
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string msg, const std::string font_file);
+  void LoadText(const std::string font_file);
   void repaint();
   void destroy();
   
@@ -63,7 +63,6 @@ Graphics_Ncurses::Graphics_Ncurses()
 }
 
 void Graphics_Ncurses::LoadText(
-  const std::string /* msg */,
   const std::string /* font_file */)
 {
   // do nothing

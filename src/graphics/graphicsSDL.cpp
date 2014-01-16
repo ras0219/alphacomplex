@@ -7,6 +7,7 @@
 #include <unistd.h> //let mingw handle it if needed
 #endif
 
+#include <cmath>
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -20,6 +21,7 @@
 
 //#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
 #define TEMP_FONT_PATH "../resources/font/Anonymous_Pro.ttf"
+#define NUMBER_OF_TILES 255
 
 using namespace std;
 using namespace chrono;
@@ -33,7 +35,7 @@ struct Graphics_SDL : Graphics {
 
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string& msg, const std::string& font_file);
+  void LoadText(const std::string& font_file);
   void repaint();
   void destroy();
 
@@ -156,21 +158,50 @@ Graphics_SDL::Graphics_SDL()
   }
   SDL_GetRendererInfo(ren,&ren_info);
   graphics_log->Write("%s:%s", "Current renderer is",ren_info.name);
+  LoadText(TEMP_FONT_PATH);
 
 
 }
 
-//maybe rename function?
-void Graphics_SDL::LoadText(const std::string& msg, const std::string&)
+void Graphics_SDL::LoadText(const std::string&)
 {
+ int error=0;
   if(ttf_texture!=NULL)
    {
     SDL_DestroyTexture(ttf_texture);
     ttf_texture = NULL;
    }
-  SDL_Surface *surf = TTF_RenderText_Solid(best_font, msg.c_str(), font_color);
-  ttf_texture = SDL_CreateTextureFromSurface(ren, surf);
+  
+  //to-do: refactor this in a slightly different architecture. 
+  //ras: we need to sit down and talk about this C++ and virtual classes.
+  const int number_of_tiles = NUMBER_OF_TILES;
+  const int rows = 1+sqrt(( float) number_of_tiles);  //make as close to square
+  
+  int tile_texture_width = rows * FONT_WIDTH;
+  int tile_texture_height = rows * FONT_HEIGHT;
+
+  SDL_Surface *surf = NULL;
+  SDL_Rect copy_dimension;
+  copy_dimension.w=FONT_WIDTH;
+  copy_dimension.h=FONT_HEIGHT;
+  SDL_Surface *ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0,0,0,0);
+  assert(ttf_surface!=NULL);
+
+ //temporary before choosing a tile\font
+  for(int count =0; count< number_of_tiles; count++)
+  {
+   surf = TTF_RenderGlyph_Solid(best_font, (uint16_t) count, font_color);
+   assert(surf!=NULL);
+   copy_dimension.x= (count % rows) * FONT_WIDTH;
+   copy_dimension.y= (count / rows) * FONT_HEIGHT;
+   error = SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension);
+   assert(error==0);
+  }
+  
+  ttf_texture = SDL_CreateTextureFromSurface(ren, ttf_surface); //send the big one over
+  error=SDL_SaveBMP(ttf_surface,"font_tilemap.bmp");
   SDL_FreeSurface(surf);
+  SDL_FreeSurface(ttf_surface);
   return;
 }
 void Graphics_SDL::handle_events(Controller* c) {
@@ -221,19 +252,6 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
-  //ugh. XXX
-  char buff[2];
-  buff[0]=ch;
-  buff[1]=0;
-  // old drawString(x,y,buff,gc);
-  if(cached_textures[ch] == NULL) //can't load entry, load it
-  {
-   LoadText(buff,TEMP_FONT_PATH);
-   cached_textures[ch]=ttf_texture;
-   ttf_texture=NULL; //we manage memory now
-
-  }
-
    int w = 0, h = 0;
    int errcode = TTF_SizeText(best_font, buff, &w, &h);
    if (errcode == -1) assert(false);

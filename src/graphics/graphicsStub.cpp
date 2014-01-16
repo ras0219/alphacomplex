@@ -13,7 +13,7 @@ struct GraphicsImpl : Graphics {
 
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string msg, const std::string font_file);
+  void LoadText(const std::string font_file);
   void repaint();
   void destroy();
 
@@ -27,7 +27,6 @@ GraphicsImpl::GraphicsImpl()
 }
 
 void GraphicsImpl::LoadText(
-  const std::string /* msg */,
   const std::string /* font_file */)
 {
   // TODO
