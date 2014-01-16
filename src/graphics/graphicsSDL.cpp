@@ -50,6 +50,7 @@ struct Graphics_SDL : Graphics {
   SDL_Renderer *ren;
   SDL_Texture *main_texture;
   SDL_Texture *ttf_texture;
+  unsigned int tiles_per_row;
   TTF_Font* best_font;
   SDL_Color font_color;
   int sdl_last_call;
@@ -175,8 +176,8 @@ void Graphics_SDL::LoadText(const std::string&)
   //to-do: refactor this in a slightly different architecture. 
   //ras: we need to sit down and talk about this C++ and virtual classes.
   const int number_of_tiles = NUMBER_OF_TILES;
-  const int rows = 1+sqrt(( float) number_of_tiles);  //make as close to square
-  
+  const int rows = 1+ (const int) sqrt(( float) number_of_tiles);  //make as close to square
+  tiles_per_row = rows;
   int tile_texture_width = rows * FONT_WIDTH;
   int tile_texture_height = rows * FONT_HEIGHT;
 
@@ -190,12 +191,15 @@ void Graphics_SDL::LoadText(const std::string&)
  //temporary before choosing a tile\font
   for(int count =0; count< number_of_tiles; count++)
   {
-   surf = TTF_RenderGlyph_Solid(best_font, (uint16_t) count, font_color);
-   assert(surf!=NULL);
-   copy_dimension.x= (count % rows) * FONT_WIDTH;
-   copy_dimension.y= (count / rows) * FONT_HEIGHT;
-   error = SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension);
-   assert(error==0);
+	  surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
+   if (surf != NULL) //if we draw the right character
+   {
+	   copy_dimension.x = (count % rows) * FONT_WIDTH;
+	   copy_dimension.y = (count / rows) * FONT_HEIGHT;
+	   error = SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension);
+	   assert(error == 0);
+   }
+   
   }
   
   ttf_texture = SDL_CreateTextureFromSurface(ren, ttf_surface); //send the big one over
@@ -215,11 +219,11 @@ void Graphics_SDL::handle_events(Controller* c) {
     case SDL_WINDOWEVENT: //window moved, max,min, etc
       if(event.window.event == SDL_WINDOWEVENT_RESIZED)
       {
+		  height = (0xffff & event.window.data2) / FONT_HEIGHT;
+		  width = (0xffff & event.window.data1) / FONT_WIDTH;
         //int old_size = (0xffff &event.window.data1);
         //int new_size = (0xffff &event.window.data2);
-        //disregard horizontal for now
-        //FONT_SIZE = new_size/old_size * FONT_SIZE;
-        //FONT_SIZE++;
+        
       }
       break;
     case SDL_QUIT: //send q to controller
@@ -252,11 +256,12 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
-   int w = 0, h = 0;
-   int errcode = TTF_SizeText(best_font, buff, &w, &h);
-   if (errcode == -1) assert(false);
-   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
-   sdl_last_call = SDL_RenderCopy(ren, cached_textures[ch], NULL, &dstRect);
+  
+   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT};
+   int x_cord = (ch% tiles_per_row) * FONT_WIDTH;
+   int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
+   SDL_Rect srcRect = {x_cord, y_cord,FONT_WIDTH,FONT_HEIGHT};
+   sdl_last_call = SDL_RenderCopy(ren, ttf_texture, &srcRect, &dstRect);
 }
 
 void Graphics_SDL::repaint() {
