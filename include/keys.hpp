@@ -1,7 +1,7 @@
 #pragma once
 
-#define FONT_HEIGHT 12
-#define FONT_WIDTH 6
+#define FONT_HEIGHT 16
+#define FONT_WIDTH 10
 
 #ifdef GRAPHICS_X11
   #include <X11/Xlib.h>
