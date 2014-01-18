@@ -73,7 +73,7 @@ void Graphics_Ncurses::handle_events(
 {
   if (destroyed) return;
   
-  KeySym ch = getch();
+  KeySym ch = mvgetch(0,0);
   if (ch != ERR)
   {
     c->handle_keypress(ch);
