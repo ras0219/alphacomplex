@@ -1,43 +1,39 @@
 #include "LRUCache.hpp"
 
-using namespace std;
-
-template<typename key, class value>
-LRUCache::LRUCache(unsigned int Max_Size)
+template<class Key, class Value>
+LRUCache<Key, Value>::LRUCache(unsigned int Max_Size, rev_func_t revocationFunction)
+  : Cache<Key, Value>(Max_Size, revocationFunction)
 {
-	//sets up max size
-	Cache::Cache(Max_Size);
-
 }
-template<typename key, class value>
-LRUCache::~LRUCache()
+
+template<class Key, class Value>
+LRUCache<Key, Value>::~LRUCache()
 {
-	if (RevocateObject == nullptr) //nothing to clean, our revocate object is null
-		return; 
+  if (RevocateObject == nullptr) //nothing to clean, our revocate object is null
+    return;
 
 }
 
-template<typename key, class value>
-void LRUCache::put(key input, value cched_value)
+template<class Key, class Value>
+void LRUCache<Key, Value>::put(Key input, Value cched_value)
 {
-
 }
 
-template<typename key, class value>
-bool LRUCache::exists(key input)
+template<class Key, class Value>
+bool LRUCache<Key, Value>::exists(Key input)
 {
-	
+  return false;
 }
 
 
-template<typename key, class value>
-bool LRUCache::get(key input, value* cached_value)
+template<class Key, class Value>
+bool LRUCache<Key, Value>::get(Key input, Value* cached_value)
 {
-
+  return false;
 }
 
-template<typename key, class value>
-float LRUCache::get_hit_rate()
+template<class Key, class Value>
+float LRUCache<Key, Value>::get_hit_rate()
 {
-
+  return 0.0f;
 }

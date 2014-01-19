@@ -1,23 +1,26 @@
+#pragma once
+
 #include "Cache.hpp"
 #include <list>
 #include <map>
 
-
 using namespace std;
 
-template<typename key, class value>
-struct LRUCache : public Cache
+template<class Key, class Value>
+struct LRUCache : Cache<Key, Value>
 {
-	LRUCache(unsigned int Max_Size, void(*revocationFunction)(value*));
-	~LRUCache();
-	void RevocateObject(key cached_value);
+  LRUCache(unsigned int Max_Size, rev_func_t revocationFunction);
+  ~LRUCache();
 
-	void put(key input, value cched_value);
-	bool exists(key input);
-	bool get(key input, value* cached_value);
+  void put(Key input, Value cched_value);
+  bool exists(Key input);
+  bool get(Key input, Value* cached_value);
 
-	float get_hit_rate();
+  float get_hit_rate();
 
-	list<value> key_tracker_type;
-	unordered_map<key, list::iterator > key_to_iterator;
+private:
+  using track_list = list<Value>;
+  
+  track_list key_tracker_type;
+  unordered_map<key, typename track_list::iterator> key_to_iterator;
 };
