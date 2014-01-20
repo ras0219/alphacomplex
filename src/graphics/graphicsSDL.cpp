@@ -18,10 +18,12 @@
 
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
+#include "LRUCache.hpp"
 
 //#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
 #define TEMP_FONT_PATH "../resources/font/Anonymous_Pro.ttf"
 #define NUMBER_OF_TILES 255
+#define STRING_CACHE_SIZE 128
 
 using namespace std;
 using namespace chrono;
@@ -39,10 +41,6 @@ struct Graphics_SDL : Graphics {
   void repaint();
   void destroy();
 
-  //<temp>
-  std::array<SDL_Texture*, 256> cached_textures;
-  //</temp>
-
   // Data
   int s;
 
@@ -55,14 +53,19 @@ struct Graphics_SDL : Graphics {
   SDL_Color font_color;
   int sdl_last_call;
   Logger *graphics_log;
+  LRUCache<std::string, SDL_Texture*> string_texture_cache;
 };
+
+void FreeSDLTexture(SDL_Texture** free_this)
+{
+	SDL_DestroyTexture(*free_this);
+}
 
 Graphics_SDL::Graphics_SDL()
   : win(nullptr), ren(nullptr), main_texture(nullptr),
     ttf_texture(nullptr), font_color({0,0,0,0}),
-    sdl_last_call(0), graphics_log(nullptr)
+	sdl_last_call(0), graphics_log(nullptr), string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
 {
-  memset(&cached_textures[0], 0, sizeof(SDL_Texture*) * cached_textures.size());
   graphics_log = new Logger("graphics.txt");
   graphics_log->Write("%s","Initializing graphics file for SDL");
   SDL_version compiled,linked;
@@ -161,7 +164,6 @@ Graphics_SDL::Graphics_SDL()
   graphics_log->Write("%s:%s", "Current renderer is",ren_info.name);
   LoadText(TEMP_FONT_PATH);
 
-
 }
 
 void Graphics_SDL::LoadText(const std::string&)
@@ -236,23 +238,36 @@ void Graphics_SDL::handle_events(Controller* c) {
   //all done with events! :)
 }
 
-/// CURRENTLY DISPATCHES TO drawChar()!!! TODO: make fast and good and not just fast
-void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context gc) {
-  // PERF TOO BAD, LETS MAKE IT GOOD!
+void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
+	//To-Do: give a choice to caller if he needs KERNING or CACHING.
+	SDL_Texture* retr_texture = nullptr;
+	if (string_texture_cache.get(str, &retr_texture) == false)
+	{
+		SDL_Surface* my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
+		if (my_font_surface == NULL) return; //we tried
+		SDL_Texture* my_font_texture = SDL_CreateTextureFromSurface(ren, my_font_surface);
+		if (my_font_texture == NULL) return;
+		//to-do: send to cache
+		string_texture_cache.put(str, my_font_texture);
+		SDL_FreeSurface(my_font_surface);
+		retr_texture = my_font_texture;
+	}
+
+	int w = 0, h = 0;
+	TTF_SizeText(best_font, str.c_str(), &w, &h);
+	SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, w, h };
+	/*
   for (auto ch : str)
     // Look at this performance
     drawChar(x++, y, ch, gc);
   // It's so good.
-
-
-  /* LoadText(str, TEMP_FONT_PATH);
-  int w = 0, h = 0;
-  int errcode = TTF_SizeText(best_font, str.c_str(), &w, &h);
-  if (errcode == -1) assert(false);
-  SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, w, h};
-  sdl_last_call = SDL_RenderCopy(ren, ttf_texture, NULL, &dstRect);
   */
-//  main_texture
+
+
+ 
+	sdl_last_call = SDL_RenderCopy(ren, retr_texture, NULL, &dstRect);
+  
+
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
