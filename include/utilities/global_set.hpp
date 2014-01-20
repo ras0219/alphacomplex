@@ -2,6 +2,9 @@
 
 #include <unordered_set>
 
+/// CRTP template to maintain a global set of all instances.
+///
+/// Inheritance from this class should probably be private with `friend struct global_set<Derived>`.
 template<class Derived>
 struct global_set {
   using set_t = std::unordered_set<Derived*>;
