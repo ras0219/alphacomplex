@@ -61,7 +61,7 @@ void LRUCache<Key, Value>::put(Key input, Value cched_value)
 		//we need to EVICT!!!!
 		evictions++;
 		Key evicted_object = key_order_tracker.back();
-		Value evicted_value = key_map[input].first;
+		Value evicted_value = key_map[evicted_object].first;
 		key_order_tracker.pop_back();
 		key_map.erase(evicted_object);
 		RevocateObject(&evicted_value);
@@ -70,6 +70,7 @@ void LRUCache<Key, Value>::put(Key input, Value cched_value)
 	//now actually insert it. Push it to front as MRU
 	key_order_tracker.push_front(input);
 	key_map[input] = make_pair(cched_value, key_order_tracker.begin());
+
 }
 
 template<class Key, class Value>
@@ -99,7 +100,7 @@ bool LRUCache<Key, Value>::get(Key input, Value* cached_value)
 		//we now need to push the hit object to top of the list
 		key_order_tracker.splice(key_order_tracker.begin(), key_order_tracker, retr_elem->second.second);
 	}
-	return false;
+	return true;
 }
 
 template<class Key, class Value>
