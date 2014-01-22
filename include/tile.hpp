@@ -3,7 +3,12 @@
 struct Tile {
   enum TileKind : char {
     ground = '.',
-    wall = '+'
+    wall = '+',
+    door = '*',
+    furniture = 'P',
+    engineering = 'S',
+    foodsupply = 'W',
+    infirmary = '.'
   } type;
 
   char render() { return type; }

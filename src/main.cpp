@@ -47,13 +47,22 @@ vector<System*> systems = { &aisystem, &smsystem, &jpsystem, &needssystem };
 
 int main(int argc, char *argv[]) {
   try {
-    City city;
+    // creates a city of size 24 unit width and 30 unit height
+    // this version also uses the current time a seed
+    CityProperties cityP(24, 30);
+
+    // generates a city using the city properties
+    City city(cityP);
 
     srand((uint)time(NULL));
-    if (argc < 2)
-      wfstream("../cities/city02.txt") >> city;
-    else
-      wfstream(argv[1]) >> city;
+
+    //  
+    (argc);
+    (argv);
+    //if (argc < 2)
+    //  wfstream("../cities/city02.txt") >> city;
+    //else
+    //  wfstream(argv[1]) >> city;
 
     gfx = new_graphics();
     ViewStack vs;
