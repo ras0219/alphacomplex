@@ -49,7 +49,7 @@ void MainView::render_body(Graphics& g, render_box const& pos) {
   //HelpText::instance.render(g);
 }
 
-void MainView::handle_keypress(KeySym ks) {
+void MainView::handle_keypress(KeyboardKey ks) {
   if (nav.handle_keypress(ks)) return;
 
   switch (ks) {

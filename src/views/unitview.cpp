@@ -107,7 +107,7 @@ void UnitView::render_body(Graphics& g, render_box const& pos) {
   ulist.render(g, pos);
 }
 
-void UnitView::handle_keypress(KeySym ks) {
+void UnitView::handle_keypress(KeyboardKey ks) {
   if (nav.handle_keypress(ks)) return;
 
   switch (ks) {

@@ -2,8 +2,13 @@
 
 namespace rasutil {
 
-  template<class F> struct thunk_func;
+  /// Thunks a member function pointer into a normal functor
+  /// Specifically, converts it into an empty functor with an operator() that
+  /// takes a T* as its first argument.
+  template<class F>
+  struct thunk_func;
 
+  /// Implementation specialization of thunk_func<F>
   template<class R, class C, class...Args>
   struct thunk_func<R(C::*)(Args...)> {
     using func_type = R(C::*)(Args...);

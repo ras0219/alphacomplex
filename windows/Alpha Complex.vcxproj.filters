@@ -226,9 +226,6 @@
     <ClInclude Include="..\include\components\ai\sequenceai.hpp">
       <Filter>Header Files\components\ai</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\components\descriptable.hpp">
-      <Filter>Header Files\components\ai</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\views\widget.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>

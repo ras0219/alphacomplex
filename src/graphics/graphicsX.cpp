@@ -10,6 +10,7 @@
 #include <chrono>
 #include <deque>
 
+#include <X11/Xlib.h>
 #include <X11/keysym.h>
 
 using namespace std;
@@ -25,6 +26,7 @@ struct Graphics_X : Graphics {
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
 
+  KeyboardKey map_key(KeySym key);
   void handle_events(struct Controller*);
 
   void LoadText(const std::string font_file);
@@ -78,6 +80,46 @@ void Graphics_X::LoadText(const std::string font_file)
   (void)font_file;
   return;
 }
+
+KeyboardKey Graphics_X::map_key(KeySym key) {
+    switch (key) {
+        case XK_Escape:
+            return KEY_Escape;
+        case XK_space:
+            return KEY_space;
+        case XK_Left:
+            return KEY_Left;
+        case XK_Right:
+            return KEY_Right;
+        case XK_Up:
+            return KEY_Up;
+        case XK_Down:
+            return KEY_Down;
+        case XK_Return:
+            return KEY_Return;
+        case XK_Tab:
+            return KEY_Tab;
+        case XK_h:
+            return KEY_h;
+        case XK_u:
+            return KEY_u;
+        case XK_r:
+            return KEY_r;
+        case XK_a:
+            return KEY_a;
+        case XK_q:
+            return KEY_q;
+        case XK_e:
+            return KEY_e;
+        case XK_d:
+            return KEY_d;
+        case XK_f:
+            return KEY_f;
+        default:
+            return KEY_Undefined;
+    }
+}
+
 void Graphics_X::handle_events(Controller* c) {
   XEvent event;
 
@@ -96,7 +138,7 @@ void Graphics_X::handle_events(Controller* c) {
       auto keycode = event.xkey.keycode;
       int keysyms_per_keycode_return;
       auto keysyms = XGetKeyboardMapping(display, keycode, 1, &keysyms_per_keycode_return);
-      c->handle_keypress(keysyms[0]);
+      c->handle_keypress(map_key(keysyms[0]));
       XFree(keysyms);
       if (destroyed) return;
       break;

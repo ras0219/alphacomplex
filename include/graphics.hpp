@@ -8,6 +8,9 @@ using namespace std;
 
 extern const char* white;
 
+#define FONT_HEIGHT 16
+#define FONT_WIDTH 10
+
 #ifdef GRAPHICS_X11
 enum : char {
   CORNER_SE = 11,
@@ -40,10 +43,21 @@ enum : char {
 
 struct Widget;
 
-struct Graphics : debug_policy_t {
+/// The graphics adapter is a singleton class that provides target-specific
+/// input and output services. Ideally, all I/O that is dependant on the
+/// platform should be isolated within a cpp file inheriting and implementing
+/// the member methods here.
+///
+/// Key functions for the main loop are `repaint()`, `destroy()`, and `handle_events()`.
+struct Graphics : private debug_policy_t {
+  /// The graphics adapter is a singleton and should not be copied.
   Graphics(const Graphics&) = delete;
+  /// The graphics adapter is a singleton and should not be copied.
   Graphics& operator=(const Graphics&) = delete;
 
+  /// Used to provide color information to drawing commands.
+  ///
+  /// May be extend in the future to include things like bold, italic, underline, and font family.
   enum Context {
     WHITE,
     RED,

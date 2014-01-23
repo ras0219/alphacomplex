@@ -5,7 +5,7 @@ void ViewStack::render(Graphics& g, render_box const& pos) {
   vstack.back()->render(g, pos);
 }
 
-void ViewStack::handle_keypress(KeySym ks) {
+void ViewStack::handle_keypress(KeyboardKey ks) {
   vstack.back()->handle_keypress(ks);
 }
 

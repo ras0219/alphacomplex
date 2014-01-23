@@ -11,7 +11,7 @@ void NavHelper::render(Graphics& g, render_box const& pos) {
   }
 }
 
-bool NavHelper::handle_keypress(KeySym ks) {
+bool NavHelper::handle_keypress(KeyboardKey ks) {
   auto it = nav_map.find(ks);
   if (it != nav_map.end()) {
     std::get<1>(it->second)();
@@ -21,7 +21,7 @@ bool NavHelper::handle_keypress(KeySym ks) {
   }
 }
 
-void NavHelper::register_key(KeySym ks, const std::string& desc, cb_t cb) {
+void NavHelper::register_key(KeyboardKey ks, const std::string& desc, cb_t cb) {
   nav_map.emplace(ks, std::make_tuple(desc, cb));
 }
 
