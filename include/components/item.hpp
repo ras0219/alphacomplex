@@ -8,6 +8,8 @@ struct ItemProperties {
   float mass;
 };
 
+/// Component to describe an item which has properties -- name of item, mass of item, material of item, etc.
+/// Also provides locking functionality.
 struct Item : AspectStatic<Aspect::Item, Item>, private global_set<Item> {
   Item(const ItemProperties& p) : prop(p), locked(false) { }
 

@@ -11,6 +11,7 @@ typedef unsigned int uint;
 typedef pair<int,int> point;
 typedef tuple<int,int,int,int> waypoint;
 
+/// Use to describe absolute directions
 enum Direction {
   EAST,
   SOUTH,
@@ -24,10 +25,12 @@ enum Direction {
 
 typedef DebugPolicy<true> debug_policy_t;
 
+/// Globally accessible function to send an announcement to the announcement singleton
 void announce(const string&);
 
 #include "keys.hpp"
 
+/// Globally accessible simulation state for whether the game logic should be run
 extern bool paused;
 
 // These definitions determine the desired framerates
@@ -36,8 +39,8 @@ extern bool paused;
 // Example config: (30 graphical fps, 100 logical fps)
 // #define US_PER_GFX 33000
 // #define US_PER_LGC 10000
-
 #define US_PER_GFX 33000
 #define US_PER_LGC 10000
-#define US_PER_REP 1000000
 
+// This defines the rate of FPS reporting into the announcements; recommended is 1000000 or 1 report per second
+#define US_PER_REP 1000000
