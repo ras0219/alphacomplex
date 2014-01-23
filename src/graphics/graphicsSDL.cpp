@@ -26,13 +26,16 @@
 using namespace std;
 using namespace chrono;
 
+using NativeKeyboardKey = unsigned long;
+
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
 
   // Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
-
+  
+  KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
 
   void LoadText(const std::string& font_file);
@@ -208,13 +211,57 @@ void Graphics_SDL::LoadText(const std::string&)
   SDL_FreeSurface(ttf_surface);
   return;
 }
+
+KeyboardKey Graphics_SDL::map_key(NativeKeyboardKey key) {
+    switch (key) {
+        case SDLK_ESCAPE:
+            return KEY_Escape;
+        case SDLK_SPACE:
+            return KEY_space;
+        case SDLK_LEFT:
+            return KEY_Left;
+        case SDLK_RIGHT:
+            return KEY_Right;
+        case SDLK_UP:
+            return KEY_Up;
+        case SDLK_DOWN:
+            return KEY_Down;
+        case SDLK_RETURN:
+            return KEY_Return;
+        case SDLK_TAB:
+            return KEY_Tab;
+        case SDLK_h:
+            return KEY_h;
+        case SDLK_u:
+            return KEY_u;
+        case SDLK_r:
+            return KEY_r;
+        case SDLK_a:
+            return KEY_a;
+        case SDLK_q:
+            return KEY_q;
+        case SDLK_e:
+            return KEY_e;
+        case SDLK_d:
+            return KEY_d;
+        case SDLK_f:
+            return KEY_f;
+        case SDLK_PAGEUP:
+            return KEY_Pageup;
+        case SDLK_PAGEDOWN:
+            return KEY_Pagedown;
+        default:
+            return KEY_Undefined;
+    }
+}
+
 void Graphics_SDL::handle_events(Controller* c) {
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     switch(event.type){
       case SDL_KEYDOWN:
-        c->handle_keypress(event.key.keysym.sym);
+        c->handle_keypress(map_key(event.key.KeyboardKey.sym));
         break;
     case SDL_WINDOWEVENT: //window moved, max,min, etc
       if(event.window.event == SDL_WINDOWEVENT_RESIZED)

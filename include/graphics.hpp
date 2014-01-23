@@ -8,6 +8,9 @@ using namespace std;
 
 extern const char* white;
 
+#define FONT_HEIGHT 16
+#define FONT_WIDTH 10
+
 #ifdef GRAPHICS_X11
 enum : char {
   CORNER_SE = 11,

@@ -24,7 +24,7 @@ void DesignView::render(Graphics& g, render_box const& pos) {
   mv.render(g, pos2);
 }
 
-void DesignView::handle_keypress(KeySym ks) {
+void DesignView::handle_keypress(KeyboardKey ks) {
   if (nav.handle_keypress(ks)) return;
   switch (ks) {
   case KEY_Left: return mv.left();

@@ -9,6 +9,8 @@
 
 using namespace std;
 
+using NativeKeyboardKey = long;
+
 struct Graphics_Ncurses : Graphics {
   Graphics_Ncurses();
 
@@ -16,6 +18,7 @@ struct Graphics_Ncurses : Graphics {
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
 
+  KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
 
   void LoadText(const std::string font_file);
@@ -68,15 +71,54 @@ void Graphics_Ncurses::LoadText(
   // do nothing
 }
 
+KeyboardKey Graphics_Ncurses::map_key(NativeKeyboardKey key) {
+    switch (key) {
+        case 27:
+            return KEY_Escape;
+        case ' ':
+            return KEY_space;
+        case KEY_LEFT:
+            return KEY_Left;
+        case KEY_RIGHT:
+            return KEY_Right;
+        case KEY_UP:
+            return KEY_Up;
+        case KEY_DOWN:
+            return KEY_Down;
+        case '\n':
+            return KEY_Return;
+        case '\t':
+            return KEY_Tab;
+        case 'h':
+            return KEY_h;
+        case 'u':
+            return KEY_u;
+        case 'r':
+            return KEY_r;
+        case 'a':
+            return KEY_a;
+        case 'q':
+            return KEY_q;
+        case 'e':
+            return KEY_e;
+        case 'd':
+            return KEY_d;
+        case 'f':
+            return KEY_f;
+        default:
+            return KEY_Undefined;
+    }
+}
+
 void Graphics_Ncurses::handle_events(
   Controller* c)
 {
   if (destroyed) return;
   
-  KeySym ch = mvgetch(0,0);
+  NativeKeyboardKey ch = mvgetch(0,0);
   if (ch != ERR)
   {
-    c->handle_keypress(ch);
+    c->handle_keypress(map_key(ch));
   }
   clrtoeol();
 }

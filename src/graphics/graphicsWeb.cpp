@@ -14,9 +14,11 @@
 
 using namespace std;
 
+typedef unsigned long NativeKeyboardKey;
+
 static char * s_buffer = NULL;
 static int s_buffer_size = 0;
-static deque<KeySym> s_input_queue;
+static deque<NativeKeyboardKey> s_input_queue;
 
 struct per_session_data__http {
   int number;
@@ -136,7 +138,7 @@ callback_alphacomplex(
       break;
     case LWS_CALLBACK_RECEIVE:
     {
-      KeySym key = (KeySym)atoi((char *)in);
+      NativeKeyboardKey key = (NativeKeyboardKey)atoi((char *)in);
       s_input_queue.push_back(key);
       break;
     }
@@ -148,7 +150,7 @@ callback_alphacomplex(
 }
 
 libwebsocket_protocols http_proto() {
-  libwebsocket_protocols lp = {};
+  libwebsocket_protocols lp;
 
   lp.name = "http-only";
   lp.callback = callback_http;
@@ -158,7 +160,7 @@ libwebsocket_protocols http_proto() {
 }
 
 libwebsocket_protocols alphacomplex_proto() {
-  libwebsocket_protocols lp = {};
+  libwebsocket_protocols lp;
 
   lp.name = "alphacomplex";
   lp.callback = callback_alphacomplex;
@@ -167,11 +169,16 @@ libwebsocket_protocols alphacomplex_proto() {
   return lp;
 }
 
+libwebsocket_protocols void_proto() {
+  libwebsocket_protocols lp;
+  return lp;
+}
+
 static struct libwebsocket_protocols protocols[] = {
   /* first protocol must always be HTTP handler */
   http_proto(),
   alphacomplex_proto(),
-  {}
+  void_proto()
 };
 
 struct Graphics_Web : Graphics {
@@ -181,6 +188,7 @@ struct Graphics_Web : Graphics {
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
 
+  KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
 
   void LoadText(const std::string font_file);
@@ -256,6 +264,45 @@ void Graphics_Web::LoadText(
   //printf("LoadText\n");
 }
 
+KeyboardKey Graphics_Web::map_key(NativeKeyboardKey key) {
+    switch (key) {
+        case 27:
+            return KEY_Escape;
+        case 32:
+            return KEY_space;
+        case 37:
+            return KEY_Left;
+        case 39:
+            return KEY_Right;
+        case 38:
+            return KEY_Up;
+        case 40:
+            return KEY_Down;
+        case 13:
+            return KEY_Return;
+        case 9:
+            return KEY_Tab;
+        case 72:
+            return KEY_h;
+        case 85:
+            return KEY_u;
+        case 82:
+            return KEY_r;
+        case 65:
+            return KEY_a;
+        case 81:
+            return KEY_q;
+        case 69:
+            return KEY_e;
+        case 68:
+            return KEY_d;
+        case 70:
+            return KEY_f;
+        default:
+            return KEY_Undefined;
+    }
+}
+
 void Graphics_Web::handle_events(
   Controller* c)
 {
@@ -263,7 +310,7 @@ void Graphics_Web::handle_events(
   
   while (!s_input_queue.empty())
   {
-    KeySym key = s_input_queue.front();
+    KeyboardKey key = map_key(s_input_queue.front());
     if (key != KEY_q)
     {
       c->handle_keypress(key);

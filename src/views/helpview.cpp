@@ -50,6 +50,6 @@ void HelpView::render(Graphics& g, render_box const& pos) {
   HelpInfo::instance.render(g, pos2);
 }
 
-void HelpView::handle_keypress(KeySym ks) {
+void HelpView::handle_keypress(KeyboardKey ks) {
   nav.handle_keypress(ks);
 }
