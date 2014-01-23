@@ -120,7 +120,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\citizenname.hpp" />
     <ClInclude Include="..\include\components\clearance.hpp" />
     <ClInclude Include="..\include\components\department.hpp" />
-    <ClInclude Include="..\include\components\descriptable.hpp" />
     <ClInclude Include="..\include\components\faction.hpp" />
     <ClInclude Include="..\include\components\foodstuff.hpp" />
     <ClInclude Include="..\include\components\furniture.hpp" />
