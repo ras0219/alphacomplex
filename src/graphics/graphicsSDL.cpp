@@ -263,7 +263,7 @@ void Graphics_SDL::handle_events(Controller* c) {
   while (SDL_PollEvent(&event)) {
     switch(event.type){
       case SDL_KEYDOWN:
-        c->handle_keypress(map_key(event.key.KeyboardKey.sym));
+        c->handle_keypress(map_key(event.key.keysym.sym));
         break;
     case SDL_WINDOWEVENT: //window moved, max,min, etc
       if(event.window.event == SDL_WINDOWEVENT_RESIZED)
