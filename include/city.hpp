@@ -464,6 +464,8 @@ private:
       build_infirmary(rp);
       build_doors(rp);
       break;
+    default:
+      break;
     }
   }
   void build_regular(const RoomProperties& rp)
@@ -719,7 +721,7 @@ private:
 
   // While generating rooms the doors are represented by 
   // TileKind::door this method replaces them with TileKind::ground
-  void City::finalize_doors()
+  void finalize_doors()
   {
     for (int j = city_properties.top; j < city_properties.height; j++)
     {
