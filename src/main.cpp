@@ -37,7 +37,7 @@ using namespace chrono;
 /*************************/
 const char* white = "#FFFFFF";
 
-microseconds us_per_gf, us_per_lf;
+unsigned long long graphics_frames, logic_frames;
 
 bool paused = false;
 
@@ -85,7 +85,9 @@ int main(int argc, char *argv[]) {
           for (auto sys : systems)
             sys->update();
         }
-        us_per_lf = duration_cast<microseconds>(t - last_lf);
+
+        ++logic_frames;
+
         last_lf = t;
       }
 
@@ -94,13 +96,21 @@ int main(int argc, char *argv[]) {
         gfx->repaint();
 
         gfx->handle_events(&vs);
-        us_per_gf = duration_cast<microseconds>(t - last_gf);
+
+        ++graphics_frames;
+
         last_gf = t;
       }
 
       if (t - last_rep >= microseconds(US_PER_REP)) {
         stringstream ss;
-        ss << 1000000 / us_per_gf.count() << " | " << 1000000 / us_per_lf.count() << ".";
+        auto us = duration_cast<microseconds>(t - last_rep).count();
+        ss << std::fixed << std::setprecision(1) << graphics_frames * 1000000.0 / us
+          << " | " << logic_frames * 1000000.0 / us;
+
+        graphics_frames = 0;
+        logic_frames = 0;
+
         announce(ss.str());
         last_rep = t;
       }

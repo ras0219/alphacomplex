@@ -8,7 +8,7 @@ struct BaseView : View {
   BaseView(struct ViewStack* vs);
 
   virtual void render(Graphics& g, render_box const& pos) override;
-  virtual void handle_keypress(KeySym ks) override;
+  virtual void handle_keypress(KeyboardKey ks) override;
 
   struct ViewStack* vstk;
   NavHelper nav;

@@ -11,6 +11,7 @@ namespace Skill {
     return xp / 1000;
   }
 
+  /// A representation for the level and xp in an arbitrary skill
   struct Skill {
     Skill() {}
     Skill(int level) : xp_(xp_of_level(level)) { }
@@ -26,6 +27,7 @@ namespace Skill {
     inline int lv() { return level_of_xp(xp_); }
   };
 
+  /// An enum for all skill categories
   enum Category {
     // Technical Skills
     BOT_MAINTENANCE,
@@ -79,6 +81,7 @@ namespace Skill {
       BUREAUCRACY
     }};
 
+  /// A flat array containing every skill
   struct Skillset {
     array<Skill,NUM_SKILLS> skills;
 
@@ -95,9 +98,12 @@ namespace Skill {
     inline const Skill& operator[](int c) const { return get((Category)c); }
   };
 
+  /// Obtain the short name for a skill. Approx 12 characters.
   const char* shortname(Category c);
+  /// Obtain the full name for a skill. Approx 20 characters.
   const char* skillname(Category c);
   
+  /// Generate a random initial skillset for a given security level citizen
   Skillset random_skills(Security::Mask);
 }
 

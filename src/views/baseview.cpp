@@ -8,6 +8,6 @@ void BaseView::render(Graphics& g, render_box const& pos) {
   render_body(g, pos2);
 }
 
-void BaseView::handle_keypress(KeySym ks) {
+void BaseView::handle_keypress(KeyboardKey ks) {
   nav.handle_keypress(ks);
 }

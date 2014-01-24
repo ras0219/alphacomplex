@@ -7,7 +7,7 @@ struct MainView : BaseView {
   MainView(struct ViewStack* vs, struct City* c);
 
   virtual void render_body(Graphics& g, render_box const& pos) override;
-  virtual void handle_keypress(KeySym ks) override;
+  virtual void handle_keypress(KeyboardKey ks) override;
 
   struct HelpView* hview;
   struct UnitView* uview;
