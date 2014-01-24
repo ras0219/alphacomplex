@@ -33,6 +33,22 @@ void City::resize(int x, int y) {
   designs.resize(x, y);
 }
 
+void City::add_entities(Security::Mask entity, int min, int max)
+{
+  int count = randNext(min, max);
+  for (int i = 0; i<count;)
+  {
+    int r = randNext(0, ysz);
+    int c = randNext(0, xsz);
+
+    if (tile(c, r).type == Tile::TileKind::ground)
+    {
+      ent(c, r).insert(new_citizen({ c, r, this }, entity));
+      i++;
+    }
+  }
+}
+
 wistream& operator>>(wistream& is, City& c) {
   c.tiles.clear();
   c.ents.clear();
@@ -128,6 +144,46 @@ wistream& operator>>(wistream& is, City& c) {
   return is;
 }
 
+// Finds the rooms in the generated city
+// TODO: this can be removed since rooms are
+// procedurally generated we don't have to find them
+void City::find_rooms()
+{
+  for (int j = city_properties.top; j < city_properties.height; j++)
+  {
+    for (int i = city_properties.left; i < city_properties.width; i++)
+    {
+      char ch = tile(i, j).type;
+      if ((ch == Tile::TileKind::wall) ||
+        (ch == Tile::TileKind::ground))
+        continue;
+
+      int kx, ky, w, h;
+      for (kx = i; kx < getXSize(); ++kx) {
+        if (tile(kx, j).type != ch)
+          break;
+      }
+      for (ky = j; ky < getYSize(); ++ky) {
+        for (int x = i; x < kx; ++x) {
+          if (tile(x, ky).type != ch)
+            goto finish_loop;
+        }
+      }
+    finish_loop:
+      w = kx - i;
+      h = ky - j;
+
+      for (int y = j; y < ky; ++y) {
+        for (int x = i; x < kx; ++x) {
+          tile(x, y).type = Tile::ground;
+        }
+      }
+
+      // room's top-left is i,j and dimensions are w x h
+      rooms.push_back(make_workroom(*this, i, j, w, h)->assert_get<Room>());
+    }
+  }
+}
 // struct DigAI : AIState {
 //   DigAI(City* c, int dx, int dy, int wx, int wy)
 //     : city(c), digx(dx), digy(dy), walkx(wx), walky(wy) { }
