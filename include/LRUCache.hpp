@@ -62,20 +62,22 @@ void LRUCache<Key, Value>::put(Key input, Value cched_value)
   if (exists(input))
     return; //do nothing, item already exists
   if (key_map.size() >= this->CAPACITY)
-    {
-      //we need to EVICT!!!!
-      evictions++;
-      Key evicted_object = key_order_tracker.back();
-      Value evicted_value = key_map[evicted_object].first;
-      key_order_tracker.pop_back();
-      key_map.erase(evicted_object);
-      this->RevocateObject(&evicted_value);
-    }
+  {
+    //we need to EVICT!!!!
+    evictions++;
+    Key evicted_object = key_order_tracker.back();
+
+    auto it = key_map.find(evicted_object);
+    Value evicted_value = it->second.first;
+    key_order_tracker.pop_back();
+    key_map.erase(it);
+
+    this->RevocateObject(&evicted_value);
+  }
 
   //now actually insert it. Push it to front as MRU
   key_order_tracker.push_front(input);
   key_map[input] = make_pair(cched_value, key_order_tracker.begin());
-
 }
 
 template<class Key, class Value>

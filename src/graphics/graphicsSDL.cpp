@@ -15,6 +15,8 @@
 #include <deque>
 #include <array>
 #include <cstring>
+#include <utility>
+#include <memory>
 
 #include "SDL.h"
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
@@ -30,188 +32,252 @@ using namespace chrono;
 
 using NativeKeyboardKey = unsigned long;
 
+// C++ wrapper around SDL_Surface* using RAII ref counting.
+struct Surface {
+  Surface() {}
+  Surface(SDL_Surface* surf) : ptr(surf, SDL_FreeSurface) {}
+
+  operator SDL_Surface*() { return ptr.get(); }
+  operator SDL_Surface const*() const { return ptr.get(); }
+
+  SDL_Surface& operator*() { return *ptr; }
+  SDL_Surface const& operator*() const { return *ptr; }
+
+  operator void const*() const { return ptr.get(); }
+
+  std::shared_ptr<SDL_Surface> ptr;
+};
+
+// C++ wrapper around SDL_Texture* using RAII ref counting.
+struct Texture {
+  Texture() {}
+  Texture(SDL_Texture* tex) : ptr(tex, SDL_DestroyTexture) {}
+
+  operator SDL_Texture*() { return ptr.get(); }
+  operator SDL_Texture const*() const { return ptr.get(); }
+
+  SDL_Texture& operator*() { return *ptr; }
+  SDL_Texture const& operator*() const { return *ptr; }
+
+  operator void const*() const { return ptr.get(); }
+
+  std::shared_ptr<SDL_Texture> ptr;
+};
+
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
 
-  // Methods
+public:
+  // Graphics interface Methods
   void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
   void drawChar(int x, int y, char str, Context gc = DEFAULT);
-  
-  KeyboardKey map_key(NativeKeyboardKey key);
+
   void handle_events(struct Controller*);
 
-  void LoadText(const std::string& font_file);
   void repaint();
   void destroy();
+
+private:
+  // Initialization methods
+  void version_check();
+  void init_window();
+  void init_renderer();
+  void init_font();
+  void log_stats();
+
+private:
+  // Internal use methods
+  inline void throw_sdl_error(const std::string& desc);
+  inline void throw_ttf_error(const std::string& desc);
+
+  KeyboardKey map_key(NativeKeyboardKey key);
+  void LoadText(const std::string& font_file);
 
   // Data
   int s;
 
   SDL_Window *win;
   SDL_Renderer *ren;
-  SDL_Texture *main_texture;
-  SDL_Texture *ttf_texture;
+  Texture main_texture;
+  Texture ttf_texture;
   unsigned int tiles_per_row;
   TTF_Font* best_font;
   SDL_Color font_color;
-  int sdl_last_call;
-  Logger *graphics_log;
-  LRUCache<std::string, SDL_Texture*> string_texture_cache;
+  Logger graphics_log;
+  LRUCache<std::string, Texture> string_texture_cache;
 };
 
-void FreeSDLTexture(SDL_Texture** free_this)
-{
-	SDL_DestroyTexture(*free_this);
+void FreeSDLTexture(Texture*) { }
+
+void Graphics_SDL::throw_sdl_error(const std::string& desc) {
+  auto err = SDL_GetError();
+  graphics_log.Write("%s\n%s", desc.c_str(), err);
+
+  throw std::runtime_error(err);
+}
+
+void Graphics_SDL::throw_ttf_error(const std::string& desc) {
+  auto err = TTF_GetError();
+  graphics_log.Write("%s\n%s", desc.c_str(), err);
+
+  throw std::runtime_error(err);
 }
 
 Graphics_SDL::Graphics_SDL()
-  : win(nullptr), ren(nullptr), main_texture(nullptr),
-    ttf_texture(nullptr), font_color({0,0,0,0}),
-	sdl_last_call(0), graphics_log(nullptr), string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
+  : win(nullptr), ren(nullptr), font_color({ 0, 255, 0, 0 })
+  , graphics_log("graphics.txt"), string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
 {
-  graphics_log = new Logger("graphics.txt");
-  graphics_log->Write("%s","Initializing graphics file for SDL");
-  SDL_version compiled,linked;
-  SDL_VERSION(&compiled);
-  SDL_GetVersion(&linked);
-  graphics_log->Write("SDL Version compiled against:%d.%d.%d\nSDL Version linked against:%d.%d.%d",
-    compiled.major, compiled.minor,compiled.patch,linked.major,linked.minor,linked.patch);
-  int slc = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS); 
+  graphics_log.Write("Initializing graphics file for SDL");
+  version_check();
 
-  if(slc == -1) {
-    //to-do: use a better funciton for this
-    std::cout << "Failed to start SDL. "<<SDL_GetError() << std::endl;
-    exit(-1); //to-do: use a logger.
-  }
-  slc = TTF_Init(); //not use for long
-  if(slc == -1) {
-    std::cout << "Failed to start TTF. "<<TTF_GetError() << std::endl;
-    exit(-1); //to-do: use a logger.
-  }
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+    throw_sdl_error("Error initializing SDL.");
 
-  font_color = {0,255,0,0};
-  width = 80; //to-do
-  height= 40;
+  if (TTF_Init())
+    throw_ttf_error("Error initializing TTF.");
 
-  //to-do: center on screen
-  win = SDL_CreateWindow("", 100, 100, width*FONT_WIDTH, height*FONT_HEIGHT,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-  if(win == nullptr) {
-    std::cout << "Failed to make window. "<<SDL_GetError() << std::endl;
-    exit(-1); //to-do: use a logger.
-  }
-  ren = SDL_CreateRenderer(win, -1,
-                                  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if(ren == nullptr) {
-    std::cout << "Failed to make renderer. "<<SDL_GetError() << std::endl;
-    exit(-1); //to-do: use a logger.
-  }
-
-  //to-do: load the file
-  best_font = TTF_OpenFont(TEMP_FONT_PATH, FONT_HEIGHT);
-  if(best_font==NULL)
-  {
-    std::cout << "Failed to load ttf from  . " << TEMP_FONT_PATH << " : " <<TTF_GetError() << std::endl;
-    exit(-1); //to-do: use a logger.
-  }
-  SDL_RenderClear(ren);
-  //debug times.
-  //following is not supported on SDL 2.0.0
-//  graphics_log->Write("%s. We have %i MB of RAM","Finished initializing graphics for SDL!",SDL_GetSystemRAM());
-  int num_drivers = SDL_GetNumVideoDrivers();
-  if(num_drivers<0)
-  {
-   graphics_log->Write("%s\n%s","Error! Unable to figure out how many drivers we got",SDL_GetError());
-   return;
-  }
-  graphics_log->Write("We have %i drivers available",num_drivers);
-  for(int driX=0; driX<num_drivers; driX++)
-  {
-   graphics_log->Write("%i:%s",driX,SDL_GetVideoDriver(driX));
-  }
-  graphics_log->Write("%s:%s", "Current driver is",SDL_GetCurrentVideoDriver());
-
-  SDL_RendererInfo ren_info;
-  memset(&ren_info,0,sizeof(ren_info));
-
-  int num_render = SDL_GetNumRenderDrivers();
-  if(num_render<0)
-  {
-   graphics_log->Write("%s\n%s","Error! Unable to figure out how many renderers we got",SDL_GetError());
-   return;
-  }
-  graphics_log->Write("We have %i renderers available",num_render);
-  for(int driR=0; driR<num_render; driR++)
-  {
-   if(SDL_GetRenderDriverInfo(driR,&ren_info)!=0)
-   {
-    graphics_log->Write("%i:%s\n%s", driR,"Failed to get any info.",SDL_GetError());
-   }
-   else
-   {
-
-    graphics_log->Write("%i: Name:%s\n Flags: %i\n Num of Texture Formats: %i\n Max_Wid: %i\n Max_H: %i",
-      driR,ren_info.name, ren_info.flags, ren_info.num_texture_formats, ren_info.max_texture_width, 
-      ren_info.max_texture_height);
-    for(unsigned int driF=0;driF<ren_info.num_texture_formats;driF++)
-    {
-     uint32_t inf = ren_info.texture_formats[driF];
-    graphics_log->Write("\n\tFormat:%i\n\tPixelFlag:%i\n\tPixelType:%i\n\tPixelOrder:%i\n\tPixelLayout:%i\n\tBitsPerPixel:%i\n\tBytesPerPixel:%i\n\tPixelFormatIndexed:%s\n\tPixelFormatAlpha:%s\n\tFourCC:%s",
-      driF, SDL_PIXELFLAG(inf), SDL_PIXELTYPE(inf), SDL_PIXELORDER(inf), SDL_PIXELLAYOUT(inf), 
-      SDL_BITSPERPIXEL(inf), SDL_BYTESPERPIXEL(inf), SDL_ISPIXELFORMAT_INDEXED(inf) ? "True" : "False", 
-      SDL_ISPIXELFORMAT_ALPHA(inf) ? "True" : "False", SDL_ISPIXELFORMAT_FOURCC(inf) ? "True" :"False");
-    }
-   }
-  }
-  SDL_GetRendererInfo(ren,&ren_info);
-  graphics_log->Write("%s:%s", "Current renderer is",ren_info.name);
-  LoadText(TEMP_FONT_PATH);
-
+  init_window();
+  init_renderer();
+  log_stats();
+  init_font();
 }
 
-void Graphics_SDL::LoadText(const std::string&)
-{
- int error=0;
-  if(ttf_texture!=NULL)
-   {
-    SDL_DestroyTexture(ttf_texture);
-    ttf_texture = NULL;
-   }
+void Graphics_SDL::destroy() {
+  if (destroyed) return;
+  if (!ren) SDL_DestroyRenderer(ren);
+  if (!win) SDL_DestroyWindow(win);
+  if (!best_font) TTF_CloseFont(best_font);
+  SDL_Quit();
+  destroyed = true;
+}
+
+void Graphics_SDL::version_check() {
+  SDL_version compiled, linked;
+  SDL_VERSION(&compiled);
+  SDL_GetVersion(&linked);
+
+  graphics_log.Write("SDL Version compiled against: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
+  graphics_log.Write("SDL Version linked against: %d.%d.%d", linked.major, linked.minor, linked.patch);
+}
+
+void Graphics_SDL::init_window() {
+  width = 80;
+  height = 40;
+
+  //to-do: center on screen
+  win = SDL_CreateWindow("", 100, 100, width * FONT_WIDTH, height * FONT_HEIGHT,
+                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+  if (win == nullptr)
+    throw_sdl_error("Failed to make window.");
+}
+
+void Graphics_SDL::init_renderer() {
+  ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if (ren == nullptr)
+    throw_sdl_error("Failed to make renderer.");
+
+  SDL_RenderClear(ren);
+}
+
+void Graphics_SDL::init_font() {
+  graphics_log.Write("Loading font:");
+  graphics_log.Write(TEMP_FONT_PATH);
+
+  best_font = TTF_OpenFont(TEMP_FONT_PATH, FONT_HEIGHT);
+  if (best_font == nullptr)
+    throw_ttf_error("Failed to load font.");
+
+  LoadText(TEMP_FONT_PATH);
+}
+
+void Graphics_SDL::log_stats() {
+  //debug times.
+  //following is not supported on SDL 2.0.0
+  //  graphics_log->Write("%s. We have %i MB of RAM","Finished initializing graphics for SDL!",SDL_GetSystemRAM());
   
+  
+  // Check drivers
+  int num_drivers = SDL_GetNumVideoDrivers();
+
+  if (num_drivers < 0)
+    throw_sdl_error("Unable to determine drivers.");
+
+  graphics_log.Write("We have %i drivers available", num_drivers);
+
+  for (int driX = 0; driX < num_drivers; ++driX) {
+    graphics_log.Write("%i: %s", driX, SDL_GetVideoDriver(driX));
+  }
+  graphics_log.Write("Current driver is: %s", SDL_GetCurrentVideoDriver());
+
+  // Check renderers  
+  SDL_RendererInfo ren_info;
+  memset(&ren_info, 0, sizeof(ren_info));
+
+  int num_render = SDL_GetNumRenderDrivers();
+  if (num_render < 0)
+    throw_sdl_error("Unable to determine renderers.");
+
+  graphics_log.Write("We have %i renderers available", num_render);
+
+  for(int driR = 0; driR < num_render; ++driR) {
+    if (SDL_GetRenderDriverInfo(driR, &ren_info)) {
+      // Nonfatal error.
+      graphics_log.Write("%i:%s\n%s", driR, "Failed to get any info.", SDL_GetError());
+    } else {
+      graphics_log.Write("%i: Name:%s\n Flags: %i\n Num of Texture Formats: %i\n Max_Wid: %i\n Max_H: %i",
+                         driR, ren_info.name, ren_info.flags, ren_info.num_texture_formats, ren_info.max_texture_width,
+                         ren_info.max_texture_height);
+      for (unsigned int driF = 0; driF < ren_info.num_texture_formats; ++driF) {
+        uint32_t inf = ren_info.texture_formats[driF];
+        graphics_log.Write("\n\tFormat:%i\n\tPixelFlag:%i\n\tPixelType:%i\n\tPixelOrder:%i\n\tPixelLayout:%i\n\tBitsPerPixel:%i\n\tBytesPerPixel:%i\n\tPixelFormatIndexed:%s\n\tPixelFormatAlpha:%s\n\tFourCC:%s",
+                           driF, SDL_PIXELFLAG(inf), SDL_PIXELTYPE(inf), SDL_PIXELORDER(inf), SDL_PIXELLAYOUT(inf),
+                           SDL_BITSPERPIXEL(inf), SDL_BYTESPERPIXEL(inf), SDL_ISPIXELFORMAT_INDEXED(inf) ? "True" : "False",
+                           SDL_ISPIXELFORMAT_ALPHA(inf) ? "True" : "False", SDL_ISPIXELFORMAT_FOURCC(inf) ? "True" : "False");
+      }
+    }
+  }
+  SDL_GetRendererInfo(ren, &ren_info);
+  graphics_log.Write("Current renderer is: %s", ren_info.name);
+}
+
+void Graphics_SDL::LoadText(const std::string&) {
   //to-do: refactor this in a slightly different architecture. 
-  //ras: we need to sit down and talk about this C++ and virtual classes.
   const int number_of_tiles = NUMBER_OF_TILES;
-  const int rows = 1+ (const int) sqrt(( float) number_of_tiles);  //make as close to square
+
+  // gk: make as close to square
+  // ras: I'm very skeptical about this calculation...
+  const int rows = 1 + (const int)sqrt((float)number_of_tiles);
   tiles_per_row = rows;
   int tile_texture_width = rows * FONT_WIDTH;
   int tile_texture_height = rows * FONT_HEIGHT;
 
-  SDL_Surface *surf = NULL;
   SDL_Rect copy_dimension;
-  copy_dimension.w=FONT_WIDTH;
-  copy_dimension.h=FONT_HEIGHT;
-  SDL_Surface *ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0,0,0,0);
-  assert(ttf_surface!=NULL);
+  copy_dimension.w = FONT_WIDTH;
+  copy_dimension.h = FONT_HEIGHT;
+  Surface ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0, 0, 0, 0);
 
- //temporary before choosing a tile\font
-  for(int count =0; count< number_of_tiles; count++)
-  {
-	  surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
-   if (surf != NULL) //if we draw the right character
-   {
-	   copy_dimension.x = (count % rows) * FONT_WIDTH;
-	   copy_dimension.y = (count / rows) * FONT_HEIGHT;
-	   error = SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension);
-	   assert(error == 0);
-   }
-   
+  if (!ttf_surface)
+    throw_sdl_error("Could not create character surface.");
+
+  //temporary before choosing a tile\font
+  for (int count = 0; count < number_of_tiles; ++count) {
+    Surface surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
+    if (surf) {
+      //if we draw the right character
+      copy_dimension.x = (count % rows) * FONT_WIDTH;
+      copy_dimension.y = (count / rows) * FONT_HEIGHT;
+      if (SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension))
+        throw_sdl_error("Could not blit character");
+    } else {
+      // TODO: What does this even mean????
+    }
   }
-  
-  ttf_texture = SDL_CreateTextureFromSurface(ren, ttf_surface); //send the big one over
-  error=SDL_SaveBMP(ttf_surface,"font_tilemap.bmp");
-  SDL_FreeSurface(surf);
-  SDL_FreeSurface(ttf_surface);
-  return;
+
+  //send the big one over
+  ttf_texture = SDL_CreateTextureFromSurface(ren, ttf_surface);
+  if (SDL_SaveBMP(ttf_surface, "font_tilemap.bmp")) {
+    graphics_log.Write("Could not save bitmap of font tilemap.\n%s", SDL_GetError());
+  }
 }
 
 KeyboardKey Graphics_SDL::map_key(NativeKeyboardKey key) {
@@ -286,64 +352,54 @@ void Graphics_SDL::handle_events(Controller* c) {
 }
 
 void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
-	//To-Do: give a choice to caller if he needs KERNING or CACHING.
-	SDL_Texture* retr_texture = nullptr;
-	if (string_texture_cache.get(str, &retr_texture) == false)
-	{
-		SDL_Surface* my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
-		if (my_font_surface == NULL) return; //we tried
-		SDL_Texture* my_font_texture = SDL_CreateTextureFromSurface(ren, my_font_surface);
-		if (my_font_texture == NULL) return;
-		//to-do: send to cache
-		string_texture_cache.put(str, my_font_texture);
-		SDL_FreeSurface(my_font_surface);
-		retr_texture = my_font_texture;
+  //To-Do: give a choice to caller if he needs KERNING or CACHING.
+
+  Texture retr_texture;
+  if (string_texture_cache.get(str, &retr_texture) == false) {
+		Surface my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
+		if (!my_font_surface)
+          //we tried
+          return;
+
+		retr_texture = SDL_CreateTextureFromSurface(ren, my_font_surface);
+		if (!retr_texture)
+          //we tried
+          return;
+
+		string_texture_cache.put(str, retr_texture);
 	}
 
 	int w = 0, h = 0;
 	TTF_SizeText(best_font, str.c_str(), &w, &h);
 	SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, w, h };
-	/*
-  for (auto ch : str)
-    // Look at this performance
-    drawChar(x++, y, ch, gc);
-  // It's so good.
-  */
-
-
+    /* for (auto ch : str)
+     * // Look at this performance
+     * drawChar(x++, y, ch, gc);
+     * // It's so good.
+     */
  
-	sdl_last_call = SDL_RenderCopy(ren, retr_texture, NULL, &dstRect);
-  
-
+    if (SDL_RenderCopy(ren, retr_texture, NULL, &dstRect))
+      throw_sdl_error("Could not copy string to screen.");
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
-  
-   SDL_Rect dstRect = {x * FONT_WIDTH, y * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT};
-   int x_cord = (ch% tiles_per_row) * FONT_WIDTH;
-   int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
-   SDL_Rect srcRect = {x_cord, y_cord,FONT_WIDTH,FONT_HEIGHT};
-   sdl_last_call = SDL_RenderCopy(ren, ttf_texture, &srcRect, &dstRect);
+  SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT };
+  int x_cord = (ch % tiles_per_row) * FONT_WIDTH;
+  int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
+  SDL_Rect srcRect = { x_cord, y_cord, FONT_WIDTH, FONT_HEIGHT };
+
+  if (SDL_RenderCopy(ren, ttf_texture, &srcRect, &dstRect))
+    throw_sdl_error("Could not copy character to screen.");
 }
 
 void Graphics_SDL::repaint() {
   SDL_RenderClear(ren);
- // SDL_RenderCopy(ren, main_texture, NULL,NULL); TBD
+  // SDL_RenderCopy(ren, main_texture, NULL,NULL); TBD
 
-  for(auto p : c)
+  for (auto p : c)
     p->render(*this, { 0, 0, getWidth(), getHeight() });
   
   SDL_RenderPresent(ren);
-}
-
-void Graphics_SDL::destroy() {
-  if (destroyed) return;
-  if(!main_texture) SDL_DestroyTexture(main_texture);
-  if(!ren) SDL_DestroyRenderer(ren);
-  if(!win) SDL_DestroyWindow(win);
-  if(!best_font) TTF_CloseFont(best_font);
-  SDL_Quit();
-  destroyed = true;
 }
 
 Graphics* new_graphics() { return new Graphics_SDL(); }
