@@ -169,8 +169,14 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\viewstack.hpp" />
     <ClInclude Include="..\include\views\widget.hpp" />
     <ClInclude Include="..\include\windows.hpp" />
+    <ClInclude Include="..\sdl\cow_resource.hpp" />
+    <ClInclude Include="..\sdl\Renderer.hpp" />
+    <ClInclude Include="..\sdl\Surface.hpp" />
+    <ClInclude Include="..\sdl\Texture.hpp" />
+    <ClInclude Include="..\sdl\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\sdl\graphicsSDL.cpp" />
     <ClCompile Include="..\src\city.cpp" />
     <ClCompile Include="..\src\clock.cpp" />
     <ClCompile Include="..\src\components\ai.cpp" />
@@ -190,7 +196,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\entities\foods.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
-    <ClCompile Include="..\src\graphics\graphicsSDL.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />

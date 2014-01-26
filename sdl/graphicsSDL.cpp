@@ -22,6 +22,10 @@
 #include "SDL_ttf.h" //XXX- REMOVE ASAP
 #include "LRUCache.hpp"
 
+#include "Surface.hpp"
+#include "Texture.hpp"
+#include "Window.hpp"
+
 //#define TEMP_FONT_PATH "../resources/font/UbuntuMono-R.ttf"
 #define TEMP_FONT_PATH "../resources/font/Anonymous_Pro.ttf"
 #define NUMBER_OF_TILES 255
@@ -29,40 +33,9 @@
 
 using namespace std;
 using namespace chrono;
+using namespace SDL;
 
 using NativeKeyboardKey = unsigned long;
-
-// C++ wrapper around SDL_Surface* using RAII ref counting.
-struct Surface {
-  Surface() {}
-  Surface(SDL_Surface* surf) : ptr(surf, SDL_FreeSurface) {}
-
-  operator SDL_Surface*() { return ptr.get(); }
-  operator SDL_Surface const*() const { return ptr.get(); }
-
-  SDL_Surface& operator*() { return *ptr; }
-  SDL_Surface const& operator*() const { return *ptr; }
-
-  operator void const*() const { return ptr.get(); }
-
-  std::shared_ptr<SDL_Surface> ptr;
-};
-
-// C++ wrapper around SDL_Texture* using RAII ref counting.
-struct Texture {
-  Texture() {}
-  Texture(SDL_Texture* tex) : ptr(tex, SDL_DestroyTexture) {}
-
-  operator SDL_Texture*() { return ptr.get(); }
-  operator SDL_Texture const*() const { return ptr.get(); }
-
-  SDL_Texture& operator*() { return *ptr; }
-  SDL_Texture const& operator*() const { return *ptr; }
-
-  operator void const*() const { return ptr.get(); }
-
-  std::shared_ptr<SDL_Texture> ptr;
-};
 
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
@@ -96,8 +69,8 @@ private:
   // Data
   int s;
 
-  SDL_Window *win;
-  SDL_Renderer *ren;
+  SDL::Window win;
+  SDL::Renderer ren;
   Texture main_texture;
   Texture ttf_texture;
   unsigned int tiles_per_row;
@@ -136,16 +109,26 @@ Graphics_SDL::Graphics_SDL()
   if (TTF_Init())
     throw_ttf_error("Error initializing TTF.");
 
-  init_window();
-  init_renderer();
+  //// Initialize the window
+  width = 80;
+  height = 40;
+
+  try {
+    //to-do: center on screen
+    win = SDL::CreateWindow("", 100, 100, width * FONT_WIDTH, height * FONT_HEIGHT,
+                            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    //// Initialize the renderer
+    ren = win.CreateRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  } catch (std::exception const& e) {
+    graphics_log.Write("%s", e.what());
+    throw;
+  }
   log_stats();
   init_font();
 }
 
 void Graphics_SDL::destroy() {
   if (destroyed) return;
-  if (!ren) SDL_DestroyRenderer(ren);
-  if (!win) SDL_DestroyWindow(win);
   if (!best_font) TTF_CloseFont(best_font);
   SDL_Quit();
   destroyed = true;
@@ -158,25 +141,6 @@ void Graphics_SDL::version_check() {
 
   graphics_log.Write("SDL Version compiled against: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
   graphics_log.Write("SDL Version linked against: %d.%d.%d", linked.major, linked.minor, linked.patch);
-}
-
-void Graphics_SDL::init_window() {
-  width = 80;
-  height = 40;
-
-  //to-do: center on screen
-  win = SDL_CreateWindow("", 100, 100, width * FONT_WIDTH, height * FONT_HEIGHT,
-                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-  if (win == nullptr)
-    throw_sdl_error("Failed to make window.");
-}
-
-void Graphics_SDL::init_renderer() {
-  ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (ren == nullptr)
-    throw_sdl_error("Failed to make renderer.");
-
-  SDL_RenderClear(ren);
 }
 
 void Graphics_SDL::init_font() {
@@ -236,7 +200,8 @@ void Graphics_SDL::log_stats() {
       }
     }
   }
-  SDL_GetRendererInfo(ren, &ren_info);
+
+  SDL_GetRendererInfo(ren.get(), &ren_info);
   graphics_log.Write("Current renderer is: %s", ren_info.name);
 }
 
@@ -256,17 +221,17 @@ void Graphics_SDL::LoadText(const std::string&) {
   copy_dimension.h = FONT_HEIGHT;
   Surface ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0, 0, 0, 0);
 
-  if (!ttf_surface)
+  if (!ttf_surface.get())
     throw_sdl_error("Could not create character surface.");
 
   //temporary before choosing a tile\font
   for (int count = 0; count < number_of_tiles; ++count) {
     Surface surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
-    if (surf) {
+    if (surf.get()) {
       //if we draw the right character
       copy_dimension.x = (count % rows) * FONT_WIDTH;
       copy_dimension.y = (count / rows) * FONT_HEIGHT;
-      if (SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension))
+      if (SDL_BlitSurface(surf.get(), NULL, ttf_surface.get(), &copy_dimension))
         throw_sdl_error("Could not blit character");
     } else {
       // TODO: What does this even mean????
@@ -274,8 +239,8 @@ void Graphics_SDL::LoadText(const std::string&) {
   }
 
   //send the big one over
-  ttf_texture = SDL_CreateTextureFromSurface(ren, ttf_surface);
-  if (SDL_SaveBMP(ttf_surface, "font_tilemap.bmp")) {
+  ttf_texture = ren.CreateTextureFromSurface(ttf_surface);
+  if (SDL_SaveBMP(ttf_surface.get(), "font_tilemap.bmp")) {
     graphics_log.Write("Could not save bitmap of font tilemap.\n%s", SDL_GetError());
   }
 }
@@ -357,12 +322,12 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
   Texture retr_texture;
   if (string_texture_cache.get(str, &retr_texture) == false) {
 		Surface my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
-		if (!my_font_surface)
+		if (!my_font_surface.get())
           //we tried
           return;
 
-		retr_texture = SDL_CreateTextureFromSurface(ren, my_font_surface);
-		if (!retr_texture)
+		retr_texture = ren.CreateTextureFromSurface(my_font_surface);
+		if (!retr_texture.get())
           //we tried
           return;
 
@@ -378,8 +343,7 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
      * // It's so good.
      */
  
-    if (SDL_RenderCopy(ren, retr_texture, NULL, &dstRect))
-      throw_sdl_error("Could not copy string to screen.");
+    ren.RenderCopy(retr_texture, nullptr, &dstRect);
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
@@ -388,18 +352,17 @@ void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) 
   int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
   SDL_Rect srcRect = { x_cord, y_cord, FONT_WIDTH, FONT_HEIGHT };
 
-  if (SDL_RenderCopy(ren, ttf_texture, &srcRect, &dstRect))
-    throw_sdl_error("Could not copy character to screen.");
+  ren.RenderCopy(ttf_texture, &srcRect, &dstRect);
 }
 
 void Graphics_SDL::repaint() {
-  SDL_RenderClear(ren);
+  ren.RenderClear();
   // SDL_RenderCopy(ren, main_texture, NULL,NULL); TBD
 
   for (auto p : c)
     p->render(*this, { 0, 0, getWidth(), getHeight() });
   
-  SDL_RenderPresent(ren);
+  ren.RenderPresent();
 }
 
 Graphics* new_graphics() { return new Graphics_SDL(); }

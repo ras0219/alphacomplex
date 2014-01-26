@@ -46,6 +46,9 @@
     <Filter Include="Header Files\views\unitviews">
       <UniqueIdentifier>{58fa75e7-f109-416f-ae7b-406f6ba7caaf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDL">
+      <UniqueIdentifier>{7b0a7aae-22c5-4c83-92de-dd14f014cae2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">
@@ -259,6 +262,21 @@
     <ClInclude Include="..\include\views\baseview.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>
+    <ClInclude Include="..\sdl\Surface.hpp">
+      <Filter>SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl\Texture.hpp">
+      <Filter>SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl\Window.hpp">
+      <Filter>SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl\cow_resource.hpp">
+      <Filter>SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl\Renderer.hpp">
+      <Filter>SDL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -342,9 +360,6 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\graphics\graphicsSDL.cpp">
-      <Filter>Source Files\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\components\needsai.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
@@ -374,6 +389,9 @@
     </ClCompile>
     <ClCompile Include="..\src\views\baseview.cpp">
       <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdl\graphicsSDL.cpp">
+      <Filter>SDL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
