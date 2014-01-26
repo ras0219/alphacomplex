@@ -77,10 +77,10 @@ private:
   TTF_Font* best_font;
   SDL_Color font_color;
   Logger graphics_log;
-  LRUCache<std::string, Texture> string_texture_cache;
+  LRUCache<std::string, SDL_Texture*> string_texture_cache;
 };
 
-void FreeSDLTexture(Texture*) { }
+void FreeSDLTexture(SDL_Texture** tex) { SDL_DestroyTexture(*tex); }
 
 void Graphics_SDL::throw_sdl_error(const std::string& desc) {
   auto err = SDL_GetError();
@@ -97,8 +97,8 @@ void Graphics_SDL::throw_ttf_error(const std::string& desc) {
 }
 
 Graphics_SDL::Graphics_SDL()
-  : win(nullptr), ren(nullptr), font_color({ 0, 255, 0, 0 })
-  , graphics_log("graphics.txt"), string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
+  : font_color({ 0, 255, 0, 0 }), graphics_log("graphics.txt")
+  , string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
 {
   graphics_log.Write("Initializing graphics file for SDL");
   version_check();
@@ -219,14 +219,14 @@ void Graphics_SDL::LoadText(const std::string&) {
   SDL_Rect copy_dimension;
   copy_dimension.w = FONT_WIDTH;
   copy_dimension.h = FONT_HEIGHT;
-  Surface ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0, 0, 0, 0);
+  Surface ttf_surface = Surface(SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0, 0, 0, 0));
 
   if (!ttf_surface.get())
     throw_sdl_error("Could not create character surface.");
 
   //temporary before choosing a tile\font
   for (int count = 0; count < number_of_tiles; ++count) {
-    Surface surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
+    Surface surf = Surface(TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 }));
     if (surf.get()) {
       //if we draw the right character
       copy_dimension.x = (count % rows) * FONT_WIDTH;
@@ -239,7 +239,7 @@ void Graphics_SDL::LoadText(const std::string&) {
   }
 
   //send the big one over
-  ttf_texture = ren.CreateTextureFromSurface(ttf_surface);
+  ttf_texture = ren.CreateTextureFromSurface(ttf_surface.get());
   if (SDL_SaveBMP(ttf_surface.get(), "font_tilemap.bmp")) {
     graphics_log.Write("Could not save bitmap of font tilemap.\n%s", SDL_GetError());
   }
@@ -319,19 +319,16 @@ void Graphics_SDL::handle_events(Controller* c) {
 void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
   //To-Do: give a choice to caller if he needs KERNING or CACHING.
 
-  Texture retr_texture;
+  SDL_Texture* retr_texture;
   if (string_texture_cache.get(str, &retr_texture) == false) {
-		Surface my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
+		Surface my_font_surface = Surface(TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 }));
 		if (!my_font_surface.get())
           //we tried
           return;
 
-		retr_texture = ren.CreateTextureFromSurface(my_font_surface);
-		if (!retr_texture.get())
-          //we tried
-          return;
-
-		string_texture_cache.put(str, retr_texture);
+		Texture tex = ren.CreateTextureFromSurface(my_font_surface.get());
+        retr_texture = tex.get();
+		string_texture_cache.put(str, tex.release());
 	}
 
 	int w = 0, h = 0;
@@ -352,7 +349,7 @@ void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) 
   int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
   SDL_Rect srcRect = { x_cord, y_cord, FONT_WIDTH, FONT_HEIGHT };
 
-  ren.RenderCopy(ttf_texture, &srcRect, &dstRect);
+  ren.RenderCopy(ttf_texture.get(), &srcRect, &dstRect);
 }
 
 void Graphics_SDL::repaint() {

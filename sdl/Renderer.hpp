@@ -12,22 +12,25 @@ namespace SDL {
   // C++ wrapper around SDL_Window* using RAII ref counting.
   struct Renderer {
     Renderer() {}
-    Renderer(SDL_Renderer* ptr) : res(ptr) {}
+    explicit Renderer(SDL_Renderer* ptr) : res(ptr) {}
+    Renderer(Renderer&& r) : res(std::move(r.res)) {}
+
+    Renderer& operator=(Renderer&& o) { res = std::move(o.res); return *this; }
 
     // Accessors
-    SDL_Renderer* get() { return res; }
-    SDL_Renderer const* get() const { return res; }
+    SDL_Renderer* get() { return res.get(); }
+    SDL_Renderer* release() { return res.release(); }
 
     // Object-based methods
-    inline Texture CreateTextureFromSurface(Surface& s) {
-      SDL_Texture* tex = SDL_CreateTextureFromSurface(get(), s.get());
+    inline Texture CreateTextureFromSurface(SDL_Surface* s) {
+      SDL_Texture* tex = SDL_CreateTextureFromSurface(get(), s);
       if (!tex)
         throw std::runtime_error(std::string("Failed to allocate texture: ") + SDL_GetError());
       return Texture(tex);
     }
 
-    inline void RenderCopy(Texture& tex, SDL_Rect const* src, SDL_Rect const* dst) {
-      if (SDL_RenderCopy(get(), tex.get(), src, dst))
+    inline void RenderCopy(SDL_Texture* tex, SDL_Rect const* src, SDL_Rect const* dst) {
+      if (SDL_RenderCopy(get(), tex, src, dst))
         throw std::runtime_error(std::string("Could not copy string to screen: ") + SDL_GetError());
     }
 
@@ -39,7 +42,10 @@ namespace SDL {
     }
 
   private:
-    Resource<SDL_Renderer, SDL_DestroyRenderer> res;
+    struct DestroyRenderer {
+      inline void operator()(SDL_Renderer* s) { SDL_DestroyRenderer(s); }
+    };
+    std::unique_ptr<SDL_Renderer, DestroyRenderer> res;
   };
 
 }

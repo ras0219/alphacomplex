@@ -3,18 +3,7 @@
 #include <memory>
 
 template<class T, void(*Deleter)(T*)>
-struct Resource {
+struct Resource : std::unique_ptr<T> {
   Resource() {}
-  Resource(T* t) : ptr(t, Deleter) {}
-
-  operator T*() { return ptr.get(); }
-  operator T const*() const { return ptr.get(); }
-
-  T& operator*() { return *ptr; }
-  T const& operator*() const { return *ptr; }
-
-  operator void const*() const { return ptr.get(); }
-
-private:
-  std::shared_ptr<T> ptr;
+  Resource(T* t) : std::unique_ptr<T>(t, Deleter) {}
 };

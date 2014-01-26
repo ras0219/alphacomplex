@@ -12,14 +12,17 @@ namespace SDL {
   struct Window {
     Window() {}
     explicit Window(SDL_Window* w) : res(w) {}
+    Window(Window&& w) : res(std::move(w.res)) {}
+
+    Window& operator=(Window&& o) { res = std::move(o.res); return *this; }
 
     // Accessors
-    SDL_Window* get() { return res; }
-    SDL_Window const* get() const { return res; }
+    SDL_Window* get() { return res.get(); }
+    SDL_Window* release() { return res.release(); }
 
     // Object-based interface
     inline Renderer CreateRenderer(int index, uint32_t flags) {
-      SDL_Renderer* rend = SDL_CreateRenderer(res, index, flags);
+      SDL_Renderer* rend = SDL_CreateRenderer(res.get(), index, flags);
       if (!rend)
         throw std::runtime_error(std::string("Could not create window: ") + SDL_GetError());
 
@@ -29,7 +32,10 @@ namespace SDL {
     }
 
   private:
-    Resource<SDL_Window, SDL_DestroyWindow> res;
+    struct DestroyWindow {
+      inline void operator()(SDL_Window* w) { SDL_DestroyWindow(w); }
+    };
+    std::unique_ptr<SDL_Window, DestroyWindow> res;
   };
 
   inline Window CreateWindow(const char* title, int x, int y, int w, int h, uint32_t flags) {

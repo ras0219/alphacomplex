@@ -11,16 +11,23 @@ namespace SDL {
   // C++ wrapper around SDL_Surface* using RAII ref counting.
   struct Surface {
     Surface() {}
-    Surface(SDL_Surface* ptr) : res(ptr) {}
+    explicit Surface(SDL_Surface* ptr) : res(ptr) {}
+    Surface(Surface&& s) : res(std::move(s.res)) {}
+
+    Surface& operator=(Surface&& o) { res = std::move(o.res); return *this; }
 
     // Accessors
-    SDL_Surface* get() { return res; }
-    SDL_Surface const* get() const { return res; }
+    SDL_Surface* get() { return res.get(); }
+    SDL_Surface* release() { return res.release(); }
 
     // Object-based methods
 
   private:
-    Resource<SDL_Surface, SDL_FreeSurface> res;
+    struct FreeSurface {
+      inline void operator()(SDL_Surface* s) { SDL_FreeSurface(s); }
+    };
+
+    std::unique_ptr<SDL_Surface, FreeSurface> res;
   };
 
 }

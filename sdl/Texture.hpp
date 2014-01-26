@@ -11,16 +11,26 @@ namespace SDL {
   // C++ wrapper around SDL_Texture* using RAII ref counting.
   struct Texture {
     Texture() {}
-    Texture(SDL_Texture* ptr) : res(ptr) {}
+    explicit Texture(SDL_Texture* ptr) : res(ptr) {}
+
+    Texture(Texture&& t) : res(std::move(t.res)) {}
+    Texture(const Texture&) = delete;
+
+    Texture& operator=(Texture&& o) { res = std::move(o.res); return *this; }
 
     // Accessors
-    SDL_Texture* get() { return res; }
-    SDL_Texture const* get() const { return res; }
+    SDL_Texture* get() { return res.get(); }
+    SDL_Texture* release() { return res.release(); }
 
     // Object-based methods
 
   private:
-    Resource<SDL_Texture, SDL_DestroyTexture> res;
+
+    struct DestroyTexture {
+      inline void operator()(SDL_Texture* s) { SDL_DestroyTexture(s); }
+    };
+
+    std::unique_ptr<SDL_Texture, DestroyTexture> res;
   };
 
 }

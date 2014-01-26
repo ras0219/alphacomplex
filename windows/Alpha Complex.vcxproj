@@ -140,6 +140,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\entities\entity.hpp" />
     <ClInclude Include="..\include\entities\foods.hpp" />
     <ClInclude Include="..\include\entities\garbage.hpp" />
+    <ClInclude Include="..\include\entities\hydroponics.hpp" />
     <ClInclude Include="..\include\entities\subsystem.hpp" />
     <ClInclude Include="..\include\entities\system.hpp" />
     <ClInclude Include="..\include\entities\workroom.hpp" />
