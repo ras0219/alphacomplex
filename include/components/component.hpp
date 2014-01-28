@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
 struct Component {
   enum Kind {

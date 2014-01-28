@@ -15,7 +15,9 @@ struct CallbackAI : AIScript {
 };
 
 template<class F>
-inline std::shared_ptr<CallbackAI<F>> make_callbackai(const F& f) { return make_shared<CallbackAI<F>>(f); }
+inline std::shared_ptr<CallbackAI<F>> make_callbackai(const F& f) {
+  return std::make_shared<CallbackAI<F>>(f);
+}
 
 // Loop Callback
 template<class F>
@@ -37,4 +39,6 @@ struct LoopCallbackAI : AIScript {
 };
 
 template<class F>
-inline std::shared_ptr<LoopCallbackAI<F>> make_loopcallbackai(const F& f) { return make_shared<LoopCallbackAI<F>>(f); }
+inline std::shared_ptr<LoopCallbackAI<F>> make_loopcallbackai(const F& f) {
+  return std::make_shared<LoopCallbackAI<F>>(f);
+}
