@@ -9,15 +9,22 @@
 #include "components/ai/pathai.hpp"
 #include "components/ai/callbackai.hpp"
 #include "components/jobprovider.hpp"
+#include "components/item.hpp"
 
 #include <algorithm>
 
 extern int influence;
 
+ItemProperties filingcabinet_properties = {
+  "Filing Cabinet",
+  150
+};
+
 Ent* make_filingcabinet(const Point& p) {
   Ent* e = new Ent;
   e->emplace<Renderable>('n');
   e->emplace<Furniture>(p);
+  e->emplace<Item>(filingcabinet_properties);
   return e;
 }
 
@@ -56,24 +63,25 @@ struct FilestorageAI : AIScript {
       return 1;
 
     Room* pos = room->assert_get<Room>();
-    if (pos->furniture.size() < 2) {
+    // Copy the furniture poiners into a vector
+    std::vector<Furniture*> cabinets = pos->filter_furniture(filingcabinet_properties);
+    // Are there enough cabinets to shuffle?
+    if (cabinets.size() < 2) {
       // Not enough filing cabinets to reshuffle
       return 1000;
     }
-    // Copy the furniture poiners into a vector
-    std::vector<Furniture*> cabinets(pos->furniture.begin(), pos->furniture.end());
     // Shuffle the vector
     std::random_shuffle(cabinets.begin(), cabinets.end());
-    // How many shuffles will we perform?
-    size_t num_to_select = std::min((size_t)5, cabinets.size());
+    // How many jobs will we perform? Half the cabinets + 1 sounds good.
+    size_t num_to_select = cabinets.size() / 2 + 1;
 
-    // Add the shuffles
+    // Add the jobs
     for (size_t n = 0; n < num_to_select - 1; ++n) {
       auto f1 = cabinets[n];
       auto f2 = cabinets[n + 1];
       jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));
     }
-    // Generate the last swap
+    // Generate the last job
     auto f1 = cabinets[num_to_select - 1];
     auto f2 = cabinets[0];
     jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));

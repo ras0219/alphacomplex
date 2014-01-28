@@ -6,14 +6,14 @@
 #include "components/foodstuff.hpp"
 
 struct Needs : ComponentCRTP<Component::Needs, Needs> {
-  int food = 20;
-  int max_food = 20;
+  int food = 100;
+  int max_food = 200;
 
-  int sleep = 20;
-  int max_sleep = 20;
+  int sleep = 200;
+  int max_sleep = 200;
 
-  int happy = 20;
-  int max_happy = 20;
+  int happy = 200;
+  int max_happy = 200;
 };
 
 struct NeedsSystem : SubSystem<NeedsSystem, Needs, AI> {

@@ -9,7 +9,7 @@
 
 struct SeekFoodAI : AIScript {
   virtual int start(AI* ai) override {
-    if (food == nullptr) {
+    if (!food) {
       return findfood(ai);
     }
 
@@ -30,10 +30,11 @@ struct SeekFoodAI : AIScript {
       Ent* e = (*it)->parent;
       if (e->has<Foodstuff>()) {
         // I have found food!
-        food = (*it)->try_lock();
-        if (food)
+        if (food = (*it)->try_lock()) {
           // It's mine!
           return findpath(ai);
+        }
+        // I was unable to lock the food.
       }
       ++it;
     }
@@ -61,7 +62,7 @@ struct SeekFoodAI : AIScript {
     if (needs->food > needs->max_food)
       needs->food = needs->max_food;
     // Release and delete the food. It has been consumed.
-    food = nullptr;
+    food.reset();
     delete food->parent;
     return complete(ai);
   }
@@ -79,10 +80,8 @@ void NeedsSystem::update_item(Ent*, Needs* nai, AI* ai) {
     return;
   }
 
-  /*
   if (nai->food > 0)
     --nai->food;
-  */
 }
 
 NeedsSystem needssystem;

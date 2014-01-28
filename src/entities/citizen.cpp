@@ -9,6 +9,7 @@
 #include "components/citizenname.hpp"
 #include "components/movable.hpp"
 #include "components/position.hpp"
+#include "components/item.hpp"
 
 #include <sstream>
 #include <cstdlib>
@@ -60,15 +61,21 @@ struct IdleAI : AIScript {
   Job* job;
 };
 
+ItemProperties citizen_properties = {
+  "citizen",
+  100
+};
+
 Ent* new_citizen(Point pos, Security::Mask sec) {
   Ent* e = new Ent;
-  e->add(new Position(pos));
-  e->add(new Movable(pos));
-  e->add(new AI(make_shared<IdleAI>()));
-  e->add(new Clearance(clearance{ sec, Department::random_dept() }));
-  e->add(new Renderable(Security::mask_to_dcode(sec)[0]));
+  e->emplace<Position>(pos);
+  e->emplace<Movable>(pos);
+  e->emplace<AI>(std::make_shared<IdleAI>());
+  e->emplace<Clearance>(clearance{ sec, Department::random_dept() });
+  e->emplace<Renderable>(Security::mask_to_dcode(sec)[0]);
   e->add(random_citizenname());
-  e->add(new Needs());
+  e->emplace<Needs>();
+  e->emplace<Item>(citizen_properties);
 
   e->add(&aisystem);
   e->add(&smsystem);

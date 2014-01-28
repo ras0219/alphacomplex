@@ -5,6 +5,7 @@
 #include "entities/workroom.hpp"
 #include "entities/entity.hpp"
 #include "entities/filestorage.hpp"
+#include "entities/hydroponics.hpp"
 
 enum RoomTypes
 {
@@ -513,11 +514,15 @@ struct CityGenerator {
             city.tile(j, i).type = Tile::TileKind::wall;
           } else
           {
-            city.tile(j, i).type = Tile::TileKind::foodsupply;
+              //city.tile(j, i).type = Tile::TileKind::foodsupply;
+            if (rand() % 3 == 0)
+              make_hydroponics_table({ &city, j, i });
           }
         }
       }
     }
+
+    city.add_room(make_hydroponics_room({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 })->assert_get<Room>());
   }
 
   void build_infirmary(const RoomProperties& rp)

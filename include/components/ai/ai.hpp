@@ -19,14 +19,14 @@ struct AI : ComponentCRTP<Component::AI, AI> {
 
   // Methods for AIScripts
   inline timer_t get_timer() { return timer; }
-  // Replaces the top script on the stack.
-  // Note: The top script receives no messages.
+  /// Replaces the top script on the stack.
+  /// Note: The top script receives no messages.
   timer_t replace_script(script_ptr ais);
-  // Add another script to the stack above the current.
-  // Calls suspend & resume
+  /// Add another script to the stack above the current.
+  /// Calls suspend & resume
   timer_t push_script(script_ptr ais);
-  // Pops the top script off the stack.
-  // Note: The top script receives no messages.
+  /// Pops the top script off the stack.
+  /// Note: The top script receives no messages.
   timer_t pop_script();
 
   inline priority_t priority() const { return scripts.back().second; }
@@ -48,19 +48,19 @@ extern AISystem aisystem;
 struct AIScript {
   virtual ~AIScript() { }
 
-  // Executed when a script starts for the first time
+  /// Executed when a script starts for the first time
   virtual AI::timer_t start(AI* ai) = 0;
-  // Executed when a script should sleep.
-  // Default behavior: none
+  /// Executed when a script should sleep.
+  /// Default behavior: none
   virtual void suspend(AI*) { }
-  // Executed after a suspend
-  // Default behavior: start()
+  /// Executed after a suspend
+  /// Default behavior: start()
   virtual AI::timer_t resume(AI* ai) { return start(ai); }
-  // Executed after a resume or start.
-  // Default behavior: complete()
+  /// Executed after a resume or start.
+  /// Default behavior: complete()
   virtual AI::timer_t update(AI* ai) { return complete(ai); }
 
-  // Called by the script to complete itself.
+  /// Called by the script to complete itself.
   inline AI::timer_t complete(AI* ai) {
     return ai->pop_script();
   }

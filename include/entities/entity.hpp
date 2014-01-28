@@ -35,6 +35,13 @@ struct Ent {
   template<class T>
   inline T* get() { return static_cast<T*>(compmap[T::StaticKind]); }
   template<class T>
+  inline T* has_get() {
+    auto it = compmap.find(T::StaticKind);
+    if (it == compmap.end())
+      return nullptr;
+    return static_cast<T*>(it->second);
+  }
+  template<class T>
   inline bool has() { return compmap.find(T::StaticKind) != compmap.end(); }
 
   template<class...Ts>

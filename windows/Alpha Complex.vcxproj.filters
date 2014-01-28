@@ -292,6 +292,9 @@
     <ClInclude Include="..\include\entities\filestorage.hpp">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\components\ai\lockai.hpp">
+      <Filter>Header Files\components\ai</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -416,6 +419,9 @@
     </ClCompile>
     <ClCompile Include="..\src\components\item.cpp">
       <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entities\hydroponics.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

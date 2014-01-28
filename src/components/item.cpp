@@ -16,3 +16,31 @@ Point Item::pos() const {
     std::terminate();
   }
 }
+
+void Item::on_remove() {
+  if (container) remove_from();
+
+  // For now, just terminate the program if we try to delete a filled container
+  if (!items.empty()) {
+    assert(false);
+    std::terminate();
+  }
+}
+
+ItemLock Item::try_lock() {
+  if (locked)
+    return ItemLock(nullptr);
+  if (container == nullptr) {
+    assert(!locked);
+    locked = true;
+    return ItemLock(this);
+  }
+  auto l = container->try_lock();
+  if (l) {
+    l.release();
+    assert(!locked);
+    locked = true;
+    return ItemLock(this);
+  }
+  return ItemLock(nullptr);
+}

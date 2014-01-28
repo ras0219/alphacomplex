@@ -3,6 +3,7 @@
 #include "components/component.hpp"
 #include "point.hpp"
 #include <unordered_set>
+#include <vector>
 
 struct Furniture : ComponentCRTP<Component::Furniture, Furniture> {
   using set_t = std::unordered_set<struct Room*>;

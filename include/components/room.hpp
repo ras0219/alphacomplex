@@ -4,8 +4,6 @@
 #include "point.hpp"
 #include <unordered_set>
 
-struct City;
-
 struct Room : ComponentCRTP<Component::Room, Room> {
   typedef std::unordered_set<struct Furniture*> set_t;
 
@@ -20,6 +18,8 @@ struct Room : ComponentCRTP<Component::Room, Room> {
       && (ty >= r.y)
       && (ty < r.y + r.h);
   }
+
+  std::vector<struct Furniture*> filter_furniture(struct ItemProperties const& props);
 
   Rect r;
   set_t furniture;

@@ -114,6 +114,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\ai\deleteai.hpp" />
     <ClInclude Include="..\include\components\ai\ifai.hpp" />
     <ClInclude Include="..\include\components\ai\job.hpp" />
+    <ClInclude Include="..\include\components\ai\lockai.hpp" />
     <ClInclude Include="..\include\components\ai\needsai.hpp" />
     <ClInclude Include="..\include\components\ai\pathai.hpp" />
     <ClInclude Include="..\include\components\ai\pathfind.hpp" />
@@ -203,6 +204,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\entities\filestorage.cpp" />
     <ClCompile Include="..\src\entities\foods.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />
+    <ClCompile Include="..\src\entities\hydroponics.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
