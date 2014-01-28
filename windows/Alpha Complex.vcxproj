@@ -105,6 +105,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\city.hpp" />
+    <ClInclude Include="..\include\citygen.hpp" />
     <ClInclude Include="..\include\clock.hpp" />
     <ClInclude Include="..\include\components\ai\activityai.hpp" />
     <ClInclude Include="..\include\components\ai\ai.hpp" />
@@ -181,6 +182,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
   <ItemGroup>
     <ClCompile Include="..\sdl\graphicsSDL.cpp" />
     <ClCompile Include="..\src\city.cpp" />
+    <ClCompile Include="..\src\citygen.cpp" />
     <ClCompile Include="..\src\clock.cpp" />
     <ClCompile Include="..\src\components\ai.cpp" />
     <ClCompile Include="..\src\components\citizenname.cpp" />

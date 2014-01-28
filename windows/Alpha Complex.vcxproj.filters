@@ -286,6 +286,9 @@
     <ClInclude Include="..\include\point.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\citygen.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -401,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="..\sdl\graphicsSDL.cpp">
       <Filter>SDL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\citygen.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
