@@ -34,7 +34,7 @@ struct SeekFoodAI : AIScript {
       }
 
       Ent* e = (*it)->parent;
-      if (e->has<Position>() && e->has<Foodstuff>()) {
+      if (e->has<Foodstuff>()) {
         // I HAVE FOUND SOME FOOD!!
         (*it)->lock();
         food = *it;
@@ -49,11 +49,10 @@ struct SeekFoodAI : AIScript {
   int findpath(AI* ai) {
     assert(food != nullptr);
 
-    auto pos = food->parent->get<Position>();
-    auto dest = pos->as_point();
+    auto dest = food->pos();
     if (dest != ai->parent->get<Position>()->as_point()) {
       // We are not at the food. We must travel!
-      return ai->push_script(make_pathai(dest));
+      return ai->push_script(make_pathai(point{ dest.x, dest.y }));
     }
     // We are at the food! Rejoice!
     return eatfood(ai);

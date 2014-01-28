@@ -9,7 +9,7 @@ struct Position : ComponentCRTP<Component::Position, Position> {
   inline City& city() { return *pos.city; }
   inline int x() const { return pos.x; }
   inline int y() const { return pos.y; }
-  inline point as_point() const { return pos.as_point(); }
+  inline Point as_point() const { return pos; }
 
   inline void move(int tx, int ty) {
     remove();

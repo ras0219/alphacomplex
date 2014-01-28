@@ -189,6 +189,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\citizenname.cpp" />
     <ClCompile Include="..\src\components\foodstuff.cpp" />
     <ClCompile Include="..\src\components\furniture.cpp" />
+    <ClCompile Include="..\src\components\item.cpp" />
     <ClCompile Include="..\src\components\jobprovider.cpp" />
     <ClCompile Include="..\src\components\movable.cpp" />
     <ClCompile Include="..\src\components\needsai.cpp" />

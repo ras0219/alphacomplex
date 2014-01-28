@@ -4,10 +4,10 @@
 #include "components/position.hpp"
 #include "entities/entity.hpp"
 
-void Furniture::init() {
+void Furniture::on_add() {
   pos.city->add_furniture(this);
 }
 
-void Furniture::deinit() {
+void Furniture::on_remove() {
   pos.city->del_furniture(this);
 }

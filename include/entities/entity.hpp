@@ -17,7 +17,11 @@ struct Ent {
 
   ~Ent() {
     for (auto p : compmap)
+      p.second->on_remove();
+
+    for (auto p : compmap)
       delete p.second;
+
     for (auto sys : sysset)
       sys->erase(this);
   }
@@ -39,11 +43,10 @@ struct Ent {
   }
 
   inline bool has(Component::Kind k) { return compmap.find(k) != compmap.end(); }
-  template<Component::Kind K, class T>
-  inline void add(ComponentCRTP<K, T>* comp) {
+  inline void add(Component* comp) {
     comp->parent = this;
     compmap[comp->kind] = comp;
-    static_cast<T*>(comp)->T::init();
+    comp->on_add();
   }
   inline void add(System* sys) {
     sysset.insert(sys);

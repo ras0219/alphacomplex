@@ -9,6 +9,9 @@ struct Point {
 
   struct City* city;
   int x, y;
+
+  bool operator==(const Point& o) { return o.city == city && o.x == x && o.y == y; }
+  bool operator!=(const Point& o) { return !(*this == o); }
 };
 
 struct rect {

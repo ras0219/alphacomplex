@@ -414,5 +414,8 @@
     <ClCompile Include="..\src\entities\filestorage.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\components\item.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

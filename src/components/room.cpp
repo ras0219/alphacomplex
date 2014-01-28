@@ -2,10 +2,10 @@
 #include "city.hpp"
 #include "components/furniture.hpp"
 
-void Room::init() {
+void Room::on_add() {
   r.city->add_room(this);
 }
 
-void Room::deinit() {
+void Room::on_remove() {
   r.city->del_room(this);
 }

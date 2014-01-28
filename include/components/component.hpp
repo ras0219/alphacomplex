@@ -27,6 +27,9 @@ struct Component {
   Component(Kind k) : kind(k), parent(nullptr) { }
   virtual ~Component() {}
 
+  virtual void on_add() {}
+  virtual void on_remove() {}
+
   Component& operator=(const Component&) = delete;
 
   template<class T>
@@ -51,9 +54,6 @@ struct ComponentCRTP : Component {
     instances.push_back(&this->as<T>());
   }
   ~ComponentCRTP() { instances.erase(std::find(instances.begin(), instances.end(), &this->as<T>())); }
-
-  void init() {}
-  void deinit() {}
 
   using set_t = std::vector<T*>;
   using iterator = typename set_t::iterator;

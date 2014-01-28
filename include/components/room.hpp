@@ -10,10 +10,9 @@ struct Room : ComponentCRTP<Component::Room, Room> {
   typedef std::unordered_set<struct Furniture*> set_t;
 
   Room(const Rect& r) : r(r) { }
-  ~Room() { deinit(); }
 
-  void init();
-  void deinit();
+  virtual void on_add() override;
+  virtual void on_remove() override;
 
   inline bool contains(int tx, int ty) const {
     return (tx >= r.x)
