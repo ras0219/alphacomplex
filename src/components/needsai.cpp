@@ -8,12 +8,6 @@
 #include "components/ai/pathai.hpp"
 
 struct SeekFoodAI : AIScript {
-  SeekFoodAI() : food(nullptr) {}
-  ~SeekFoodAI() {
-    if (food != nullptr)
-      food->unlock();
-  }
-
   virtual int start(AI* ai) override {
     if (food == nullptr) {
       return findfood(ai);
@@ -35,11 +29,11 @@ struct SeekFoodAI : AIScript {
 
       Ent* e = (*it)->parent;
       if (e->has<Foodstuff>()) {
-        // I HAVE FOUND SOME FOOD!!
-        (*it)->lock();
-        food = *it;
-
-        return findpath(ai);
+        // I have found food!
+        food = (*it)->try_lock();
+        if (food)
+          // It's mine!
+          return findpath(ai);
       }
       ++it;
     }
@@ -47,7 +41,7 @@ struct SeekFoodAI : AIScript {
     return 200;
   }
   int findpath(AI* ai) {
-    assert(food != nullptr);
+    assert(food);
 
     auto dest = food->pos();
     if (dest != ai->parent->get<Position>()->as_point()) {
@@ -66,13 +60,13 @@ struct SeekFoodAI : AIScript {
     needs->food += fs->amount;
     if (needs->food > needs->max_food)
       needs->food = needs->max_food;
-    // Delete the food. It has been consumed.
-    delete food->parent;
+    // Release and delete the food. It has been consumed.
     food = nullptr;
+    delete food->parent;
     return complete(ai);
   }
 
-  Item* food;
+  ItemLock food;
 };
 
 AI::script_ptr make_seek_food_script() {

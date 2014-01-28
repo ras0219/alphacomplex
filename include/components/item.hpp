@@ -5,12 +5,19 @@
 #include "point.hpp"
 #include <unordered_set>
 #include <cassert>
+#include <memory>
 
 /// Properties of an item -- name of item, mass of item, material of item, etc.
 struct ItemProperties {
   std::string name;
   float mass;
 };
+
+struct unlock_item {
+  inline void operator()(struct Item* i);
+};
+
+using ItemLock = std::unique_ptr<struct Item, unlock_item>;
 
 /// Component to describe an item which has properties, can be locked, and can be nested with other items.
 ///
@@ -29,8 +36,20 @@ struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
     }
   }
 
-  inline void lock() { assert(!locked); locked = true; }
-  inline void unlock() { assert(locked); locked = false; }
+  inline ItemLock try_lock() {
+    if (locked)
+      return nullptr;
+    if (container == nullptr)
+      return ItemLock(this);
+    auto l = container->try_lock();
+    if (l) {
+      l.release();
+      assert(!locked);
+      locked = true;
+      return ItemLock(this);
+    }
+    return nullptr;
+  }
 
   inline void insert(Item* i) { items.insert(i); }
   inline void erase(Item* i) { items.erase(i); }
@@ -56,3 +75,11 @@ struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
 
   friend struct global_set<Item>;
 };
+
+
+inline void unlock_item::operator()(Item* i) {
+  assert(i->locked);
+  i->locked = false;
+  if (i->container)
+    (*this)(i->container);
+}
