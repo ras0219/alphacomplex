@@ -4,6 +4,7 @@
 #include "entities/citizen.hpp"
 #include "entities/workroom.hpp"
 #include "entities/entity.hpp"
+#include "entities/filestorage.hpp"
 
 enum RoomTypes
 {
@@ -96,9 +97,8 @@ struct CityGenerator {
     {
       for (int j = 0; j < city.getXSize(); ++j)
       {
-        city.tiles.push_back({ Tile::TileKind::ground });
+        city.tile(j, i) = { Tile::TileKind::ground };
       }
-      city.ents.emplace_back();
     }
 
     // recursively generate city
@@ -401,7 +401,7 @@ struct CityGenerator {
           {
             if ((city.tile(j, i).type == Tile::TileKind::ground) && ((i % factor) != 0))
             {
-              city.tile(j, i).type = Tile::TileKind::furniture;
+              make_filingcabinet({ &city, j, i });
             }
           }
         }
@@ -419,11 +419,13 @@ struct CityGenerator {
           {
             if ((city.tile(j, i).type == Tile::TileKind::ground) && ((j % factor) != 0))
             {
-              city.tile(j, i).type = Tile::TileKind::furniture;
+              make_filingcabinet({ &city, j, i });
             }
           }
         }
       }
+
+      city.add_room(make_filestorage({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 })->assert_get<Room>());
     }
   }
 

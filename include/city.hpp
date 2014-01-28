@@ -45,19 +45,21 @@ struct City {
 
   int xsz;
   int ysz;
-  vector<Tile> tiles;
-  vector< ents_t > ents;
-  vector<struct Room*> rooms;
+  Overlay<Tile> tiles;
+  Overlay<ents_t> ents;
   Overlay<char> designs;
+  Overlay<struct Furniture*> furniture;
+
+  vector<struct Room*> rooms;
 
   inline int getXSize() const { return xsz; }
   inline int getYSize() const { return ysz; }
 
-  inline Tile tile(int x, int y) const { return tiles[xsz*y + x]; }
-  inline Tile& tile(int x, int y) { return tiles[xsz*y + x]; }
+  inline Tile tile(int x, int y) const { return tiles.data[xsz*y + x]; }
+  inline Tile& tile(int x, int y) { return tiles.data[xsz*y + x]; }
 
-  inline const ents_t& ent(int x, int y) const { return ents[xsz*y + x]; }
-  inline ents_t& ent(int x, int y) { return ents[xsz*y + x]; }
+  inline const ents_t& ent(int x, int y) const { return ents.data[xsz*y + x]; }
+  inline ents_t& ent(int x, int y) { return ents.data[xsz*y + x]; }
 
   inline void add_ent(int x, int y, Ent* e) {
     ent(x, y).insert(e);
@@ -68,21 +70,28 @@ struct City {
 
   /// Insert a room. Fast Amortized O(1).
   /// Precondition: Room has not already been added (not checked).
-  inline void add_room(struct Room* r) {
-    rooms.push_back(r);
-  }
+  void add_room(struct Room* r);
 
   /// Delete a room by reference. Fast O(R).
-  inline void del_room(struct Room* r) {
-    auto it = std::find(rooms.begin(), rooms.end(), r);
-    assert(it != rooms.end());
-    rooms.erase(it);
-  }
+  void del_room(struct Room* r);
 
-  /// Find all furniture within a square. Fast O(w*h + E) where E is entities within (x,y,w,h).
+  /// Place a piece of furniture. Fast O(1).
+  /// Precondition: Location has no furniture.
+  /// Precondition: Furniture has no room assignments.
+  /// Postcondition: Furniture may have room assignments.
+  /// Postcondition: Location has furniture f.
+  void add_furniture(struct Furniture* f);
+
+  /// Remove a piece of furniture. Fast O(1).
+  /// Precondition: Location has furniture f.
+  /// Postcondition: Furniture has no room assignments.
+  /// Postcondition: Location has no furniture.
+  void del_furniture(struct Furniture* f);
+
+  /// Find all furniture within a rectangle. Fast O(w*h).
   vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
 
-  /// Find all rooms containing a square. Fast O(R).
+  /// Find all rooms containing a point. Fast O(R).
   vector<struct Room*> find_rooms(int x, int y);
 
   /// Check that x and y are within the current city
@@ -99,17 +108,18 @@ struct City {
   /// Resize the city. This should not be called after initialization.
   void resize(int x, int y);
 
-  City() : xsz(0), ysz(0), designs(0, 0) {}
-  City(int x, int y) : xsz(x), ysz(y), tiles(x*y),
-                       ents(x*y),
-                       designs(xsz, ysz) {}
+  City(int x, int y) : xsz(x), ysz(y), tiles(x, y),
+                       ents(x, y),
+                       designs(x, y),
+                       furniture(x, y) {}
 
   /// Constructor: uses the city properties to generate a city
   City(struct CityProperties const& cityP) :
       xsz(cityP.width), ysz(cityP.height),
-      tiles(xsz*ysz),
-      ents(xsz*ysz),
-      designs(xsz, ysz)
+      tiles(xsz, ysz),
+      ents(xsz, ysz),
+      designs(xsz, ysz),
+      furniture(xsz, ysz)
   {
     randomgen(*this, cityP);
   }

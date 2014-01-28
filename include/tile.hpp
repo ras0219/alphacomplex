@@ -5,10 +5,11 @@ struct Tile {
     ground = '.',
     wall = '+',
     door = '*',
-    furniture = 'P',
+    //furniture = 'P',
     engineering = 'S',
     foodsupply = 'W',
-    infirmary = '.'
+    infirmary = '.',
+    filestorage = 'F'
   } type;
 
   char render() { return type; }

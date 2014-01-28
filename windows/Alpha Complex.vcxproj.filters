@@ -289,6 +289,9 @@
     <ClInclude Include="..\include\citygen.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\entities\filestorage.hpp">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -407,6 +410,9 @@
     </ClCompile>
     <ClCompile Include="..\src\citygen.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entities\filestorage.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

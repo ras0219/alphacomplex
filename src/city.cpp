@@ -22,12 +22,13 @@
 void City::resize(int x, int y) {
   xsz = x;
   ysz = y;
+  furniture.resize(x, y);
+  tiles.resize(x, y);
+  ents.resize(x, y);
   designs.resize(x, y);
 }
 
 wistream& operator>>(wistream& is, City& c) {
-  c.tiles.clear();
-  c.ents.clear();
   c.xsz = 0;
   c.ysz = 0;
 
@@ -46,8 +47,8 @@ wistream& operator>>(wistream& is, City& c) {
       throw runtime_error("invalid c format");
 
     for (int i = 0; i < x; ++i) {
-      c.tiles.push_back({ (Tile::TileKind)s[i] });
-      c.ents.emplace_back();
+      c.tile(i, y) = { (Tile::TileKind)s[i] };
+      c.ent(i, y).clear();
     }
 
     ++y;
@@ -109,7 +110,7 @@ wistream& operator>>(wistream& is, City& c) {
   }
 
   for (auto r : c.rooms)
-    LOGGER::verbose() << r->w << 'x' << r->h << " Room @ " << r->x << ", " << r->y << endl;
+    LOGGER::verbose() << r->r.w << 'x' << r->r.h << " Room @ " << r->r.x << ", " << r->r.y << endl;
 
   for (int j = 0; j < c.getYSize(); ++j) {
     for (int i = 0; i < c.getXSize(); ++i)
@@ -178,23 +179,60 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   jobs.add_job(job);
 }
 
-vector<Room*> City::find_rooms(int x, int y) {
-  vector<Room*> ret;
+void City::add_room(Room* r) {
+  rooms.push_back(r);
+
+  auto v = find_furniture(r->r.x, r->r.y, r->r.w, r->r.h);
+  r->furniture = Room::set_t(v.begin(), v.end());
+  for (auto f : r->furniture)
+    f->rooms.insert(r);
+}
+
+void City::del_room(Room* r) {
+  auto it = std::find(rooms.begin(), rooms.end(), r);
+  assert(it != rooms.end());
+  rooms.erase(it);
+
+  for (auto f : r->furniture)
+    f->rooms.erase(r);
+  r->furniture.clear();
+}
+ 
+
+void City::add_furniture(Furniture* f) {
+  assert(furniture(f->x(), f->y()) == nullptr);
+  furniture(f->x(), f->y()) = f;
+
+  std::vector<struct Room*> rs = find_rooms(f->x(), f->y());
+  f->rooms = Furniture::set_t(rs.begin(), rs.end());
+
+  for (auto r : f->rooms)
+    r->furniture.insert(f);
+}
+
+void City::del_furniture(Furniture* f) {
+  assert(furniture(f->x(), f->y()) == f);
+  furniture(f->x(), f->y()) = nullptr;
+
+  for (auto r : f->rooms)
+    r->furniture.erase(f);
+  f->rooms.clear();
+}
+
+std::vector<Room*> City::find_rooms(int x, int y) {
+  std::vector<Room*> ret;
   for (auto r : rooms)
   if (r->contains(x, y))
     ret.push_back(r);
   return ret;
 }
 
-vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
-  vector<Furniture*> ret;
+std::vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
+  std::vector<Furniture*> ret;
   for (int i = x; i < x + w; ++i) {
     for (int j = y; j < y + h; ++j) {
-      for (auto e : ent(i, j)) {
-        if (e->has<Furniture>()) {
-          ret.push_back(e->assert_get<Furniture>());
-        }
-      }
+      if (furniture(i, j) != nullptr)
+        ret.push_back(furniture(i, j));
     }
   }
   return ret;

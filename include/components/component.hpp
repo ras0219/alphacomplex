@@ -52,6 +52,9 @@ struct ComponentCRTP : Component {
   }
   ~ComponentCRTP() { instances.erase(std::find(instances.begin(), instances.end(), &this->as<T>())); }
 
+  void init() {}
+  void deinit() {}
+
   using set_t = std::vector<T*>;
   using iterator = typename set_t::iterator;
   static set_t instances;

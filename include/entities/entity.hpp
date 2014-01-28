@@ -39,13 +39,20 @@ struct Ent {
   }
 
   inline bool has(Component::Kind k) { return compmap.find(k) != compmap.end(); }
-  inline void add(Component* comp) {
+  template<Component::Kind K, class T>
+  inline void add(ComponentCRTP<K, T>* comp) {
     comp->parent = this;
     compmap[comp->kind] = comp;
+    static_cast<T*>(comp)->T::init();
   }
   inline void add(System* sys) {
     sysset.insert(sys);
     sys->insert(this);
+  }
+
+  template<class C, class...Args>
+  inline void emplace(Args&&...args) {
+    add(new C(std::forward<Args>(args)...));
   }
 
   map_t compmap;

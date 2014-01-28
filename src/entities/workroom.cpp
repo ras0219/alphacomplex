@@ -34,8 +34,8 @@ struct MakeWorkScript : AIScript {
       return 100;
 
     Room* pos = room->assert_get<Room>();
-    int x2 = pos->x;
-    int y2 = pos->y;
+    int x2 = pos->r.x;
+    int y2 = pos->r.y;
 
     int x = 1, y = 1;
 
@@ -48,9 +48,8 @@ struct MakeWorkScript : AIScript {
 Ent* make_workroom(City& c, int x, int y, int w, int h) {
   Ent* r = new Ent;
 
-  Room* room = new Room(c, x, y, w, h);
+  Room* room = new Room(Rect{ &c, x, y, w, h });
   r->add(room);
-  room->init();
 
   r->add(new AI(make_shared<MakeWorkScript>()));
   r->add(new JobProvider);

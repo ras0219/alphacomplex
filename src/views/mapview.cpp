@@ -4,6 +4,7 @@
 #include "clock.hpp"
 #include "joblist.hpp"
 #include "components/renderable.hpp"
+#include "components/furniture.hpp"
 
 //#ifdef GRAPHICS_X11
 //enum : char {
@@ -61,7 +62,7 @@ void MapView::prepare_buffer() {
         auto end = s.end();
         for (; it != end; ++it) {
           if ((*it)->has<Renderable>()) {
-            putChar(x, y, (*it)->get<Renderable>()->render());
+            putChar(x, y, (*it)->assert_get<Renderable>()->render());
             break;
           }
         }
@@ -89,6 +90,14 @@ void MapView::prepare_buffer() {
 
         putChar(x, y, prettywalls[i]);
         continue;
+      }
+
+      if (auto f = city->furniture(x, y)) {
+        if (f->parent->has<Renderable>()) {
+          auto r = f->parent->assert_get<Renderable>();
+          putChar(x, y, r->render());
+          continue;
+        }
       }
 
       putChar(x, y, city->tile(x, y).type);
