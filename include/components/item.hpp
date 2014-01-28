@@ -1,16 +1,18 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "components/component.hpp"
 #include "utilities/global_set.hpp"
 
+#include <cassert>
+
 struct ItemProperties {
-  string name;
+  std::string name;
   float mass;
 };
 
 /// Component to describe an item which has properties -- name of item, mass of item, material of item, etc.
 /// Also provides locking functionality.
-struct Item : AspectStatic<Aspect::Item, Item>, private global_set<Item> {
+struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
   Item(const ItemProperties& p) : prop(p), locked(false) { }
 
   inline void lock() { assert(!locked); locked = true; }

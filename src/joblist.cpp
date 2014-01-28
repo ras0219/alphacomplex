@@ -23,7 +23,7 @@ void JobList::remove_jobs() {
   }
 }
 
-Job* JobList::find_job(Clearance c) {
+Job* JobList::find_job(clearance c) {
   auto it = jlist.begin();
   while (it != jlist.end()) {
     auto j = *it;

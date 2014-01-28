@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-vector<string> names = {
+std::vector<std::string> names = {
   "Alex",
   "Alice",
   "Ansi",
@@ -20,7 +20,7 @@ vector<string> names = {
   "Zim"
 };
 
-vector<string> sectors = {
+std::vector<std::string> sectors = {
   "QNX",
   "ABC",
   "TRN",

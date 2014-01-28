@@ -5,7 +5,7 @@
 #include "entities/subsystem.hpp"
 #include "components/foodstuff.hpp"
 
-struct Needs : AspectStatic<Aspect::Needs, Needs> {
+struct Needs : ComponentCRTP<Component::Needs, Needs> {
   int food = 20;
   int max_food = 20;
 

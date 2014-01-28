@@ -5,10 +5,10 @@
 #include "components/ai/ai.hpp"
 #include "components/ai/job.hpp"
 #include "components/ai/needsai.hpp"
-#include "windows.hpp"
 #include "components/renderable.hpp"
 #include "components/citizenname.hpp"
 #include "components/movable.hpp"
+#include "components/position.hpp"
 
 #include <sstream>
 #include <cstdlib>
@@ -17,7 +17,7 @@
 
 string get_full_name(Ent* e) {
   CitizenName* cn = e->assert_get<CitizenName>();
-  ClearanceComp* cc = e->assert_get<ClearanceComp>();
+  Clearance* cc = e->assert_get<Clearance>();
 
   stringstream ss;
   ss << cn->name;
@@ -46,7 +46,7 @@ struct IdleAI : AIScript {
       job = nullptr;
     }
 
-    ClearanceComp* c = ai->parent->assert_get<ClearanceComp>();
+    Clearance* c = ai->parent->assert_get<Clearance>();
 
     job = jobs.find_job(c->clearance());
     if (job) {
@@ -60,12 +60,12 @@ struct IdleAI : AIScript {
   Job* job;
 };
 
-Ent* new_citizen(Position pos, Security::Mask sec) {
+Ent* new_citizen(Point pos, Security::Mask sec) {
   Ent* e = new Ent;
-  e->add(new PositionComp(pos));
+  e->add(new Position(pos));
   e->add(new Movable(pos));
   e->add(new AI(make_shared<IdleAI>()));
-  e->add(new ClearanceComp(Clearance{ sec, Department::random_dept() }));
+  e->add(new Clearance(clearance{ sec, Department::random_dept() }));
   e->add(new Renderable(Security::mask_to_dcode(sec)[0]));
   e->add(random_citizenname());
   e->add(new Needs());
@@ -75,30 +75,3 @@ Ent* new_citizen(Position pos, Security::Mask sec) {
   e->add(&needssystem);
   return e;
 }
-
-// int Citizen::description(char* buf, size_t n) const {
-//   if (security() == Security::INFRARED)
-//     return snprintf(buf, n, "%s-%s [%1d]", name.c_str(), sect.c_str(), ssn);
-//   const char* dcode = Security::mask_to_dcode(security());
-//   return snprintf(buf, n, "%s-%c-%s [%1d]", name.c_str(), *dcode, sect.c_str(), ssn);
-// }
-
-// Security::Mask Citizen::security() const {
-//   return sec;
-// }
-
-// Citizen::Citizen(int x_, int y_, Security::Mask s, City& c)
-//   : AIEntity(x_, y_, c),
-//     sec(s),
-//     fact(Faction::PLAYER),
-//     dept(Department::random_dept()),
-//     aistate(new IdleAI()),
-//     //intsec_review_job(nullptr),
-//     ssn(rand() % 10000)
-// {
-//   name = names[rand() % names.size()];
-//   sect = sectors[rand() % sectors.size()];
-  
-//   skills = Skill::random_skills(sec);
-// }
-

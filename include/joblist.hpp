@@ -19,14 +19,14 @@ struct JobList {
   iterator add_job(Job* j);
   iterator add_job(const shared_ptr<Job>& j);
   void remove_jobs();
-  Job* find_job(Clearance c);
+  Job* find_job(clearance c);
 
   list_t jlist;
 };
 
 struct JobListing : StaticWidget<JobListing> {
   JobList* jlist;
-  string title;
+  std::string title;
 
   JobListing(JobList* l, const char* t) : jlist(l), title(t) { }
 

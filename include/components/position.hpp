@@ -3,8 +3,8 @@
 #include "entities/entity.hpp"
 #include "city.hpp"
 
-struct PositionComp : AspectStatic<Aspect::Position, PositionComp> {
-  PositionComp(struct Position p) : pos(p) { }
+struct Position : ComponentCRTP<Component::Position, Position> {
+  Position(Point p) : pos(p) { }
 
   inline City& city() { return *pos.city; }
   inline int x() const { return pos.x; }
@@ -17,7 +17,7 @@ struct PositionComp : AspectStatic<Aspect::Position, PositionComp> {
     pos.y = ty;
     insert();
   }
-  inline void move(struct Position tp) {
+  inline void move(Point tp) {
     remove();
     pos.x = tp.x;
     pos.y = tp.y;
@@ -25,9 +25,8 @@ struct PositionComp : AspectStatic<Aspect::Position, PositionComp> {
   }
 
 private:
-  // These methods should not normally be called.
   inline void insert() { city().add_ent(x(), y(), parent); }
   inline void remove() { city().del_ent(x(), y(), parent); }
 
-  struct Position pos;
+  Point pos;
 };

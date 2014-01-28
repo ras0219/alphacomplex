@@ -13,6 +13,7 @@
 #include "components/ai/sequenceai.hpp"
 #include "windows.hpp"
 #include "entities/workroom.hpp"
+#include "joblist.hpp"
 
 #include <stdexcept>
 
@@ -43,7 +44,7 @@ void City::add_entities(Security::Mask entity, int min, int max)
 
     if (tile(c, r).type == Tile::TileKind::ground)
     {
-      ent(c, r).insert(new_citizen({ c, r, this }, entity));
+      ent(c, r).insert(new_citizen({ this, c, r }, entity));
       i++;
     }
   }
@@ -92,12 +93,12 @@ wistream& operator>>(wistream& is, City& c) {
       } else if (ch == 'E') {
         // Citizen* e = new Citizen(i,j,Security::RED, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::RED));
+        c.ent(i, j).insert(new_citizen({ &c, i, j }, Security::RED));
         c.tile(i, j).type = Tile::ground;
       } else if (ch == 'O') {
         // Citizen* e = new Citizen(i,j,Security::ORANGE, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i, j).insert(new_citizen({ i, j, &c }, Security::ORANGE));
+        c.ent(i, j).insert(new_citizen({ &c, i, j }, Security::ORANGE));
         c.tile(i, j).type = Tile::ground;
       } else if (ch == 'D') {
         // Dwarf* e = new Dwarf(i,j, c);
@@ -127,7 +128,7 @@ wistream& operator>>(wistream& is, City& c) {
         }
 
         // room's top-left is i,j and dimensions are w x h
-        c.rooms.push_back(make_workroom(c, i, j, w, h)->assert_get<Room>());
+        c.rooms.push_back(make_workroom({ &c, i, j, w, h })->assert_get<Room>());
       }
     }
   }
@@ -180,7 +181,7 @@ void City::find_rooms()
       }
 
       // room's top-left is i,j and dimensions are w x h
-      rooms.push_back(make_workroom(*this, i, j, w, h)->assert_get<Room>());
+      rooms.push_back(make_workroom({ this, i, j, w, h })->assert_get<Room>());
     }
   }
 }
@@ -224,7 +225,7 @@ void City::find_rooms()
 // };
 
 void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
-  Clearance c = { Security::ALL, Department::ALL };
+  clearance c = { Security::ALL, Department::ALL };
   auto wall_cb = [=](AI*) {
     return city->designs(digx, digy) & 1 && city->tile(digx, digy).type == Tile::wall;
   };

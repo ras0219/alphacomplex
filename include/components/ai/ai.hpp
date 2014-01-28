@@ -5,9 +5,8 @@
 
 #include <memory>
 #include <vector>
-using std::vector;
 
-struct AI : AspectStatic<Aspect::AI, AI> {
+struct AI : ComponentCRTP<Component::AI, AI> {
   using priority_t = int;
   using script_ptr = std::shared_ptr<struct AIScript>;
   using timer_t = int;
@@ -35,7 +34,7 @@ struct AI : AspectStatic<Aspect::AI, AI> {
 
   // Data
   timer_t timer;
-  vector< pair<script_ptr, priority_t> > scripts;
+  std::vector< std::pair<script_ptr, priority_t> > scripts;
 };
 
 struct AISystem : SubSystem<AISystem, AI> {

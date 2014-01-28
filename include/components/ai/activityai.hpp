@@ -1,6 +1,5 @@
 #pragma once
 
-#include "entities/entity.hpp"
 #include "ai.hpp"
 
 struct ActivityAI : AIScript {
@@ -14,5 +13,5 @@ struct ActivityAI : AIScript {
 };
 
 inline std::shared_ptr<ActivityAI> make_activityai(int d) {
-  return make_shared<ActivityAI>(d);
+  return std::make_shared<ActivityAI>(d);
 }

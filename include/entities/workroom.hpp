@@ -1,5 +1,5 @@
 #pragma once
 
-#include "entity.hpp"
+#include "point.hpp"
 
-Ent* make_workroom(City& c, int x, int y, int w, int h);
+struct Ent* make_workroom(Rect);

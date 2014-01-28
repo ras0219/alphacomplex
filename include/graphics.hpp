@@ -11,36 +11,6 @@ extern const char* white;
 #define FONT_HEIGHT 18
 #define FONT_WIDTH 10
 
-#ifdef GRAPHICS_X11
-enum : char {
-  CORNER_SE = 11,
-  CORNER_NE = 12,
-  CORNER_NW = 13,
-  CORNER_SW = 14,
-  CROSS = 15,
-  HBAR = 18,
-  TEE_E = 21,
-  TEE_W = 22,
-  TEE_N = 23,
-  TEE_S = 24,
-  VBAR = 25
-};
-#else
-enum : char {
-  CORNER_SE = '#',
-  CORNER_NE = '#',
-  CORNER_NW = '#',
-  CORNER_SW = '#',
-  CROSS = '+',
-  HBAR = '-',
-  TEE_E = '#',
-  TEE_W = '#',
-  TEE_N = '#',
-  TEE_S = '#',
-  VBAR = '|'
-};
-#endif
-
 struct Widget;
 
 /// The graphics adapter is a singleton class that provides target-specific

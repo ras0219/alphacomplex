@@ -28,7 +28,7 @@ MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSi
   nav.register_key(KEY_d, "[d] Designations", [this]() { vstk->push(dview); });
   nav.register_key(KEY_a, "[a] Announcements", [this]() { vstk->push(aview); });
   nav.register_key(KEY_f, "[f] Purchase Food", [this]() {
-    city->ent(1, 1).insert(make_bread({ 1, 1, city }));
+    city->ent(1, 1).insert(make_bread({ city, 1, 1 }));
   });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
   nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() { mv.next_mode(); });
@@ -56,7 +56,7 @@ void MainView::handle_keypress(KeyboardKey ks) {
   case KEY_r:
     if (influence >= 0) {
       //influence -= 15;
-      city->ent(1, 1).insert(new_citizen({ 1, 1, city }, Security::RED));
+      city->ent(1, 1).insert(new_citizen({ city, 1, 1 }, Security::RED));
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
@@ -64,7 +64,7 @@ void MainView::handle_keypress(KeyboardKey ks) {
   case KEY_e:
     if (influence >= 5) {
       influence -= 5;
-      city->ent(1, 1).insert(new_citizen({ 1, 1, city }, Security::INFRARED));
+      city->ent(1, 1).insert(new_citizen({ city, 1, 1 }, Security::INFRARED));
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }

@@ -5,7 +5,7 @@
 #include "entities/citizen.hpp"
 #include "views/scrollable.hpp"
 
-struct Graphics;
+#include "graphics.hpp"
 
 struct UnitViewMode : Scrollable {
   using Scrollable::render;

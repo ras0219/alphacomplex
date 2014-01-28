@@ -280,6 +280,12 @@
     <ClInclude Include="..\include\entities\hydroponics.hpp">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\components\component.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\point.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">

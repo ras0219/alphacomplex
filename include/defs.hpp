@@ -8,7 +8,7 @@ using namespace std;
 
 typedef unsigned int uint;
 
-typedef pair<int,int> point;
+#include "point.hpp"
 typedef tuple<int,int,int,int> waypoint;
 
 /// Use to describe absolute directions
@@ -26,7 +26,7 @@ enum Direction {
 typedef DebugPolicy<true> debug_policy_t;
 
 /// Globally accessible function to send an announcement to the announcement singleton
-void announce(const string&);
+void announce(const std::string&);
 
 #include "keys.hpp"
 

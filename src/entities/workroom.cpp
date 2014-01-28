@@ -60,6 +60,10 @@ Ent* make_workroom(City& c, int x, int y, int w, int h) {
   return r;
 }
 
+Ent* make_workroom(Rect r) {
+  return make_workroom(*r.city, r.x, r.y, r.w, r.h);
+}
+
 std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
   std::shared_ptr<SequenceAI> script = make_shared<SequenceAI>();
 
@@ -69,7 +73,7 @@ std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
 
   return make_shared<Job>(
     "Fetch Documents",
-    Clearance{ Security::ALL, Department::RESEARCH },
+    clearance{ Security::ALL, Department::RESEARCH },
     script
     );
 }

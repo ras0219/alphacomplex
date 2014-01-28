@@ -119,6 +119,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\ai\sequenceai.hpp" />
     <ClInclude Include="..\include\components\citizenname.hpp" />
     <ClInclude Include="..\include\components\clearance.hpp" />
+    <ClInclude Include="..\include\components\component.hpp" />
     <ClInclude Include="..\include\components\department.hpp" />
     <ClInclude Include="..\include\components\faction.hpp" />
     <ClInclude Include="..\include\components\foodstuff.hpp" />
@@ -149,6 +150,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\logger.hpp" />
+    <ClInclude Include="..\include\point.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
     <ClInclude Include="..\include\utilities\apply_tuple.hpp" />
     <ClInclude Include="..\include\utilities\global_set.hpp" />

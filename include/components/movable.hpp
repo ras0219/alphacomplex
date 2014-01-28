@@ -1,11 +1,13 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "components/component.hpp"
 #include "entities/subsystem.hpp"
 #include "position.hpp"
 
-struct Movable : AspectStatic<Aspect::Movable, Movable> {
-  Movable(struct Position p) : pos(p) { }
+struct City;
+
+struct Movable : ComponentCRTP<Component::Movable, Movable> {
+  Movable(Point p) : pos(p) { }
 
   inline City& city() { return *pos.city; }
   inline int x() const { return pos.x; }
@@ -21,11 +23,11 @@ struct Movable : AspectStatic<Aspect::Movable, Movable> {
     pos.y = p.second;
   }
 
-  struct Position pos;
+  Point pos;
 };
 
-struct SimpleMovableSystem : SubSystem<SimpleMovableSystem, Movable, PositionComp> {
-  inline void update_item(Ent*, Movable* m, PositionComp* pc) {
+struct SimpleMovableSystem : SubSystem<SimpleMovableSystem, Movable, Position> {
+  inline void update_item(struct Ent*, Movable* m, Position* pc) {
     pc->move(m->pos);
   }
 };

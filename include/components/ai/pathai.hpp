@@ -5,16 +5,15 @@
 #include "components/movable.hpp"
 
 #include <vector>
-
-using std::vector;
+#include <cassert>
 
 struct PathAI : AIScript {
   PathAI(point d, int rate = 5) : walkrate(rate), dest(d) { }
 
   inline virtual int start(AI* ai) {
     Ent* c = ai->parent;
-    assert(c->has<PositionComp>());
-    PositionComp* pos = c->get<PositionComp>();
+    assert(c->has<Position>());
+    Position* pos = c->get<Position>();
 
     path = pathfind(pos->city(), pos->x(), pos->y(),
                     dest.first, dest.second);

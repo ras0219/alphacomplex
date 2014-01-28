@@ -175,25 +175,37 @@ struct City {
     ent(x, y).erase(e);
   }
 
+  /// Insert a room. Fast Amortized O(1).
+  /// Precondition: Room has not already been added (not checked).
   inline void add_room(struct Room* r) {
     rooms.push_back(r);
   }
+
+  /// Delete a room by reference. Fast O(R).
   inline void del_room(struct Room* r) {
     auto it = std::find(rooms.begin(), rooms.end(), r);
     assert(it != rooms.end());
     rooms.erase(it);
   }
 
+  /// Find all furniture within a square. Fast O(w*h + E) where E is entities within (x,y,w,h).
   vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
+
+  /// Find all rooms containing a square. Fast O(R).
   vector<struct Room*> find_rooms(int x, int y);
 
+  /// Check that x and y are within the current city
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
   }
 
+  /// Toggle whether the wall at (x, y) should have a dig job.
   void toggle_dig_wall(int x, int y);
+
+  /// Replace a wall at (x, y) with empty ground.
   void remove_wall(int x, int y);
 
+  /// Resize the city. This should not be called after initialization.
   void resize(int x, int y);
 
   City() : xsz(0), ysz(0), designs(0, 0) {}
@@ -201,7 +213,7 @@ struct City {
                        ents(x*y),
                        designs(xsz, ysz) {}
 
-  // Constructor: uses the city properties to generate a city
+  /// Constructor: uses the city properties to generate a city
   City(const CityProperties& cityP) :
       xsz(cityP.width), ysz(cityP.height),
       tiles(xsz*ysz),
@@ -744,11 +756,5 @@ private:
 
 wistream& operator>>(wistream& is, City& city);
 
-struct Position {
-  inline point as_point() const { return {x, y}; }
-
-  int x, y;
-  City* city;
-};
 
 

@@ -14,7 +14,7 @@ namespace Security {
       VIOLET = 128,
       ULTRAVIOLET = 256,
       GAMMA = 512,
-      ALL = (uint)(-1)
+      ALL = (unsigned int)(-1)
   };
 
   inline Mask and_below(Mask m) {

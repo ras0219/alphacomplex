@@ -4,21 +4,21 @@
 #include "security.hpp"
 #include "department.hpp"
 
-struct Clearance {
+struct clearance {
   Security::Mask security;
   Department::Mask dept;
 };
 
-struct ClearanceComp : AspectStatic<Aspect::Clearance, ClearanceComp> {
-  ClearanceComp(struct Clearance c) : clear(c) { }
+struct Clearance : ComponentCRTP<Component::Clearance, Clearance> {
+  Clearance(clearance c) : clear(c) { }
 
-  inline struct Clearance& clearance() { return clear; }
+  inline clearance& clearance() { return clear; }
   inline Security::Mask& security() { return clear.security; }
   inline Department::Mask& department() { return clear.dept; }
 
-  struct Clearance clear;
+  struct clearance clear;
 };
 
-inline bool operator&(const Clearance& l, const Clearance& r) {
+inline bool operator&(const clearance& l, const clearance& r) {
   return l.security & r.security && l.dept & r.dept;
 }

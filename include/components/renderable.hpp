@@ -1,8 +1,8 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "components/component.hpp"
 
-struct Renderable :  AspectStatic<Aspect::Renderable, Renderable> {
+struct Renderable :  ComponentCRTP<Component::Renderable, Renderable> {
   Renderable(char c = '?') : ch(c) { }
 
   inline char render() const { return ch; }

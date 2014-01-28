@@ -9,7 +9,7 @@
 using std::vector;
 using std::shared_ptr;
 
-struct JobProvider : AspectStatic<Aspect::JobProvider, JobProvider> {
+struct JobProvider : ComponentCRTP<Component::JobProvider, JobProvider> {
   ~JobProvider();
 
   // Public

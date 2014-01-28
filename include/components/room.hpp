@@ -1,15 +1,13 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "components/component.hpp"
 
 #include <unordered_set>
 
-using std::unordered_set;
-
 struct City;
 
-struct Room : AspectStatic<Aspect::Room, Room> {
-  typedef unordered_set<struct Furniture*> set_t;
+struct Room : ComponentCRTP<Component::Room, Room> {
+  typedef std::unordered_set<struct Furniture*> set_t;
 
   Room(City& c, int x_, int y_, int w_, int h_)
     : city(&c), x(x_), y(y_), w(w_), h(h_)

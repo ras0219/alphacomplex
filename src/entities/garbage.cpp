@@ -12,18 +12,18 @@
 
 // const char* CleaningRoom::RAWNAME = "cleaningroom";
 
-Ent* make_garbage(Position pos) {
+Ent* make_garbage(Point pos) {
   Ent* e = new Ent;
-  e->add(new PositionComp(pos));
+  e->add(new Position(pos));
   e->add(new Renderable(';'));
   return e;
 }
 
 
 std::shared_ptr<Job> make_garbage_job(Ent* e) {
-  PositionComp* pos = e->assert_get<PositionComp>();
+  Position* pos = e->assert_get<Position>();
 
-  Clearance c = {
+  clearance c = {
     (Security::Mask)(Security::INFRARED |
                      Security::RED),
     Department::FACILITIES

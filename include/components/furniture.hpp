@@ -1,11 +1,11 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "components/component.hpp"
 
-struct Room;
+#include <unordered_set>
 
-struct Furniture : AspectStatic<Aspect::Furniture, Furniture> {
-  typedef unordered_set<struct Room*> set_t;
+struct Furniture : ComponentCRTP<Component::Furniture, Furniture> {
+  using set_t = std::unordered_set<struct Room*>;
   ~Furniture() { deinit(); }
 
   void init();

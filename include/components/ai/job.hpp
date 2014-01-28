@@ -7,14 +7,15 @@
 
 #include <cassert>
 #include <vector>
+#include <string>
 
 struct Job {
-  Job(string d, Clearance c, AI::script_ptr ais) : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
+  Job(std::string d, clearance c, AI::script_ptr ais) : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
 
-  inline const string& description() const {
+  inline const std::string& description() const {
     return desc;
   }
-  inline Clearance clearance() const { return clear; }
+  inline clearance clearance() const { return clear; }
 
   inline AI::script_ptr script() {
     return scr;
@@ -27,8 +28,8 @@ struct Job {
   inline void reserve() { assert(state == UNRESERVED); state = RESERVED; }
   inline void complete() { assert(state == RESERVED); state = COMPLETED; }
 
-  string desc;
-  Clearance clear;
+  std::string desc;
+  struct clearance clear;
   AI::script_ptr scr;
 
   enum State {

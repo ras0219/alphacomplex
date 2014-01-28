@@ -1,6 +1,5 @@
 #pragma once
 
-#include "entity.hpp"
-#include "components/position.hpp"
+#include "point.hpp"
 
-Ent* make_bread(const Position& p);
+struct Ent* make_bread(const Point& p);

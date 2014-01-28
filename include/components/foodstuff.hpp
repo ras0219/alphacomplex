@@ -2,7 +2,7 @@
 
 #include "entities/entity.hpp"
 
-struct Foodstuff : AspectStatic<Aspect::Foodstuff, Foodstuff> {
+struct Foodstuff : ComponentCRTP<Component::Foodstuff, Foodstuff> {
   Foodstuff(int amt) : amount(amt) { }
 
   int amount;
