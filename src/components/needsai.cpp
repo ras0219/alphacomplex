@@ -30,7 +30,7 @@ struct SeekFoodAI : AIScript {
       Ent* e = (*it)->parent;
       if (e->has<Foodstuff>()) {
         // I have found food!
-        if (food = (*it)->try_lock()) {
+        if ((food = (*it)->try_lock())) {
           // It's mine!
           return findpath(ai);
         }

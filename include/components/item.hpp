@@ -62,7 +62,7 @@ struct ItemLock {
   /// Construct with no item
   ItemLock() {}
   /// Construct with no item
-  ItemLock(nullptr_t) {}
+  ItemLock(std::nullptr_t) {}
   /// Construct with item `i`. Item `i` should be locked before this is called.
   explicit ItemLock(Item* i) : ptr(i) {}
   /// Transfer lock ownership.

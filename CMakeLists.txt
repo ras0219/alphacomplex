@@ -29,6 +29,7 @@ set(SOURCES
   "src/components/room.cpp"
   "src/components/sequenceai.cpp"
   "src/components/skills.cpp"
+  "src/components/item.cpp"
   ## Entities
   "src/entities/citizen.cpp"
   "src/entities/entity.cpp"
@@ -36,6 +37,7 @@ set(SOURCES
   "src/entities/garbage.cpp"
   "src/entities/workroom.cpp"
   "src/entities/filestorage.cpp"
+  "src/entities/hydroponics.cpp"
   ## UnitViews
   "src/views/unitviews/assignview.cpp"
   "src/views/unitviews/needsview.cpp"
