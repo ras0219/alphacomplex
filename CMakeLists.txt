@@ -35,6 +35,7 @@ set(SOURCES
   "src/entities/foods.cpp"
   "src/entities/garbage.cpp"
   "src/entities/workroom.cpp"
+  "src/entities/filestorage.cpp"
   ## UnitViews
   "src/views/unitviews/assignview.cpp"
   "src/views/unitviews/needsview.cpp"
