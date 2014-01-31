@@ -94,11 +94,16 @@ struct ItemLock {
   inline ItemLock remove_from();
   /// Consume another item lock and insert this item into the other.
   inline void insert_into(ItemLock&& o);
-  /// Delete the underlying item object. Return the parent lock.
+  /// Delete the underlying item object (delayed). Return the parent lock.
   inline ItemLock delete_reset();
+
+  /// Commit all delayed deletions.
+  static inline void finalize_deletes();
 
 private:
   std::unique_ptr<struct Item, unlock_item> ptr;
+
+  static std::vector<ItemLock> to_delete;
 };
 
 inline void unlock_item::operator()(Item* i) {
@@ -120,8 +125,21 @@ inline void ItemLock::insert_into(ItemLock&& o) {
 }
 
 inline ItemLock ItemLock::delete_reset() {
-  ItemLock r = remove_from();
-  delete get();
-  reset();
-  return r;
+  if (ptr->container) {
+    ItemLock r = remove_from();
+    to_delete.emplace_back(std::move(*this));
+    return r;
+  } else {
+    to_delete.emplace_back(std::move(*this));
+    return nullptr;
+  }
+}
+
+inline void ItemLock::finalize_deletes() {
+  for (auto& l : to_delete) {
+    auto p = l.get();
+    l.reset();
+    delete p;
+  }
+  to_delete.clear();
 }

@@ -44,3 +44,5 @@ ItemLock Item::try_lock() {
   }
   return ItemLock(nullptr);
 }
+
+std::vector<ItemLock> ItemLock::to_delete;

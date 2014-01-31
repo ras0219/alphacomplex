@@ -28,6 +28,7 @@
 #include "components/movable.hpp"
 #include "components/jobprovider.hpp"
 #include "components/ai/needsai.hpp"
+#include "components/item.hpp"
 
 #include <map>
 
@@ -76,6 +77,8 @@ int main(int, char **) {
 
           for (auto sys : systems)
             sys->update();
+
+          ItemLock::finalize_deletes();
         }
 
         ++logic_frames;

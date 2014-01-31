@@ -62,9 +62,7 @@ struct SeekFoodAI : AIScript {
     if (needs->food > needs->max_food)
       needs->food = needs->max_food;
     // Release and delete the food. It has been consumed.
-    auto p = food->parent;
-    food.reset();
-    delete p;
+    food.delete_reset();
     return complete(ai);
   }
 
