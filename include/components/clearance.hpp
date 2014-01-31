@@ -10,9 +10,9 @@ struct clearance {
 };
 
 struct Clearance : ComponentCRTP<Component::Clearance, Clearance> {
-  Clearance(clearance c) : clear(c) { }
+  Clearance(struct clearance c) : clear(c) { }
 
-  inline clearance& clearance() { return clear; }
+  inline struct clearance& get_clearance() { return clear; }
   inline Security::Mask& security() { return clear.security; }
   inline Department::Mask& department() { return clear.dept; }
 

@@ -15,7 +15,7 @@ struct Job {
   inline const std::string& description() const {
     return desc;
   }
-  inline clearance clearance() const { return clear; }
+  inline struct clearance clearance() const { return clear; }
 
   inline AI::script_ptr script() {
     return scr;

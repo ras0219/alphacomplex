@@ -49,7 +49,7 @@ struct IdleAI : AIScript {
 
     Clearance* c = ai->parent->assert_get<Clearance>();
 
-    job = jobs.find_job(c->clearance());
+    job = jobs.find_job(c->get_clearance());
     if (job) {
       job->reserve();
       return ai->push_script( job->script() );
