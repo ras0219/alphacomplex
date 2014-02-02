@@ -181,23 +181,23 @@ void Graphics_SDL::LoadText(const std::string&)
   const int rows = 1+ (const int) sqrt(( float) number_of_tiles);  //make as close to square
   tiles_per_row = rows;
   int tile_texture_width = rows * FONT_WIDTH;
-  int tile_texture_height = rows * FONT_HEIGHT;
+  int tile_texture_height = rows * (FONT_HEIGHT+1);
 
   SDL_Surface *surf = NULL;
   SDL_Rect copy_dimension;
   copy_dimension.w=FONT_WIDTH;
-  copy_dimension.h=FONT_HEIGHT;
+  copy_dimension.h = (FONT_HEIGHT + 1);
   SDL_Surface *ttf_surface = SDL_CreateRGBSurface(0, tile_texture_width, tile_texture_height, 32, 0,0,0,0);
   assert(ttf_surface!=NULL);
 
  //temporary before choosing a tile\font
   for(int count =0; count< number_of_tiles; count++)
   {
-	  surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, font_color, { 0, 0, 0, 0 });
+	  surf = TTF_RenderGlyph_Shaded(best_font, (uint16_t)count, { 255, 255, 255, 255 }, { 0, 0, 0, 0 });
    if (surf != NULL) //if we draw the right character
    {
 	   copy_dimension.x = (count % rows) * FONT_WIDTH;
-	   copy_dimension.y = (count / rows) * FONT_HEIGHT;
+	   copy_dimension.y = (count / rows) * (FONT_HEIGHT + 1);
 	   error = SDL_BlitSurface(surf, NULL, ttf_surface, &copy_dimension);
 	   assert(error == 0);
    }
@@ -240,13 +240,14 @@ void Graphics_SDL::handle_events(Controller* c) {
 
 void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
 	//To-Do: give a choice to caller if he needs KERNING or CACHING.
+	if (str == "") return;
 	SDL_Texture* retr_texture = nullptr;
 	if (string_texture_cache.get(str, &retr_texture) == false)
 	{
 		SDL_Surface* my_font_surface = TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 });
-		if (my_font_surface == NULL) return; //we tried
+		if (my_font_surface == NULL) assert(0); //we tried
 		SDL_Texture* my_font_texture = SDL_CreateTextureFromSurface(ren, my_font_surface);
-		if (my_font_texture == NULL) return;
+		if (my_font_texture == NULL) assert(0);
 		//to-do: send to cache
 		string_texture_cache.put(str, my_font_texture);
 		SDL_FreeSurface(my_font_surface);
@@ -256,6 +257,7 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
 	int w = 0, h = 0;
 	TTF_SizeText(best_font, str.c_str(), &w, &h);
 	SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, w, h };
+	
 	/*
   for (auto ch : str)
     // Look at this performance
@@ -266,8 +268,6 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
 
  
 	sdl_last_call = SDL_RenderCopy(ren, retr_texture, NULL, &dstRect);
-  
-
 }
 
 void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
