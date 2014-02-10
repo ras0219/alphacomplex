@@ -6,7 +6,7 @@
 #include "hud.hpp"
 
 /// Provides default layout functions to conforming views.
-/// Specifically, the View V must allow `declval<V*>()->nav.render(g, pos)`.
+/// Specifically, the View V must allow `v->nav.render(g, pos)`.
 struct DefaultLayout {
 
   /// Render using the default layout
