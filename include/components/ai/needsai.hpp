@@ -5,6 +5,8 @@
 #include "entities/subsystem.hpp"
 #include "components/foodstuff.hpp"
 
+#include <string>
+
 struct Needs : ComponentCRTP<Component::Needs, Needs> {
   int food = 100;
   int max_food = 200;

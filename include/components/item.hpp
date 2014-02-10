@@ -5,6 +5,7 @@
 #include "point.hpp"
 #include <unordered_set>
 #include <cassert>
+#include <string>
 
 /// Properties of an item -- name of item, mass of item, material of item, etc.
 struct ItemProperties {
