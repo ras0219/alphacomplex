@@ -11,12 +11,12 @@ struct MapView : Widget {
   enum Mode {
     DEFAULT,
     ENTCOUNT,
-    //ROOMS,
+    ROOMS,
     MAX_MODE
   };
 
   MapView(int x, int y, City* c)
-    : city(c), buf(x*y, '\0'), mode(DEFAULT), vp(c, x, y) {}
+    : city(c), buf(x*y, '\0'), zbuf(x*y, 0), mode(DEFAULT), vp(c, x, y) {}
 
   // This is just prepare_buffer() followed by blit_buffer(g)
   virtual void render(Graphics& g, render_box const& pos);
@@ -25,7 +25,7 @@ struct MapView : Widget {
   // Copy buf to graphics
   void blit_buffer(Graphics& g, render_box const& pos);
 
-  void putChar(int x, int y, char c);
+  void putChar(int x, int y, char c, unsigned char z);
 
   inline void set_mode(Mode m) { mode = m; }
   inline void next_mode() { mode = (Mode)((mode + 1) % MAX_MODE); }
@@ -35,6 +35,7 @@ struct MapView : Widget {
   // Shared & Read only
   City* city;
   vector<char> buf;
+  vector<unsigned char> zbuf;
   Mode mode;
   CityViewport vp;
 };
@@ -42,11 +43,7 @@ struct MapView : Widget {
 struct MapViewCursor {
   MapViewCursor(MapView* mv) : mv(mv), csr(mv->city) {}
 
-  inline void render(Graphics& g, render_box const& pos) {
-    mv->prepare_buffer();
-    mv->putChar(csr.x, csr.y, 'X');
-    mv->blit_buffer(g, pos);
-  }
+  void render(Graphics& g, render_box const& pos);
 
   inline void right() { csr.offset(1, 0); update_vp(); }
   inline void left() { csr.offset(-1, 0); update_vp(); }

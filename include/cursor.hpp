@@ -1,5 +1,7 @@
 #pragma once
 
+#include "point.hpp"
+
 struct City;
 
 struct CityViewport {
@@ -10,6 +12,8 @@ struct CityViewport {
   bool move(int ntlx, int ntly);
   bool move_relative(int tlxoff, int tlyoff);
   bool move_to_include(int x, int y);
+
+  inline rect as_rect() { return rect{tlx, tly, xsz, ysz}; }
 
   // Externals should not need this
   bool check();

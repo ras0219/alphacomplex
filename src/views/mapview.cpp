@@ -5,6 +5,7 @@
 #include "joblist.hpp"
 #include "components/renderable.hpp"
 #include "components/furniture.hpp"
+#include "components/room.hpp"
 
 //#ifdef GRAPHICS_X11
 //enum : char {
@@ -21,6 +22,16 @@
 //  VBAR = 25
 //};
 //#else
+enum : unsigned char {
+  Z_FLOOR = 64,
+  Z_FLOOR_OVERLAY = 80,
+  Z_DEFAULT = 128,
+  Z_WALLS = 130,
+  Z_FURNITURE = 140,
+  Z_ENTITIES = 150,
+  Z_TOP = 255
+};
+
 enum : char {
   CORNER_SE = '#',
   CORNER_NE = '#',
@@ -49,30 +60,47 @@ void MapView::render(Graphics& g, render_box const& pos) {
 }
 
 void MapView::prepare_buffer() {
-  for (int y = vp.tly; y < vp.ysz; ++y) {
-    for (int x = vp.tlx; x < vp.xsz; ++x) {
+  // Reset zbuffer
+  memset(zbuf.data(), 0, buf.size());
+
+  if (mode == ROOMS) {
+    // Draw all the rooms
+    for (auto room : city->rooms) {
+      rect r = room->r.as_rect();
+      if (r.overlaps(vp.as_rect())) {
+        for (int y = r.y; y < r.y + r.h; ++y) {
+          for (int x = r.x; x < r.x + r.w; ++x) {
+            putChar(x, y, '~', Z_FLOOR_OVERLAY);
+          }
+        }
+      }
+    }
+  }
+
+  for (int y = vp.tly; y < vp.tly + vp.ysz; ++y) {
+    for (int x = vp.tlx; x < vp.tlx + vp.xsz; ++x) {
       if (city->designs(x, y) & 1) {
-        putChar(x, y, '%');
+        putChar(x, y, '%', Z_WALLS);
         continue;
       }
 
-      if (mode == DEFAULT) {
+      if (mode == ENTCOUNT) {
+        if (city->ent(x, y).size() > 0 && city->ent(x, y).size() <= 9) {
+          putChar(x, y, (char)('0' + city->ent(x, y).size()), Z_ENTITIES);
+          continue;
+        }
+      } else {
         auto& s = city->ent(x, y);
         auto it = s.begin();
         auto end = s.end();
         for (; it != end; ++it) {
           if ((*it)->has<Renderable>()) {
-            putChar(x, y, (*it)->assert_get<Renderable>()->render());
+            putChar(x, y, (*it)->assert_get<Renderable>()->render(), Z_ENTITIES);
             break;
           }
         }
 
         if (it != end) {
-          continue;
-        }
-      } else if (mode == ENTCOUNT) {
-        if (city->ent(x, y).size() > 0 && city->ent(x, y).size() <= 9) {
-          putChar(x, y, (char)('0' + city->ent(x, y).size()));
           continue;
         }
       }
@@ -88,19 +116,18 @@ void MapView::prepare_buffer() {
         if (y < city->getYSize() - 1 && !city->tile(x, y + 1).walkable())
           i += 8;
 
-        putChar(x, y, prettywalls[i]);
+        putChar(x, y, prettywalls[i], Z_WALLS);
         continue;
       }
 
       if (auto f = city->furniture(x, y)) {
         if (f->parent->has<Renderable>()) {
           auto r = f->parent->assert_get<Renderable>();
-          putChar(x, y, r->render());
+          putChar(x, y, r->render(), Z_FURNITURE);
           continue;
         }
       }
-
-      putChar(x, y, city->tile(x, y).type);
+      putChar(x, y, city->tile(x, y).type, Z_FLOOR);
     }
   }
 }
@@ -113,9 +140,19 @@ void MapView::blit_buffer(Graphics& g, render_box const& pos) {
   }
 }
 
-void MapView::putChar(int x, int y, char c) {
+void MapView::putChar(int x, int y, char c, unsigned char z) {
   x -= vp.tlx;
   y -= vp.tly;
-  if (x >= 0 && x < vp.xsz && y >= 0 && y < vp.ysz)
-    buf[y*vp.xsz + x] = c;
+  if (x >= 0 && x < vp.xsz && y >= 0 && y < vp.ysz) {
+    if (zbuf[y*vp.xsz + x] < z) {
+      zbuf[y*vp.xsz + x] = z;
+      buf[y*vp.xsz + x] = c;
+    }
+  }
+}
+
+void MapViewCursor::render(Graphics& g, render_box const& pos) {
+  mv->prepare_buffer();
+  mv->putChar(csr.x, csr.y, 'X', Z_TOP);
+  mv->blit_buffer(g, pos);
 }
