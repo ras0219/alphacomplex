@@ -3,6 +3,7 @@
 #include "components/ai/callbackai.hpp"
 #include "utilities/global_set.hpp"
 #include "components/item.hpp"
+#include "components/itemlock.hpp"
 #include "components/foodstuff.hpp"
 #include "components/position.hpp"
 #include "components/ai/pathai.hpp"

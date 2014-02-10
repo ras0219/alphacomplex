@@ -29,6 +29,7 @@
 #include "components/jobprovider.hpp"
 #include "components/ai/needsai.hpp"
 #include "components/item.hpp"
+#include "components/itemlock.hpp"
 
 #include <map>
 

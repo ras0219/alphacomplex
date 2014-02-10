@@ -128,6 +128,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\furniture.hpp" />
     <ClInclude Include="..\include\components\inventory.hpp" />
     <ClInclude Include="..\include\components\item.hpp" />
+    <ClInclude Include="..\include\components\itemlock.hpp" />
     <ClInclude Include="..\include\components\jobprovider.hpp" />
     <ClInclude Include="..\include\components\movable.hpp" />
     <ClInclude Include="..\include\components\position.hpp" />
