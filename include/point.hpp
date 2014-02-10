@@ -17,7 +17,7 @@ struct Point {
 struct rect {
   int x, y, w, h;
 
-  const bool overlaps(rect o) {
+  inline bool overlaps(rect o) {
     return x < (o.x + o.w) && (x + w) > o.x
       && y < (o.y + o.h) && (y + h) > o.y;
   }

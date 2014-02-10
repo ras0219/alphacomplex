@@ -6,11 +6,6 @@
 #include "navhelper.hpp"
 #include "components/itemlock.hpp"
 
-namespace DesignViewE {
-  enum Mode;
-  enum RoomType;
-}
-
 struct DesignView : View {
   DesignView(struct ViewStack* vs, MapView* mv, City* c);
 
@@ -26,7 +21,7 @@ struct DesignView : View {
 
 private:
   // Mode details
-  DesignViewE::Mode mode;
-  DesignViewE::RoomType rtype;
+  unsigned int mode;
+  unsigned int rtype;
   ItemLock ilock;
 };

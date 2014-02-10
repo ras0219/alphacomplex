@@ -7,6 +7,8 @@
 #include "components/furniture.hpp"
 #include "components/room.hpp"
 
+#include <cstring>
+
 //#ifdef GRAPHICS_X11
 //enum : char {
 //  CORNER_SE = 11,

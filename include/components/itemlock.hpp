@@ -7,7 +7,7 @@
 struct Item;
 
 struct unlock_item {
-  inline void operator()(struct Item* i);
+  void operator()(struct Item* i);
 };
 
 /// RAII Wrapper to cleanly manipulate item locks.
