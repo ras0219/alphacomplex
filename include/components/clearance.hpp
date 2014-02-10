@@ -9,14 +9,11 @@ struct clearance {
   Department::Mask dept;
 };
 
-struct Clearance : ComponentCRTP<Component::Clearance, Clearance> {
-  Clearance(struct clearance c) : clear(c) { }
+struct Clearance : ComponentCRTP<Component::Clearance, Clearance>, clearance {
+  Clearance(const clearance& c) : clearance(c) {}
 
-  inline struct clearance& get_clearance() { return clear; }
-  inline Security::Mask& security() { return clear.security; }
-  inline Department::Mask& department() { return clear.dept; }
-
-  struct clearance clear;
+  inline Security::Mask& security() { return clearance::security; }
+  inline Department::Mask& department() { return clearance::dept; }
 };
 
 inline bool operator&(const clearance& l, const clearance& r) {
