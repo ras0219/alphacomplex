@@ -67,8 +67,8 @@ int City::getYSize() const { return ysz; }
 Tile City::tile(int x, int y) const { return tiles.data[xsz*y + x]; }
 Tile& City::tile(int x, int y) { return tiles.data[xsz*y + x]; }
 
-const ents_t& City::ent(int x, int y) const { return ents.data[xsz*y + x]; }
-ents_t& City::ent(int x, int y) { return ents.data[xsz*y + x]; }
+const City::ents_t& City::ent(int x, int y) const { return ents.data[xsz*y + x]; }
+City::ents_t& City::ent(int x, int y) { return ents.data[xsz*y + x]; }
 
 void City::add_ent(int x, int y, Ent* e) {
   ent(x, y).insert(e);

@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-class System;
+struct System;
 
 struct Ent {
   typedef std::unordered_map<int, Component*> map_t;

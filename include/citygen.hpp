@@ -5,7 +5,7 @@
 struct CityProperties
 {
 public:
-  CityProperties(){}
+  CityProperties();
   CityProperties(int iHeight, int iWidth);
   CityProperties(int iHeight, int iWidth, int iSeed);
 

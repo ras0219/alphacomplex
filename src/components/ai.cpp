@@ -37,17 +37,17 @@ void AI::update() {
   if (timer <= 0) timer = script()->update(this);
 }
 
-virtual AIScript::~AIScript() { }
+AIScript::~AIScript() { }
 
 /// Executed when a script should sleep.
 /// Default behavior: none
-virtual void AIScript::suspend(AI*) { }
+void AIScript::suspend(AI*) { }
 /// Executed after a suspend
 /// Default behavior: start()
-virtual AI::timer_t AIScript::resume(AI* ai) { return start(ai); }
+AI::timer_t AIScript::resume(AI* ai) { return start(ai); }
 /// Executed after a resume or start.
 /// Default behavior: complete()
-virtual AI::timer_t AIScript::update(AI* ai) { return complete(ai); }
+AI::timer_t AIScript::update(AI* ai) { return complete(ai); }
 
 /// Called by the script to complete itself.
 AI::timer_t AIScript::complete(AI* ai) {

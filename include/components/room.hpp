@@ -11,7 +11,7 @@ struct Room : ComponentCRTP<Component::Room, Room> {
   virtual void on_add() override;
   virtual void on_remove() override;
 
-  inline bool contains(int tx, int ty) const;
+  bool contains(int tx, int ty) const;
 
   std::vector<struct Furniture*> filter_furniture(struct ItemProperties const& props);
 
