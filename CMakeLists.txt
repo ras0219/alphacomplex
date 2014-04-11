@@ -38,6 +38,7 @@ set(SOURCES
   "src/entities/workroom.cpp"
   "src/entities/filestorage.cpp"
   "src/entities/hydroponics.cpp"
+  "src/entities/subsystem.cpp"
   ## UnitViews
   "src/views/unitviews/assignview.cpp"
   "src/views/unitviews/needsview.cpp"
@@ -55,7 +56,8 @@ set(SOURCES
   "src/views/statustext.cpp"
   "src/views/unitview.cpp"
   "src/views/viewstack.cpp"
-  ## 
+  ##
+  "src/point.cpp"
   "src/city.cpp"
   "src/citygen.cpp"
   "src/clock.cpp"

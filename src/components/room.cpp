@@ -4,6 +4,15 @@
 #include "components/item.hpp"
 #include "entities/entity.hpp"
 
+Room::Room(const Rect& r) : r(r) {}
+
+bool Room::contains(int tx, int ty) const {
+  return (tx >= r.x)
+    && (tx < r.x + r.w)
+    && (ty >= r.y)
+    && (ty < r.y + r.h);
+}
+
 std::vector<Furniture*> Room::filter_furniture(ItemProperties const& props) {
   std::vector<struct Furniture*> ret;
   auto pred = [&props](struct Furniture* f) {

@@ -8,7 +8,6 @@
 #include <algorithm>
 
 #include "defs.hpp"
-#include "graphics.hpp"
 #include "tile.hpp"
 #include "citygen.hpp"
 
@@ -18,22 +17,20 @@ struct Ent;
 
 template<class T>
 struct Overlay {
-  int getXSize() const { return xsz; }
-  int getYSize() const { return ysz; }
+  int getXSize() const;
+  int getYSize() const;
 
-  bool check(int x, int y) const {
-    return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
-  }
+  bool check(int x, int y) const ;
 
-  T& get(int x, int y) { return data[xsz*y + x]; }
-  const T& get(int x, int y) const { return data[xsz*y + x]; }
+  T& get(int x, int y) ;
+  const T& get(int x, int y) const;
 
-  T& operator()(int x, int y) { return get(x,y); }
-  const T& operator()(int x, int y) const { return get(x,y); }
+  T& operator()(int x, int y);
+  const T& operator()(int x, int y) const;
 
-  void resize(int x, int y) { xsz = x; ysz = y; data.resize(x*y); }
+  void resize(int x, int y);
 
-  Overlay(int x, int y) : xsz(x), ysz(y), data(xsz*ysz) {}
+  Overlay(int x, int y);
 
   int xsz;
   int ysz;
@@ -52,21 +49,17 @@ struct City {
 
   vector<struct Room*> rooms;
 
-  inline int getXSize() const { return xsz; }
-  inline int getYSize() const { return ysz; }
+  int getXSize() const;
+  int getYSize() const;
 
-  inline Tile tile(int x, int y) const { return tiles.data[xsz*y + x]; }
-  inline Tile& tile(int x, int y) { return tiles.data[xsz*y + x]; }
+  Tile tile(int x, int y) const;
+  Tile& tile(int x, int y);
 
-  inline const ents_t& ent(int x, int y) const { return ents.data[xsz*y + x]; }
-  inline ents_t& ent(int x, int y) { return ents.data[xsz*y + x]; }
+  const ents_t& ent(int x, int y) const;
+  ents_t& ent(int x, int y);
 
-  inline void add_ent(int x, int y, Ent* e) {
-    ent(x, y).insert(e);
-  }
-  inline void del_ent(int x, int y, Ent* e) {
-    ent(x, y).erase(e);
-  }
+  void add_ent(int x, int y, Ent* e);
+  void del_ent(int x, int y, Ent* e);
 
   /// Insert a room. Fast Amortized O(1).
   /// Precondition: Room has not already been added (not checked).
@@ -95,9 +88,7 @@ struct City {
   vector<struct Room*> find_rooms(int x, int y);
 
   /// Check that x and y are within the current city
-  inline bool check(int x, int y) const {
-    return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
-  }
+  bool check(int x, int y) const;
 
   /// Toggle whether the wall at (x, y) should have a dig job.
   void toggle_dig_wall(int x, int y);
@@ -108,21 +99,11 @@ struct City {
   /// Resize the city. This should not be called after initialization.
   void resize(int x, int y);
 
-  City(int x, int y) : xsz(x), ysz(y), tiles(x, y),
-                       ents(x, y),
-                       designs(x, y),
-                       furniture(x, y) {}
-
+  City(int x, int y);
+  
   /// Constructor: uses the city properties to generate a city
-  City(struct CityProperties const& cityP) :
-      xsz(cityP.width), ysz(cityP.height),
-      tiles(xsz, ysz),
-      ents(xsz, ysz),
-      designs(xsz, ysz),
-      furniture(xsz, ysz)
-  {
-    randomgen(*this, cityP);
-  }
+  City(struct CityProperties const& cityP);
+  
 };
 
 wistream& operator>>(wistream& is, City& city);

@@ -7,6 +7,8 @@
 #include "entities/filestorage.hpp"
 #include "entities/hydroponics.hpp"
 
+
+
 enum RoomTypes
 {
   Regular,
@@ -87,6 +89,18 @@ public:
 #define CITY_GENERATION_DEPTH 2
 #define ROOM_MIN_SEGMENTS 2
 #define ROOM_MAX_SEGMENTS 6
+CityProperties::CityProperties() {}
+CityProperties::CityProperties(int iHeight, int iWidth) : height(iHeight), width(iWidth),
+							  seed((int)time(0)), top(0),
+							  left(0), bottom(height-1),
+							  right(width-1)
+{}
+
+CityProperties::CityProperties(int iHeight, int iWidth) : height(iHeight), width(iWidth),
+							  seed(iSeed), top(0),
+							  left(0), bottom(height-1),
+							  right(width-1)
+{}
 
 struct CityGenerator {
   CityGenerator(City& city, CityProperties const& props) : city(city), props(props) {
