@@ -69,32 +69,36 @@ struct City {
   }
 
   /// Insert a room. Fast Amortized O(1).
-  /// Precondition: Room has not already been added (not checked).
+  /// Precondition: Room has not already been added (asserted).
+  /// Precondition: Room != nullptr (asserted).
   void add_room(struct Room* r);
 
-  /// Delete a room by reference. Fast O(R).
+  /// Delete a room by pointer. Fast O(R).
+  /// Precondition: Room has been added (asserted).
+  /// Precondition: Room != nullptr (asserted).
   void del_room(struct Room* r);
 
   /// Place a piece of furniture. Fast O(1).
   /// Precondition: Location has no furniture.
-  /// Precondition: Furniture has no room assignments.
-  /// Postcondition: Furniture may have room assignments.
   /// Postcondition: Location has furniture f.
   void add_furniture(struct Furniture* f);
 
   /// Remove a piece of furniture. Fast O(1).
   /// Precondition: Location has furniture f.
-  /// Postcondition: Furniture has no room assignments.
   /// Postcondition: Location has no furniture.
   void del_furniture(struct Furniture* f);
 
   /// Find all furniture within a rectangle. Fast O(w*h).
   vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
 
+  /// Convenience overload for find_furniture(x,y,w,h).
+  /// Precondition: Rect r is associated with this city (not checked).
+  vector<struct Furniture*> find_furniture(Rect r);
+
   /// Find all rooms containing a point. Fast O(R).
   vector<struct Room*> find_rooms(int x, int y);
 
-  /// Check that x and y are within the current city
+  /// Check that x and y are within the current city.
   inline bool check(int x, int y) const {
     return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
   }

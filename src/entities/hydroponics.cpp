@@ -65,9 +65,9 @@ struct HydroponicsAI : AIScript {
     if (rand() % 5 > 0)
       return 1000;
 
-    Room* pos = room->assert_get<Room>();
+    Room* r = room->assert_get<Room>();
     // Copy the furniture poiners into a vector
-    std::vector<Furniture*> tables = pos->filter_furniture(hydroponics_table_properties);
+    std::vector<Furniture*> tables = r->find_furniture(hydroponics_table_properties);
     // Return if there are no hydroponics tables
     if (tables.size() == 0) {
       return 1000;

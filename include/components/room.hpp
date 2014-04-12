@@ -2,11 +2,9 @@
 
 #include "components/component.hpp"
 #include "point.hpp"
-#include <unordered_set>
+#include <vector>
 
 struct Room : ComponentCRTP<Component::Room, Room> {
-  typedef std::unordered_set<struct Furniture*> set_t;
-
   Room(const Rect& r) : r(r) { }
 
   virtual void on_add() override;
@@ -19,8 +17,8 @@ struct Room : ComponentCRTP<Component::Room, Room> {
       && (ty < r.y + r.h);
   }
 
-  std::vector<struct Furniture*> filter_furniture(struct ItemProperties const& props);
+  std::vector<struct Furniture*> find_furniture(struct ItemProperties const& props);
+  std::vector<struct Furniture*> find_furniture();
 
   Rect r;
-  set_t furniture;
 };

@@ -121,45 +121,6 @@ wistream& operator>>(wistream& is, City& c) {
   return is;
 }
 
-// struct DigAI : AIState {
-//   DigAI(City* c, int dx, int dy, int wx, int wy)
-//     : city(c), digx(dx), digy(dy), walkx(wx), walky(wy) { }
-
-//   virtual int start(Citizen* c) {
-//     return c->push_aistate(c->path_activity_script(walkx, walky, 100));
-//   }
-//   virtual int update(Citizen* c) {
-//     assert(false); return -1;
-//   }
-//   virtual int resume(Citizen* c, AIState*) {
-//     if (city->designs(digx,digy) & 1 && city->tile(digx,digy).type == Tile::wall) {
-//       city->remove_wall(digx,digy);
-//     }
-//     return complete(c);
-//   }
-
-//   City* city;
-//   int digx, digy, walkx, walky;
-// };
-
-// struct DigJob : Job {
-//   DigJob(City* c, int dx_, int dy_, int wx_, int wy_)
-//     : city(c), dx(dx_), dy(dy_), wx(wx_), wy(wy_) { }
-
-//   virtual int description(char* buf, size_t n) const {
-//     return snprintf(buf, n, "Digging");
-//   }
-//   virtual Department::Mask department() { return Department::FACILITIES; }
-//   virtual Security::Mask security() { return Security::ALL; }
-
-//   virtual AIState* get_script(Citizen* e) const {
-//     return new DigAI(city, dx, dy, wx, wy);
-//   }
-
-//   City* city;
-//   int dx, dy, wx, wy;
-// };
-
 void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   clearance c = { Security::ALL, Department::ALL };
   auto wall_cb = [=](AI*) {
@@ -180,43 +141,27 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
 }
 
 void City::add_room(Room* r) {
-  rooms.push_back(r);
-
-  auto v = find_furniture(r->r.x, r->r.y, r->r.w, r->r.h);
-  r->furniture = Room::set_t(v.begin(), v.end());
-  for (auto f : r->furniture)
-    f->rooms.insert(r);
+    assert(r != nullptr);
+    assert(std::find(rooms.begin(), rooms.end(), r) == rooms.end());
+    rooms.push_back(r);
 }
 
 void City::del_room(Room* r) {
-  auto it = std::find(rooms.begin(), rooms.end(), r);
-  assert(it != rooms.end());
-  rooms.erase(it);
-
-  for (auto f : r->furniture)
-    f->rooms.erase(r);
-  r->furniture.clear();
+    assert(r != nullptr);
+    auto it = std::find(rooms.begin(), rooms.end(), r);
+    assert(it != rooms.end());
+    rooms.erase(it);
 }
  
 
 void City::add_furniture(Furniture* f) {
   assert(furniture(f->x(), f->y()) == nullptr);
   furniture(f->x(), f->y()) = f;
-
-  std::vector<struct Room*> rs = find_rooms(f->x(), f->y());
-  f->rooms = Furniture::set_t(rs.begin(), rs.end());
-
-  for (auto r : f->rooms)
-    r->furniture.insert(f);
 }
 
 void City::del_furniture(Furniture* f) {
   assert(furniture(f->x(), f->y()) == f);
   furniture(f->x(), f->y()) = nullptr;
-
-  for (auto r : f->rooms)
-    r->furniture.erase(f);
-  f->rooms.clear();
 }
 
 std::vector<Room*> City::find_rooms(int x, int y) {
@@ -236,6 +181,9 @@ std::vector<Furniture*> City::find_furniture(int x, int y, int w, int h) {
     }
   }
   return ret;
+}
+std::vector<Furniture*> City::find_furniture(Rect r) {
+    return find_furniture(r.x, r.y, r.w, r.h);
 }
 
 void City::toggle_dig_wall(int x, int y) {

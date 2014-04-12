@@ -426,7 +426,7 @@ struct CityGenerator {
         }
       }
 
-      city.add_room(make_filestorage({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 })->assert_get<Room>());
+      make_filestorage({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 });
     }
   }
 
@@ -522,7 +522,7 @@ struct CityGenerator {
       }
     }
 
-    city.add_room(make_hydroponics_room({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 })->assert_get<Room>());
+    make_hydroponics_room({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 });
   }
 
   void build_infirmary(const RoomProperties& rp)

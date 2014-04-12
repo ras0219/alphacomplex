@@ -62,9 +62,9 @@ struct FilestorageAI : AIScript {
     if (rand() % 5 > 0)
       return 1;
 
-    Room* pos = room->assert_get<Room>();
+    Room* r = room->assert_get<Room>();
     // Copy the furniture poiners into a vector
-    std::vector<Furniture*> cabinets = pos->filter_furniture(filingcabinet_properties);
+    std::vector<Furniture*> cabinets = r->find_furniture(filingcabinet_properties);
     // Are there enough cabinets to shuffle?
     if (cabinets.size() < 2) {
       // Not enough filing cabinets to reshuffle

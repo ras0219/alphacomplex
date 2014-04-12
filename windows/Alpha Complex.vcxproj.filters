@@ -65,6 +65,9 @@
     <None Include="..\README.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Doxyfile">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\city.hpp">
@@ -137,9 +140,6 @@
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\components\renderable.hpp">
-      <Filter>Header Files\components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\components\room.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\components\security.hpp">
@@ -298,6 +298,9 @@
     <ClInclude Include="..\include\components\itemlock.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\components\room.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -319,9 +322,6 @@
       <Filter>Source Files\components</Filter>
     </ClCompile>
     <ClCompile Include="..\src\components\pathfind.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\components\room.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
     <ClCompile Include="..\src\components\skills.cpp">
@@ -425,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="..\src\entities\hydroponics.cpp">
       <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\components\room.cpp">
+      <Filter>Source Files\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -50,6 +50,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -101,6 +102,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
   <ItemGroup>
     <None Include="..\cmake\Modules\FindSDL2.cmake" />
     <None Include="..\cmake\Modules\FindSDL2_ttf.cmake" />
+    <None Include="..\Doxyfile" />
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
