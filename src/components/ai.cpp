@@ -3,7 +3,7 @@
 
 bool AI::add_task(AI::script_ptr ais, AI::priority_t prior) {
     if (prior <= current_priority())
-        return false;
+    return false;
     current_script()->suspend(this);
     {
         task_stack t;
@@ -11,7 +11,7 @@ bool AI::add_task(AI::script_ptr ais, AI::priority_t prior) {
         tasks.emplace_back(prior, std::move(t));
     }
     timer = current_script()->start(this);
-    return true;
+  return true;
 }
 
 // These are just some inline method calls, no worries
@@ -26,6 +26,12 @@ AI::timer_t AI::pop_script() {
         return current_script()->resume(this);
     }
     return current_script()->update(this);
+}
+
+void AI::update() {
+    --timer;
+
+    if (timer <= 0) timer = current_script()->update(this);
 }
 
 AI::timer_t AI::fail_script() {
@@ -48,6 +54,16 @@ AI::timer_t AI::fail_script() {
 AI::timer_t AI::push_script(AI::script_ptr ais) {
     current_task().emplace_back(std::move(ais));
     return current_script()->start(this);
+}
+
+void AIScript::suspend(AI*) { }
+
+AI::timer_t AIScript::resume(AI* ai) { return start(ai); }
+
+AI::timer_t AIScript::update(AI* ai) { return ai->pop_script(); }
+
+void AISystem::update_item(Ent*, AI* ai) {
+    ai->update();
 }
 
 AISystem SubSystem<AISystem, AI>::g_singleton;

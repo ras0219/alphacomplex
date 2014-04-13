@@ -5,13 +5,13 @@
 typedef std::pair<int, int> point;
 
 struct Point {
-  inline point as_point() const { return{ x, y }; }
+  point as_point() const;
 
   struct City* city;
   int x, y;
 
-  bool operator==(const Point& o) { return o.city == city && o.x == x && o.y == y; }
-  bool operator!=(const Point& o) { return !(*this == o); }
+  bool operator==(const Point& o);
+  bool operator!=(const Point& o);
 };
 
 inline bool operator==(const point& p1, const point& p2) {
@@ -24,14 +24,11 @@ inline bool operator!=(const point& p1, const point& p2) {
 struct rect {
   int x, y, w, h;
 
-  inline bool overlaps(rect o) {
-    return x < (o.x + o.w) && (x + w) > o.x
-      && y < (o.y + o.h) && (y + h) > o.y;
-  }
+  bool overlaps(rect o);
 };
 
 struct Rect {
-  inline rect as_rect() const { return{ x, y, w, h }; }
+  rect as_rect() const;
 
   struct City* city;
   int x, y, w, h;

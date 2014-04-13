@@ -212,6 +212,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\entities\filestorage.cpp" />
     <ClCompile Include="..\src\entities\foods.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />
+    <ClCompile Include="..\src\entities\subsystem.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
     <ClCompile Include="..\src\hydroponics\hydroponicsjobs.cpp" />
     <ClCompile Include="..\src\hydroponics\hydroponics.cpp" />
@@ -220,6 +221,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\point.cpp" />
     <ClCompile Include="..\src\views\announceview.cpp" />
     <ClCompile Include="..\src\views\baseview.cpp" />
     <ClCompile Include="..\src\views\designview.cpp" />

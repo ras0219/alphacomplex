@@ -37,6 +37,83 @@ point City::random_point() {
     std::abort();
 }
 
+template<class T>
+Overlay<T>::Overlay(int x, int y) : xsz(x), ysz(y), data(xsz*ysz) {}
+
+template<class T>
+int Overlay<T>::getXSize() const
+{
+  return xsz;
+}
+
+template<class T>
+int Overlay<T>::getYSize() const
+{
+  return ysz;
+}
+
+template <class T>
+bool Overlay<T>::check(int x, int y) const {
+  return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
+}
+
+template <class T>
+T& Overlay<T>::get(int x, int y) { return data[xsz*y + x]; }
+
+template <class T>
+const T& Overlay<T>::get(int x, int y) const
+{
+  return data[xsz*y + x];
+}
+
+template <class T>
+T& Overlay<T>::operator()(int x, int y)
+{
+  return get(x,y);
+}
+template <class T>
+const T& Overlay<T>::operator()(int x, int y) const
+{
+  return get(x,y);
+}
+
+template <class T> void Overlay<T>::resize(int x, int y) { xsz = x; ysz = y; data.resize(x*y); }
+
+int City::getXSize() const { return xsz; }
+int City::getYSize() const { return ysz; }
+
+Tile City::tile(int x, int y) const { return tiles.data[xsz*y + x]; }
+Tile& City::tile(int x, int y) { return tiles.data[xsz*y + x]; }
+
+const City::ents_t& City::ent(int x, int y) const { return ents.data[xsz*y + x]; }
+City::ents_t& City::ent(int x, int y) { return ents.data[xsz*y + x]; }
+
+void City::add_ent(int x, int y, Ent* e) {
+  ent(x, y).insert(e);
+}
+void City::del_ent(int x, int y, Ent* e) {
+  ent(x, y).erase(e);
+}
+
+bool City::check(int x, int y) const {
+  return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
+}
+
+City::City(int x, int y) : xsz(x), ysz(y),
+			   tiles(x,y),
+			   ents(x,y),
+			   designs(x,y),
+			   furniture(x,y){}
+City::City(struct CityProperties const& cityP) :
+  xsz(cityP.width), ysz(cityP.height),
+  tiles(xsz, ysz),
+  ents(xsz, ysz),
+  designs(xsz, ysz),
+  furniture(xsz, ysz)
+{
+  randomgen(*this, cityP);
+}
+
 void City::resize(int x, int y) {
   xsz = x;
   ysz = y;

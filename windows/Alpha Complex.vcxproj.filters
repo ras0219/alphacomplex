@@ -453,5 +453,11 @@
     <ClCompile Include="..\src\hydroponics\hydroponicsjobs.cpp">
       <Filter>Source Files\hydroponics</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\entities\subsystem.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\point.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

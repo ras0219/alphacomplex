@@ -10,8 +10,6 @@
 
 #include <cstdio>
 
-// const char* CleaningRoom::RAWNAME = "cleaningroom";
-
 Ent* make_garbage(Point pos) {
   Ent* e = new Ent;
   e->add(new Position(pos));

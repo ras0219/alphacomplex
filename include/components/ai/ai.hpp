@@ -49,22 +49,18 @@ struct AI : ComponentCRTP<Component::AI, AI> {
 
 private:
     /// Remaining number of ticks before triggering update()
-    timer_t timer;
+  timer_t timer;
     /// List of current tasks
     ///@invariant Strictly increasing priority
     task_queue tasks;
 };
 
 struct AISystem : SubSystem<AISystem, AI> {
-  inline void update_item(Ent*, AI* ai) {
-    ai->update();
-  }
+  void update_item(Ent*, AI* ai);
 };
 
 /// Interface to be implemented by AI script coroutines
 struct AIScript {
-  virtual ~AIScript() { }
-
   /// Yields a description of the current script for UI use
   ///@return Brief description
   virtual const std::string& description() const = 0;
@@ -75,17 +71,17 @@ struct AIScript {
 
   /// Executed when the current task is interrupted.
   /// Default behavior: Nothing
-  virtual void suspend(AI*) { }
+  virtual void suspend(AI*);
 
   /// Executed when the current task is resumed.
   /// Default behavior: start()
   ///@return Amount of time to wait before calling update()
-  virtual AI::timer_t resume(AI* ai) { return start(ai); }
+  virtual AI::timer_t resume(AI* ai);
 
   /// Executed after a resume, a start, or a child task completed.
   ///@pre start() or resume() was called before this
   ///@return Amount of time to wait before calling update() again
-  virtual AI::timer_t update(AI* ai) { return ai->pop_script(); }
+  virtual AI::timer_t update(AI* ai);
 
   /// Executed when a child task fails.
   /// Default behavior: propagate failure
@@ -95,9 +91,3 @@ struct AIScript {
   virtual AI::timer_t failure(AI* ai) { return ai->fail_script(); }
 };
 
-inline void AI::update() {
-  --timer;
-
-  if (timer <= 0)
-      timer = current_script()->update(this);
-}
