@@ -38,4 +38,9 @@ struct SubSystem : System {
   int tickcount;
   int tickrate;
   map_t nodes;
+
+  static Derived& singleton() { return g_singleton; }
+
+private:
+  static Derived g_singleton;
 };

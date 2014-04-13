@@ -2,11 +2,11 @@
 #include "entities/garbage.hpp"
 #include "windows.hpp"
 #include "entities/citizen.hpp"
-#include "components/ai/deleteai.hpp"
 #include "components/renderable.hpp"
 #include "components/ai/sequenceai.hpp"
 #include "components/ai/pathai.hpp"
 #include "components/ai/activityai.hpp"
+#include "components/ai/callbackai.hpp"
 
 #include <cstdio>
 
@@ -32,7 +32,7 @@ std::shared_ptr<Job> make_garbage_job(Ent* e) {
   SequenceAI::ptr ais = std::make_shared<SequenceAI>();
   ais->add_task(std::make_shared<PathAI>(point{ pos->x(), pos->y() }));
   ais->add_task(std::make_shared<ActivityAI>(100));
-  ais->add_task(make_deleteai(e));
+  ais->add_task(make_callbackai([=](AI*){ delete e; }));
 
   return make_shared<Job>("Clean Garbage", c, std::move(ais));
 }

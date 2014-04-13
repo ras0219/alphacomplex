@@ -46,11 +46,12 @@
       <PreprocessorDefinitions>GRAPHICS_SDL;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -113,7 +114,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\ai\ai.hpp" />
     <ClInclude Include="..\include\components\ai\aidsl.hpp" />
     <ClInclude Include="..\include\components\ai\callbackai.hpp" />
-    <ClInclude Include="..\include\components\ai\deleteai.hpp" />
     <ClInclude Include="..\include\components\ai\ifai.hpp" />
     <ClInclude Include="..\include\components\ai\job.hpp" />
     <ClInclude Include="..\include\components\ai\lockai.hpp" />

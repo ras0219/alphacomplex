@@ -23,5 +23,3 @@ struct NeedsSystem : SubSystem<NeedsSystem, Needs, AI> {
 
   void update_item(Ent* e, Needs* nai, AI* ai);
 };
-
-extern NeedsSystem needssystem;

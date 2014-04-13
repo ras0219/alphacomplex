@@ -3,13 +3,19 @@
 #include "ai.hpp"
 
 struct ActivityAI : AIScript {
-  ActivityAI(int d) : delay(d) { }
+  ActivityAI(AI::timer_t i, std::string d = "Unknown Activity") : delay(i), desc(d) { }
 
-  virtual int start(AI*) {
+  virtual AI::timer_t start(AI*) {
     return delay;
   }
 
-  int delay;
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
+private:
+  AI::timer_t delay;
+  std::string desc;
 };
 
 inline std::shared_ptr<ActivityAI> make_activityai(int d) {

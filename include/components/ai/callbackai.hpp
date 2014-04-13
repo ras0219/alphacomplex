@@ -4,14 +4,20 @@
 
 template<class F>
 struct CallbackAI : AIScript {
-  CallbackAI(const F& g) : f(g) { }
+  CallbackAI(const F& g, std::string d = "") : f(g), desc(d) { }
 
-  virtual int start(AI* ai) {
+  virtual AI::timer_t start(AI* ai) {
     f(ai);
     return complete(ai);
   }
 
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
+private:
   F f;
+  std::string desc;
 };
 
 template<class F>

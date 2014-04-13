@@ -20,6 +20,11 @@ struct SeekFoodAI : AIScript {
     return start(ai);
   }
 
+  static std::string desc;
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
   int findfood(AI* ai) {
     auto it = global_set<Item>::begin();
     while (it != global_set<Item>::end()) {
@@ -70,13 +75,16 @@ struct SeekFoodAI : AIScript {
   ItemLock food;
 };
 
+
+std::string SeekFoodAI::desc = "Seeking food";
+
 AI::script_ptr make_seek_food_script() {
   return make_shared<SeekFoodAI>();
 }
 
 void NeedsSystem::update_item(Ent*, Needs* nai, AI* ai) {
-  if (nai->food <= nai->max_food / 5 && ai->priority() < 5) {
-    ai->interrupt(make_seek_food_script(), 5);
+  if (nai->food <= nai->max_food / 5 && ai->current_priority() < 5) {
+    ai->add_task(make_seek_food_script(), 5);
     return;
   }
 
@@ -84,4 +92,4 @@ void NeedsSystem::update_item(Ent*, Needs* nai, AI* ai) {
     --nai->food;
 }
 
-NeedsSystem needssystem;
+NeedsSystem SubSystem<NeedsSystem, Needs, AI>::g_singleton;

@@ -8,7 +8,7 @@
 #include <cassert>
 
 struct PathAI : AIScript {
-  PathAI(point d, int rate = 5) : walkrate(rate), dest(d) { }
+  PathAI(point d, AI::timer_t rate = 5) : walkrate(rate), dest(d), desc("Walking") { }
 
   inline virtual int start(AI* ai) {
     Ent* c = ai->parent;
@@ -46,10 +46,16 @@ struct PathAI : AIScript {
     return walkrate;
   }
 
-  int walkrate;
-  point dest;
-  vector<point> path;
-  vector<point>::reverse_iterator pathp;
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
+private:
+    AI::timer_t walkrate;
+    point dest;
+    vector<point> path;
+    vector<point>::reverse_iterator pathp;
+    std::string desc;
 };
 
 inline std::shared_ptr<PathAI> make_pathai(point p, int rate = 5) {

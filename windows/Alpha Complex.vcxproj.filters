@@ -208,9 +208,6 @@
     <ClInclude Include="..\include\components\ai\callbackai.hpp">
       <Filter>Header Files\components\ai</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\components\ai\deleteai.hpp">
-      <Filter>Header Files\components\ai</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\components\ai\ifai.hpp">
       <Filter>Header Files\components\ai</Filter>
     </ClInclude>

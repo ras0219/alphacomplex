@@ -85,7 +85,16 @@ struct HydroponicsAI : AIScript {
 
     return 1000;
   }
+
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
+private:
+    static std::string desc;
 };
+
+std::string HydroponicsAI::desc = "Harvesting";
 
 Ent* make_hydroponics_room(const Rect& r) {
   Ent* e = new Ent;
@@ -95,7 +104,7 @@ Ent* make_hydroponics_room(const Rect& r) {
   e->emplace<AI>(std::make_shared<HydroponicsAI>());
   e->emplace<JobProvider>();
 
-  e->add(&aisystem);
+  e->add(&AISystem::singleton());
   e->add(&jpsystem);
   return e;
 }

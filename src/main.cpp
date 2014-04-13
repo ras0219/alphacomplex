@@ -45,7 +45,7 @@ bool paused = false;
 
 Graphics *gfx;
 
-vector<System*> systems = { &aisystem, &smsystem, &jpsystem, &needssystem };
+vector<System*> systems = { &AISystem::singleton(), &smsystem, &jpsystem, &NeedsSystem::singleton() };
 
 int main(int, char **) {
   try {

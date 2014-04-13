@@ -43,7 +43,16 @@ struct MakeWorkScript : AIScript {
 
     return 100;
   }
+
+  virtual const std::string& description() const override {
+      return desc;
+  }
+
+private:
+    static std::string desc;
 };
+
+std::string MakeWorkScript::desc = "Making work";
 
 Ent* make_workroom(City& c, int x, int y, int w, int h) {
   Ent* r = new Ent;
@@ -54,7 +63,7 @@ Ent* make_workroom(City& c, int x, int y, int w, int h) {
   r->add(new AI(make_shared<MakeWorkScript>()));
   r->add(new JobProvider);
 
-  r->add(&aisystem);
+  r->add(&AISystem::singleton());
   r->add(&jpsystem);
   return r;
 }

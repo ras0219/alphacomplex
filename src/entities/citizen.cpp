@@ -40,6 +40,9 @@ struct IdleAI : AIScript {
   virtual int update(AI* c) {
     return request_job(c);
   }
+  virtual const std::string& description() const override {
+      return desc;
+  }
 
   int request_job(AI* ai) {
     if (job) {
@@ -59,7 +62,9 @@ struct IdleAI : AIScript {
   }
 
   Job* job;
+  static std::string desc;
 };
+std::string IdleAI::desc = "Idling";
 
 ItemProperties citizen_properties = {
   "citizen",
@@ -77,8 +82,8 @@ Ent* new_citizen(Point pos, Security::Mask sec) {
   e->emplace<Needs>();
   e->emplace<Item>(citizen_properties);
 
-  e->add(&aisystem);
+  e->add(&AISystem::singleton());
   e->add(&smsystem);
-  e->add(&needssystem);
+  e->add(&NeedsSystem::singleton());
   return e;
 }

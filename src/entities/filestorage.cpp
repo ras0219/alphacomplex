@@ -43,52 +43,61 @@ std::shared_ptr<Job> make_filing_job(int x1, int y1, int x2, int y2, Ent*) {
 }
 
 struct FilestorageAI : AIScript {
-  virtual int start(AI*) {
-    return 1;
-  }
-  virtual int update(AI* ai) {
-    Ent* room = ai->parent;
-    JobProvider* jobprov = room->assert_get<JobProvider>();
+    virtual AI::timer_t start(AI*) override {
+        return 1;
+    }
+    virtual AI::timer_t update(AI* ai) override {
+        Ent* room = ai->parent;
+        JobProvider* jobprov = room->assert_get<JobProvider>();
 
-    for (uint x = 0; x < jobprov->provided_jobs.size(); ++x) {
-      if (jobprov->provided_jobs[x]->completed())
-        jobprov->provided_jobs.erase(jobprov->provided_jobs.begin() + x--);
+        for (uint x = 0; x < jobprov->provided_jobs.size(); ++x) {
+            if (jobprov->provided_jobs[x]->completed())
+                jobprov->provided_jobs.erase(jobprov->provided_jobs.begin() + x--);
+        }
+
+        if (jobprov->provided_jobs.size() > 0)
+            // Do not create more jobs if we aren't done with the last reshuffling
+            return 1000;
+
+        if (rand() % 5 > 0)
+            return 1;
+
+        Room* r = room->assert_get<Room>();
+        // Copy the furniture poiners into a vector
+        std::vector<Furniture*> cabinets = r->find_furniture(filingcabinet_properties);
+        // Are there enough cabinets to shuffle?
+        if (cabinets.size() < 2) {
+            // Not enough filing cabinets to reshuffle
+            return 1000;
+        }
+        // Shuffle the vector
+        std::random_shuffle(cabinets.begin(), cabinets.end());
+        // How many jobs will we perform? Half the cabinets + 1 sounds good.
+        size_t num_to_select = cabinets.size() / 2 + 1;
+
+        // Add the jobs
+        for (size_t n = 0; n < num_to_select - 1; ++n) {
+            auto f1 = cabinets[n];
+            auto f2 = cabinets[n + 1];
+            jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));
+        }
+        // Generate the last job
+        auto f1 = cabinets[num_to_select - 1];
+        auto f2 = cabinets[0];
+        jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));
+
+        return 1;
     }
 
-    if (jobprov->provided_jobs.size() > 0)
-      // Do not create more jobs if we aren't done with the last reshuffling
-      return 1000;
-
-    if (rand() % 5 > 0)
-      return 1;
-
-    Room* r = room->assert_get<Room>();
-    // Copy the furniture poiners into a vector
-    std::vector<Furniture*> cabinets = r->find_furniture(filingcabinet_properties);
-    // Are there enough cabinets to shuffle?
-    if (cabinets.size() < 2) {
-      // Not enough filing cabinets to reshuffle
-      return 1000;
+    virtual const std::string& description() const override {
+        return desc;
     }
-    // Shuffle the vector
-    std::random_shuffle(cabinets.begin(), cabinets.end());
-    // How many jobs will we perform? Half the cabinets + 1 sounds good.
-    size_t num_to_select = cabinets.size() / 2 + 1;
 
-    // Add the jobs
-    for (size_t n = 0; n < num_to_select - 1; ++n) {
-      auto f1 = cabinets[n];
-      auto f2 = cabinets[n + 1];
-      jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));
-    }
-    // Generate the last job
-    auto f1 = cabinets[num_to_select - 1];
-    auto f2 = cabinets[0];
-    jobprov->to_provide_jobs.emplace_back(make_filing_job(f1->x(), f2->y(), f2->x(), f2->y(), room));
-
-    return 1;
-  }
+private:
+    static std::string desc;
 };
+
+std::string FilestorageAI::desc = "Storing files";
 
 Ent* make_filestorage(const Rect& r) {
   Ent* e = new Ent;
@@ -96,7 +105,7 @@ Ent* make_filestorage(const Rect& r) {
   e->emplace<AI>(std::make_shared<FilestorageAI>());
   e->emplace<JobProvider>();
 
-  e->add(&aisystem);
+  e->add(&AISystem::singleton());
   e->add(&jpsystem);
   return e;
 }
