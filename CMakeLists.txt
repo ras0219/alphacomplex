@@ -9,12 +9,16 @@ set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 
 include_directories(include)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -std=c++11")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASESTATIC "-O4 -DNDEBUG -static-libstdc++ -static-libgcc")
+if (!WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -std=c++11")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O4 -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
+  set(CMAKE_CXX_FLAGS_RELEASESTATIC "-O4 -DNDEBUG -static-libstdc++ -static-libgcc")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /MP")
+endif()
 
 set(SOURCES
   ## Components
@@ -37,8 +41,12 @@ set(SOURCES
   "src/entities/garbage.cpp"
   "src/entities/workroom.cpp"
   "src/entities/filestorage.cpp"
-  "src/entities/hydroponics.cpp"
   "src/entities/subsystem.cpp"
+  ## Hydroponics
+  "src/hydroponics/hydroponics.cpp"
+  "src/hydroponics/hydroponicsai.cpp"
+  "src/hydroponics/hydroponicsjobs.cpp"
+  "src/hydroponics/hydroponics_table.cpp"
   ## UnitViews
   "src/views/unitviews/assignview.cpp"
   "src/views/unitviews/needsview.cpp"
