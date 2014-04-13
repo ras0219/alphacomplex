@@ -14,6 +14,13 @@ struct Point {
   bool operator!=(const Point& o) { return !(*this == o); }
 };
 
+inline bool operator==(const point& p1, const point& p2) {
+    return p1.first == p2.first && p1.second == p2.second;
+}
+inline bool operator!=(const point& p1, const point& p2) {
+    return !(p1 == p2);
+}
+
 struct rect {
   int x, y, w, h;
 
