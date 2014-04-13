@@ -128,11 +128,11 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   };
   auto dig_cb = [=](AI*) { city->remove_wall(digx, digy); };
 
-  SequenceAI::ptr s1 = make_shared<SequenceAI>();
+  auto s1 = make_shared<SequenceAI>();
   s1->add_task(make_shared<ActivityAI>(100));
   s1->add_task(new_ifscript(wall_cb, make_callbackai(dig_cb)));
 
-  SequenceAI::ptr s2 = make_shared<SequenceAI>();
+  auto s2 = make_shared<SequenceAI>();
   s2->add_task(make_shared<PathAI>(point(x1, y1)));
   s2->add_task(new_ifscript(wall_cb, s1));
 

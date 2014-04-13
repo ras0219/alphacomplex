@@ -271,9 +271,6 @@
     <ClInclude Include="..\sdl\cow_resource.hpp">
       <Filter>SDL</Filter>
     </ClInclude>
-    <ClInclude Include="..\sdl\Renderer.hpp">
-      <Filter>SDL</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\entities\hydroponics.hpp">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
@@ -297,6 +294,9 @@
     </ClInclude>
     <ClInclude Include="..\include\components\room.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl\Renderer.hpp">
+      <Filter>SDL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +424,9 @@
       <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="..\src\components\room.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\components\aidsl.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
   </ItemGroup>

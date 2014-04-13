@@ -29,7 +29,7 @@ std::shared_ptr<Job> make_garbage_job(Ent* e) {
     Department::FACILITIES
   };
 
-  SequenceAI::ptr ais = std::make_shared<SequenceAI>();
+  auto ais = std::make_shared<SequenceAI>();
   ais->add_task(std::make_shared<PathAI>(point{ pos->x(), pos->y() }));
   ais->add_task(std::make_shared<ActivityAI>(100));
   ais->add_task(make_callbackai([=](AI*){ delete e; }));
