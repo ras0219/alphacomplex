@@ -1,8 +1,6 @@
 #pragma once
 
+#include "point.hpp"
 #include "ai.hpp"
-#include "pathai.hpp"
-#include "activityai.hpp"
-#include "callbackai.hpp"
-#include "ifai.hpp"
 
+AI::script_ptr make_do_at(point destination, int duration, std::string description, int walkrate = 5);
