@@ -17,18 +17,12 @@ extern int influence;
 std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent* p);
 
 struct MakeWorkScript : AIScript {
-  virtual int start(AI* ai) {
-    (void)ai;
+  virtual int start(AI*) {
     return 100;
   }
   virtual int update(AI* ai) {
     Ent* room = ai->parent;
     JobProvider* jobprov = room->assert_get<JobProvider>();
-
-    for (uint x = 0; x < jobprov->provided_jobs.size(); ++x) {
-      if (jobprov->provided_jobs[x]->completed())
-        jobprov->provided_jobs.erase(jobprov->provided_jobs.begin() + x--);
-    }
 
     if (rand() % 20 > 0)
       return 100;
@@ -64,7 +58,7 @@ Ent* make_workroom(City& c, int x, int y, int w, int h) {
   r->add(new JobProvider);
 
   r->add(&AISystem::singleton());
-  r->add(&jpsystem);
+  r->add(&JobProviderSystem::singleton());
   return r;
 }
 

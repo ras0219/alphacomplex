@@ -6,21 +6,18 @@
 
 #include <memory>
 #include <vector>
-using std::vector;
-using std::shared_ptr;
 
 struct JobProvider : ComponentCRTP<Component::JobProvider, JobProvider> {
-  ~JobProvider();
+    using joblist_t = std::vector<std::shared_ptr<Job>>;
+    ~JobProvider();
 
-  // Public
-  vector<shared_ptr<Job>> to_provide_jobs;
+    // Public
+    joblist_t to_provide_jobs;
 
-  // Private
-  vector<shared_ptr<Job>> provided_jobs;
+    // Private
+    joblist_t provided_jobs;
 };
 
 struct JobProviderSystem : SubSystem<JobProviderSystem, JobProvider> {
   void update_item(Ent*, JobProvider*);
 };
-
-extern JobProviderSystem jpsystem;

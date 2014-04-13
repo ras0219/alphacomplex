@@ -105,6 +105,6 @@ Ent* make_hydroponics_room(const Rect& r) {
   e->emplace<JobProvider>();
 
   e->add(&AISystem::singleton());
-  e->add(&jpsystem);
+  e->add(&JobProviderSystem::singleton());
   return e;
 }
