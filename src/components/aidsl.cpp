@@ -37,7 +37,7 @@ public:
                 state = State::activity;
                 return duration;
             } else if (state == State::activity) {
-                return complete(ai);
+                return ai->pop_script();
             } else {
                 assert(false);
                 return 0;

@@ -8,7 +8,7 @@ struct CallbackAI : AIScript {
 
   virtual AI::timer_t start(AI* ai) {
     f(ai);
-    return complete(ai);
+    return ai->pop_script();
   }
 
   virtual const std::string& description() const override {

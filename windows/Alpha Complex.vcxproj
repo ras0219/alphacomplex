@@ -147,11 +147,14 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\entities\filestorage.hpp" />
     <ClInclude Include="..\include\entities\foods.hpp" />
     <ClInclude Include="..\include\entities\garbage.hpp" />
-    <ClInclude Include="..\include\entities\hydroponics.hpp" />
     <ClInclude Include="..\include\entities\subsystem.hpp" />
     <ClInclude Include="..\include\entities\system.hpp" />
     <ClInclude Include="..\include\entities\workroom.hpp" />
     <ClInclude Include="..\include\graphics.hpp" />
+    <ClInclude Include="..\include\hydroponics\hydroponicsjobs.hpp" />
+    <ClInclude Include="..\include\hydroponics\hydroponics.hpp" />
+    <ClInclude Include="..\include\hydroponics\hydroponicsai.hpp" />
+    <ClInclude Include="..\include\hydroponics\hydroponics_table.hpp" />
     <ClInclude Include="..\include\joblist.hpp" />
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
@@ -159,6 +162,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\point.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
     <ClInclude Include="..\include\utilities\apply_tuple.hpp" />
+    <ClInclude Include="..\include\utilities\assert_cast.hpp" />
     <ClInclude Include="..\include\utilities\global_set.hpp" />
     <ClInclude Include="..\include\utilities\thunk_func.hpp" />
     <ClInclude Include="..\include\views\announceview.hpp" />
@@ -208,8 +212,11 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\entities\filestorage.cpp" />
     <ClCompile Include="..\src\entities\foods.cpp" />
     <ClCompile Include="..\src\entities\garbage.cpp" />
-    <ClCompile Include="..\src\entities\hydroponics.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
+    <ClCompile Include="..\src\hydroponics\hydroponicsjobs.cpp" />
+    <ClCompile Include="..\src\hydroponics\hydroponics.cpp" />
+    <ClCompile Include="..\src\hydroponics\hydroponicsai.cpp" />
+    <ClCompile Include="..\src\hydroponics\hydroponics_table.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />

@@ -10,40 +10,44 @@
 struct PathAI : AIScript {
   PathAI(point d, AI::timer_t rate = 5) : walkrate(rate), dest(d), desc("Walking") { }
 
-  inline virtual int start(AI* ai) {
+  inline virtual AI::timer_t start(AI* ai) {
     Ent* c = ai->parent;
-    assert(c->has<Position>());
-    Position* pos = c->get<Position>();
+    Position* pos = c->assert_get<Position>();
 
     path = pathfind(pos->city(), pos->x(), pos->y(),
                     dest.first, dest.second);
     pathp = path.rbegin();
 
-    if (pathp == path.rend())
-      return complete(ai);
+    if (pathp == path.rend()) {
+        return check_end(ai, pos);
+    } else {
+        return walkrate;
+    }
+  }
 
-    return walkrate;
+  inline AI::timer_t check_end(AI* ai, Position* pos) {
+        // Either we are at the destination, or we can't find a path.
+        if (pos->x() == dest.first && pos->y() == dest.second) {
+            // The journey is complete
+            return ai->pop_script();
+        }
+        // Otherwise...... failure.
+        return ai->fail_script();
   }
 
   inline virtual int update(AI* ai) {
-    return update_impl(ai);
-  }
-
-  inline int update_impl(AI* ai) {
     Ent* c = ai->parent;
-    assert(c->has<Movable>());
-    Movable* mov = c->get<Movable>();
 
     if (pathp != path.rend()) {
-      assert(mov->pos.city->tile(pathp->first, pathp->second).walkable());
-      mov->set(*pathp);
-      ++pathp;
+        Movable* mov = c->assert_get<Movable>();
+        assert(mov->pos.city->tile(pathp->first, pathp->second).walkable());
+        mov->set(*pathp);
+        ++pathp;
+
+        return walkrate;
+    } else {
+        return check_end(ai, c->assert_get<Position>());
     }
-
-    if (pathp == path.rend())
-      return complete(ai);
-
-    return walkrate;
   }
 
   virtual const std::string& description() const override {

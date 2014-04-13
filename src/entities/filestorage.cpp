@@ -29,13 +29,13 @@ Ent* make_filingcabinet(const Point& p) {
 }
 
 std::shared_ptr<Job> make_filing_job(int x1, int y1, int x2, int y2, Ent*) {
-  std::shared_ptr<SequenceAI> script = std::make_shared<SequenceAI>();
+  auto script = std::make_shared<SequenceAI>();
 
   script->add_task(make_do_at(point(x1, y1), 15, "Retrieve document"));
   script->add_task(make_do_at(point(x2, y2), 15, "File document"));
   script->add_task(make_callbackai([=](AI*) { ++influence; }));
 
-  return make_shared<Job>(
+  return std::make_shared<Job>(
     "Reorganize filing system",
     clearance{ Security::ALL, Department::ALL },
     script

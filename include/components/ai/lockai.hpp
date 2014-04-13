@@ -12,13 +12,18 @@ struct LockAI : AIScript {
       return ai->push_script(subscript);
     else
       // On failure, short circuit.
-      return complete(ai);
+      return ai->pop_script();
   }
 
   virtual AI::timer_t update(AI* ai) override {
     // Release the item lock.
     lock.reset();
-    return complete(ai);
+    return ai->pop_script();
+  }
+
+  virtual AI::timer_t failure(AI* ai) override {
+      lock.reset();
+      return AIScript::failure(ai);
   }
 
   virtual const std::string& description() const override {

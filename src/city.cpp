@@ -15,9 +15,27 @@
 #include "entities/workroom.hpp"
 #include "joblist.hpp"
 
-#include <stdexcept>
+#include <cstdlib>
+#include <random>
 
-//const char* SentinelEntity::RAWNAME = "sentinel";
+point City::random_point() {
+    // Try to find a point 5 times randomly.
+    for (int x = 0; x < 5; ++x) {
+        point p = { rand() % getXSize(), rand() % getYSize() };
+        if (tile(p.first, p.second).walkable()) {
+            return p;
+        }
+    }
+    // If we've failed 5 times, (maybe big map with small walkable area?), just do a walk
+    for (int x = 0; x < xsz; ++x) {
+        for (int y = 0; y < ysz; ++y) {
+            if (tile(x, y).walkable()) {
+                return { x, y };
+            }
+        }
+    }
+    std::abort();
+}
 
 void City::resize(int x, int y) {
   xsz = x;

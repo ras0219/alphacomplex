@@ -55,7 +55,7 @@ struct IdleAI : AIScript {
     job = jobs.find_job(*c);
     if (job) {
       job->reserve();
-      return ai->push_script( job->script() );
+      return ai->add_task( job->script(), 1 );
     } else {
       return 30;
     }

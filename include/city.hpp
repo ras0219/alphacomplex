@@ -115,6 +115,9 @@ struct City {
   /// Resize the city. This should not be called after initialization.
   void resize(int x, int y);
 
+  /// Selects a random walkable tile in the city
+  point random_point();
+
   City(int x, int y) : xsz(x), ysz(y), tiles(x, y),
                        ents(x, y),
                        designs(x, y),

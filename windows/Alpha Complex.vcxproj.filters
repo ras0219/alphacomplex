@@ -34,9 +34,6 @@
     <Filter Include="Source Files\entities">
       <UniqueIdentifier>{931f98ef-51f9-491d-b99a-3ef57b0a4f9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\graphics">
-      <UniqueIdentifier>{a0744eba-6988-4c9a-b135-c0f856c93929}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\utilities">
       <UniqueIdentifier>{9adb99f9-5d6e-4683-a479-6372f39d2cc0}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,12 @@
     </Filter>
     <Filter Include="SDL">
       <UniqueIdentifier>{7b0a7aae-22c5-4c83-92de-dd14f014cae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hydroponics">
+      <UniqueIdentifier>{d0ed23f5-4e88-4bfb-a2ca-6b4336f3abc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hydroponics">
+      <UniqueIdentifier>{fe0dd653-f601-4a3a-a973-be6587712fc3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +274,6 @@
     <ClInclude Include="..\sdl\cow_resource.hpp">
       <Filter>SDL</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\entities\hydroponics.hpp">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\components\component.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
@@ -297,6 +297,21 @@
     </ClInclude>
     <ClInclude Include="..\sdl\Renderer.hpp">
       <Filter>SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hydroponics\hydroponics.hpp">
+      <Filter>Header Files\hydroponics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hydroponics\hydroponics_table.hpp">
+      <Filter>Header Files\hydroponics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hydroponics\hydroponicsai.hpp">
+      <Filter>Header Files\hydroponics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hydroponics\hydroponicsjobs.hpp">
+      <Filter>Header Files\hydroponics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utilities\assert_cast.hpp">
+      <Filter>Header Files\utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -420,14 +435,23 @@
     <ClCompile Include="..\src\components\item.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\entities\hydroponics.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\components\room.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
     <ClCompile Include="..\src\components\aidsl.cpp">
       <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hydroponics\hydroponics.cpp">
+      <Filter>Source Files\hydroponics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hydroponics\hydroponics_table.cpp">
+      <Filter>Source Files\hydroponics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hydroponics\hydroponicsai.cpp">
+      <Filter>Source Files\hydroponics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hydroponics\hydroponicsjobs.cpp">
+      <Filter>Source Files\hydroponics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

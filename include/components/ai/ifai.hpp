@@ -11,7 +11,7 @@ struct IfScript : AIScript {
     if (cb(ai)) {
       return ai->push_script(script);
     }
-    return complete(ai);
+    return ai->pop_script();
   }
 
   virtual const std::string& description() const override {

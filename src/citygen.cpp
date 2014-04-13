@@ -5,7 +5,8 @@
 #include "entities/workroom.hpp"
 #include "entities/entity.hpp"
 #include "entities/filestorage.hpp"
-#include "entities/hydroponics.hpp"
+#include "hydroponics/hydroponics.hpp"
+#include "hydroponics/hydroponics_table.hpp"
 
 enum RoomTypes
 {

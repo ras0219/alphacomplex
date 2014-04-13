@@ -69,7 +69,7 @@ struct SeekFoodAI : AIScript {
       needs->food = needs->max_food;
     // Release and delete the food. It has been consumed.
     food.delete_reset();
-    return complete(ai);
+    return ai->pop_script();
   }
 
   ItemLock food;

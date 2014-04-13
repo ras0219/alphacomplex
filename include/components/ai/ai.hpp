@@ -33,6 +33,9 @@ struct AI : ComponentCRTP<Component::AI, AI> {
   /// Pops the top script off the stack.
   ///@return Delay time requested by the next script
   timer_t pop_script();
+  /// Pops the top script off the stack and signals failure to the parent.
+  ///@return Delay time requested by the next script
+  timer_t fail_script();
 
   ///@}
 
@@ -82,34 +85,15 @@ struct AIScript {
   /// Executed after a resume, a start, or a child task completed.
   ///@pre start() or resume() was called before this
   ///@return Amount of time to wait before calling update() again
-  virtual AI::timer_t update(AI* ai) { return complete(ai); }
+  virtual AI::timer_t update(AI* ai) { return ai->pop_script(); }
 
-  /// Called by the script to complete itself.
-  ///@deprecated
-  inline AI::timer_t complete(AI* ai) {
-      assert(ai->current_script().get() == this);
-      return ai->pop_script();
-  }
+  /// Executed when a child task fails.
+  /// Default behavior: propagate failure
+  ///@warning Top-level scripts should override this and provide an appropriate catch-all
+  ///@pre push_script() was called before this
+  ///@return Amount of time to wait before calling update() again
+  virtual AI::timer_t failure(AI* ai) { return ai->fail_script(); }
 };
-
-// These are just some inline method calls, no worries
-inline AI::timer_t AI::pop_script() {
-    assert(tasks.size() > 0);
-    assert(current_task().size() > 0);
-    current_task().pop_back();
-    if (current_task().size() == 0) {
-        // Resume the previous task
-        assert(tasks.size() > 1);
-        tasks.pop_back();
-        return current_script()->resume(this);
-    }
-    return current_script()->update(this);
-}
-
-inline AI::timer_t AI::push_script(AI::script_ptr ais) {
-  current_task().emplace_back(std::move(ais));
-  return current_script()->start(this);
-}
 
 inline void AI::update() {
   --timer;

@@ -15,8 +15,8 @@ struct ItemProperties {
 
 /// Component to describe an item which has properties, can be locked, and can be nested with other items.
 ///
-/// Invariant: If container is not null, then parent does not have a Position Component or a Furniture Component.
-/// Invariant: If container is null, then parent has a Position Component or a Furniture Component.
+///@invariant If container is not null, then parent does not have a Position Component or a Furniture Component.
+///@invariant If container is null, then parent has a Position Component or a Furniture Component.
 struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
   Item(const ItemProperties& p) : prop(p), locked(false), container(nullptr) { }
 
@@ -29,12 +29,14 @@ struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
   inline void erase(Item* i) { items.erase(i); }
 
   /// Unsafe function. Should not be called if you do not have both `this` and `container` locked.
+  ///@warning UNSAFE
   inline void remove_from() {
     assert(container);
     container->erase(this);
     container = nullptr;
   }
   /// Unsafe function. Should not be called if you do not have both `this` and `i` locked.
+  ///@warning UNSAFE
   inline void insert_into(Item* i) {
     assert(container == nullptr);
     container = i;
