@@ -4,6 +4,9 @@
 #include "point.hpp"
 #include <vector>
 
+struct Furniture;
+struct ItemProperties;
+
 struct Room : ComponentCRTP<Component::Room, Room> {
     Room(const Rect& r);
 
@@ -12,7 +15,7 @@ struct Room : ComponentCRTP<Component::Room, Room> {
 
   bool contains(int tx, int ty) const;
 
-  std::vector<struct Furniture*> find_furniture(struct ItemProperties const& props);
+  std::vector<struct Furniture*> find_furniture(ItemProperties const& props);
   std::vector<struct Furniture*> find_furniture();
 
   Rect r;
