@@ -2,7 +2,7 @@
 
 #include "components/component.hpp"
 
-struct Renderable :  ComponentCRTP<Component::Renderable, Renderable> {
+struct Renderable : ecs::ComponentCRTP<ecs::Component::Renderable, Renderable> {
   Renderable(char c) : ch(c) { }
 
   inline char render() const { return ch; }

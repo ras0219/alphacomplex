@@ -9,7 +9,7 @@ struct clearance {
   Department::Mask dept;
 };
 
-struct Clearance : ComponentCRTP<Component::Clearance, Clearance>, clearance {
+struct Clearance : ecs::ComponentCRTP<ecs::Component::Clearance, Clearance>, clearance {
   Clearance(const clearance& c) : clearance(c) {}
 
   inline Security::Mask& security() { return clearance::security; }

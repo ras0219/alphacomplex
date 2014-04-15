@@ -7,13 +7,13 @@
 #include "entities/filestorage.hpp"
 #include "hydroponics/hydroponics.hpp"
 #include "hydroponics/hydroponics_table.hpp"
-
-
+#include "storage/storageroom.hpp"
 
 enum RoomTypes
 {
   Regular,
   FoodSupply,
+  FoodStorage,
   FileStorage,
   Infirmary,
   Engineering,
@@ -329,7 +329,7 @@ struct CityGenerator {
 
       if (city.tile(c, r).type == Tile::TileKind::ground)
       {
-        city.ent(c, r).insert(new_citizen({ &city, c, r }, entity));
+        new_citizen({ &city, c, r }, entity);
         i++;
       }
     }
@@ -364,6 +364,10 @@ struct CityGenerator {
       build_food_supply(rp);
       build_doors(rp);
       break;
+    case RoomTypes::FoodStorage:
+        build_food_storage(rp);
+        build_doors(rp);
+        break;
     case RoomTypes::Infirmary:
       build_infirmary(rp);
       build_doors(rp);
@@ -391,6 +395,28 @@ struct CityGenerator {
         }
       }
     }
+  }
+
+  void build_food_storage(const RoomProperties& rp)
+  {
+      for (int i = rp.top; i <= rp.bottom; i++)
+      {
+          for (int j = rp.left; j <= rp.right; j++)
+          {
+              if (city.tile(j, i).type != Tile::TileKind::door)
+              {
+                  if ((i == rp.top) || (i == rp.bottom) ||
+                      (j == rp.left) || (j == rp.right))
+                  {
+                      city.tile(j, i).type = Tile::TileKind::wall;
+                  } else
+                  {
+                      city.tile(j, i).type = Tile::TileKind::ground;
+                  }
+              }
+          }
+      }
+      storage::make_storageroom({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 });
   }
 
   void build_file_storage(const RoomProperties& rp)
@@ -532,13 +558,13 @@ struct CityGenerator {
           {
               //city.tile(j, i).type = Tile::TileKind::foodsupply;
             if (rand() % 3 == 0)
-              make_hydroponics_table({ &city, j, i });
+              hydroponics::make_hydroponics_table({ &city, j, i });
           }
         }
       }
     }
 
-    make_hydroponics_room({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 });
+    hydroponics::make_hydroponics_room({ &city, rp.left + 1, rp.top + 1, rp.width - 2, rp.height - 2 });
   }
 
   void build_infirmary(const RoomProperties& rp)

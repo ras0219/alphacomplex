@@ -10,35 +10,14 @@
 #include "defs.hpp"
 #include "tile.hpp"
 #include "citygen.hpp"
+#include "overlay.hpp"
 
-using namespace std;
-
-struct Ent;
-
-template<class T>
-struct Overlay {
-  int getXSize() const;
-  int getYSize() const;
-
-  bool check(int x, int y) const ;
-
-  T& get(int x, int y) ;
-  const T& get(int x, int y) const;
-
-  T& operator()(int x, int y);
-  const T& operator()(int x, int y) const;
-
-  void resize(int x, int y);
-
-  Overlay(int x, int y);
-
-  int xsz;
-  int ysz;
-  std::vector<T> data;
-};
+namespace ecs {
+    struct Ent;
+}
 
 struct City {
-  using ents_t = unordered_set<Ent*>;
+  using ents_t = unordered_set<ecs::Ent*>;
 
   int xsz;
   int ysz;
@@ -47,7 +26,7 @@ struct City {
   Overlay<char> designs;
   Overlay<struct Furniture*> furniture;
 
-  vector<struct Room*> rooms;
+  std::vector<struct Room*> rooms;
 
   int getXSize() const;
   int getYSize() const;
@@ -58,8 +37,8 @@ struct City {
   const ents_t& ent(int x, int y) const;
   ents_t& ent(int x, int y);
 
-  void add_ent(int x, int y, Ent* e);
-  void del_ent(int x, int y, Ent* e);
+  void add_ent(int x, int y, ecs::Ent* e);
+  void del_ent(int x, int y, ecs::Ent* e);
 
   /// Insert a room. Fast Amortized O(1).
   /// @pre Room has not already been added (asserted).
@@ -83,16 +62,16 @@ struct City {
 
   /// Find all furniture within a rectangle. Fast O(w*h).
   /// @return List of found furniture.
-  vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
+  std::vector<struct Furniture*> find_furniture(int x, int y, int w, int h);
 
   /// Convenience overload for find_furniture(x,y,w,h).
   /// @pre Rect r is associated with this city (not checked).
   /// @return List of found furniture
-  vector<struct Furniture*> find_furniture(Rect r);
+  std::vector<struct Furniture*> find_furniture(Rect r);
 
   /// Find all rooms containing a point. Fast O(R).
   /// @return List of found rooms
-  vector<struct Room*> find_rooms(int x, int y);
+  std::vector<struct Room*> find_rooms(int x, int y);
 
   /// Check that x and y are within the current city
   bool check(int x, int y) const;
@@ -109,11 +88,12 @@ struct City {
   /// Selects a random walkable tile in the city
   point random_point();
 
-  City(int x, int y);
+  /// Default constructor. Doesn't generate a city.
+  City();
 
   /// Constructor: uses the city properties to generate a city
-  City(struct CityProperties const& cityP);
-  
+  void generate(struct CityProperties const& cityP);
+ 
 };
 
 wistream& operator>>(wistream& is, City& city);

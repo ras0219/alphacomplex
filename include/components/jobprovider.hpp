@@ -7,17 +7,23 @@
 #include <memory>
 #include <vector>
 
-struct JobProvider : ComponentCRTP<Component::JobProvider, JobProvider> {
-    using joblist_t = std::vector<std::shared_ptr<Job>>;
-    ~JobProvider();
+namespace job {
 
-    // Public
-    joblist_t to_provide_jobs;
+    struct JobProvider : ecs::ComponentCRTP<ecs::Component::JobProvider, JobProvider> {
+        using joblist_t = std::vector<std::shared_ptr<Job>>;
+        ~JobProvider();
 
-    // Private
-    joblist_t provided_jobs;
-};
+        // Public
+        joblist_t to_provide_jobs;
 
-struct JobProviderSystem : SubSystem<JobProviderSystem, JobProvider> {
-  void update_item(Ent*, JobProvider*);
-};
+        // Private
+        joblist_t provided_jobs;
+    };
+
+    struct JobProviderSystem : ecs::SubSystem<JobProviderSystem, JobProvider> {
+        void update_item(ecs::Ent*, JobProvider*);
+
+        static ecs::CRTPSystemFactory<JobProviderSystem> factory;
+    };
+
+}

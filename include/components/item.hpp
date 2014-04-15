@@ -7,50 +7,54 @@
 #include <cassert>
 #include <string>
 
-/// Properties of an item -- name of item, mass of item, material of item, etc.
-struct ItemProperties {
-  std::string name;
-  float mass;
-};
+namespace item {
 
-/// Component to describe an item which has properties, can be locked, and can be nested with other items.
-///
-///@invariant If container is not null, then parent does not have a Position Component or a Furniture Component.
-///@invariant If container is null, then parent has a Position Component or a Furniture Component.
-struct Item : ComponentCRTP<Component::Item, Item>, private global_set<Item> {
-  Item(const ItemProperties& p) : prop(p), locked(false), container(nullptr) { }
+    /// Properties of an item -- name of item, mass of item, material of item, etc.
+    struct ItemProperties {
+        std::string name;
+        float mass;
+    };
 
-  virtual void on_remove() override;
+    /// Component to describe an item which has properties, can be locked, and can be nested with other items.
+    ///
+    ///@invariant If container is not null, then parent does not have a Position Component or a Furniture Component.
+    ///@invariant If container is null, then parent has a Position Component or a Furniture Component.
+    struct Item : ecs::ComponentCRTP<ecs::Component::Item, Item>, private global_set<Item> {
+        Item(const ItemProperties& p) : prop(p), locked(false), container(nullptr) { }
 
-  /// Attempt to lock the item. If the lock fails, return a default-initialized `ItemLock`.
-  struct ItemLock try_lock();
+        virtual void on_remove() override;
 
-  inline void insert(Item* i) { items.insert(i); }
-  inline void erase(Item* i) { items.erase(i); }
+        /// Attempt to lock the item. If the lock fails, return a default-initialized `ItemLock`.
+        struct ItemLock try_lock();
 
-  /// Unsafe function. Should not be called if you do not have both `this` and `container` locked.
-  ///@warning UNSAFE
-  inline void remove_from() {
-    assert(container);
-    container->erase(this);
-    container = nullptr;
-  }
-  /// Unsafe function. Should not be called if you do not have both `this` and `i` locked.
-  ///@warning UNSAFE
-  inline void insert_into(Item* i) {
-    assert(container == nullptr);
-    container = i;
-    container->insert(this);
-  }
+        inline void insert(Item* i) { items.insert(i); }
+        inline void erase(Item* i) { items.erase(i); }
 
-  /// Walk up the containment tree and find the top parent's location. Slow O(D) where D is tree depth.
-  Point pos() const;
+        /// Unsafe function. Should not be called if you do not have both `this` and `container` locked.
+        ///@warning UNSAFE
+        inline void remove_from() {
+            assert(container);
+            container->erase(this);
+            container = nullptr;
+        }
+        /// Unsafe function. Should not be called if you do not have both `this` and `i` locked.
+        ///@warning UNSAFE
+        inline void insert_into(Item* i) {
+            assert(container == nullptr);
+            container = i;
+            container->insert(this);
+        }
 
-  ItemProperties const& prop;
-  bool locked;
-  Item* container;
-  using set_t = std::unordered_set<struct Item*>;
-  set_t items;
+        /// Walk up the containment tree and find the top parent's location. Slow O(D) where D is tree depth.
+        Point pos() const;
 
-  friend struct global_set<Item>;
-};
+        ItemProperties const& prop;
+        bool locked;
+        Item* container;
+        using set_t = std::unordered_set<struct Item*>;
+        set_t items;
+
+        friend struct global_set<Item>;
+    };
+
+}

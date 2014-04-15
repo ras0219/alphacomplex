@@ -7,24 +7,24 @@
 
 #include "entities/entity.hpp"
 
-ItemProperties bread_properties = { "Bread", 1 };
+item::ItemProperties bread_properties = { "Bread", 1 };
 
-Ent* make_bread(const Point& p) {
-  Ent* r = new Ent;
-  r->add(new Position(p));
-  r->add(new Foodstuff(1200));
-  r->add(new Item(bread_properties));
-  r->add(new Renderable('%'));
+ecs::Ent* make_bread(const Point& p) {
+  auto r = new ecs::Ent;
+  r->emplace<Position>(p);
+  r->emplace<Foodstuff>(1200);
+  r->emplace<item::Item>(bread_properties);
+  r->emplace<Renderable>('%');
   return r;
 }
 
-ItemProperties lettuce_properties = { "Lettuce", 1 };
+item::ItemProperties lettuce_properties = { "Lettuce", 1 };
 
-Ent* make_lettuce(const Point& p) {
-  Ent* r = new Ent;
-  r->add(new Position(p));
-  r->add(new Foodstuff(200));
-  r->add(new Item(lettuce_properties));
-  r->add(new Renderable('%'));
+ecs::Ent* make_lettuce(const Point& p) {
+  auto r = new ecs::Ent;
+  r->emplace<Position>(p);
+  r->emplace<Foodstuff>(200);
+  r->emplace<item::Item>(lettuce_properties);
+  r->emplace<Renderable>('%');
   return r;
 }

@@ -3,13 +3,16 @@
 #include "entities/entity.hpp"
 #include "city.hpp"
 
-struct Position : ComponentCRTP<Component::Position, Position> {
+struct Position : ecs::ComponentCRTP<ecs::Component::Position, Position> {
   Position(Point p) : pos(p) { }
 
   inline City& city() { return *pos.city; }
   inline int x() const { return pos.x; }
   inline int y() const { return pos.y; }
   inline Point as_point() const { return pos; }
+
+  virtual void on_add() override { insert(); }
+  virtual void on_remove() override { remove(); }
 
   inline void move(int tx, int ty) {
     remove();

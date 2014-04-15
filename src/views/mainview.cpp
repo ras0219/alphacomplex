@@ -35,7 +35,7 @@ MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSi
   nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });
 }
 
-JobListing pendinglist(&jobs, "Pending Jobs");
+job::JobListing pendinglist(&job::JobList::getJoblist(), "Pending Jobs");
 
 void MainView::render_body(Graphics& g, render_box const& pos) {
   render_box pos2 = pos;
@@ -56,7 +56,7 @@ void MainView::handle_keypress(KeyboardKey ks) {
   case KEY_r:
     if (influence >= 0) {
       //influence -= 15;
-      city->ent(1, 1).insert(new_citizen({ city, 1, 1 }, Security::RED));
+      new_citizen({ city, 1, 1 }, Security::RED);
     } else {
       announce("You must have 15 influence to recruit new troubleshooters.");
     }
@@ -64,7 +64,7 @@ void MainView::handle_keypress(KeyboardKey ks) {
   case KEY_e:
     if (influence >= 5) {
       influence -= 5;
-      city->ent(1, 1).insert(new_citizen({ city, 1, 1 }, Security::INFRARED));
+      new_citizen({ city, 1, 1 }, Security::INFRARED);
     } else {
       announce("You must have 5 influence to recruit new infrareds.");
     }

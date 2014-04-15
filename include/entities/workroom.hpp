@@ -1,5 +1,6 @@
 #pragma once
 
-#include "point.hpp"
+namespace ecs { struct Ent; }
+struct Rect;
 
-struct Ent* make_workroom(Rect);
+ecs::Ent* make_workroom(const Rect&);

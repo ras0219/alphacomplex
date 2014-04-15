@@ -11,34 +11,40 @@
 #include "entities/foods.hpp"
 #include "utilities/assert_cast.hpp"
 
-std::shared_ptr<Job> make_harvest_job(Furniture* table) {
-    auto script = std::make_shared<SequenceAI>();
-    script->add_task(make_do_at(table->as_point().as_point(), 200, "Harvesting Plants"));
-    script->add_task(make_callbackai([=](AI*) {
-        assert_cast<HydroponicsTable>(table)->stage = HydroponicsTable::not_planted;
-        Point p = table->as_point();
-        p.city->add_ent(p.x, p.y, make_lettuce(p));
-    }));
+using namespace job;
+using namespace ai;
 
-    return make_shared<Job>(
-        "Harvest plants",
-        clearance{ Security::ALL, Department::AGRICULTURE },
-        make_lockai(table->parent->assert_get<Item>(), script)
-        );
-}
+namespace hydroponics {
 
-std::shared_ptr<Job> make_plant_job(Furniture* table) {
-    auto script = std::make_shared<SequenceAI>();
-    point seeds_loc = table->as_point().city->random_point();
-    script->add_task(make_do_at(seeds_loc, 200, "Scrounging Seeds"));
-    script->add_task(make_do_at(table->as_point().as_point(), 200, "Planting Seeds"));
-    script->add_task(make_callbackai([=](AI*) {
-        assert_cast<HydroponicsTable>(table)->stage = HydroponicsTable::planted;
-    }));
+    std::shared_ptr<Job> make_harvest_job(Furniture* table) {
+        auto script = std::make_shared<SequenceAI>();
+        script->add_task(make_do_at(table->as_point().as_point(), 200, "Harvesting Plants"));
+        script->add_task(make_callbackai([=](AI*) {
+            assert_cast<HydroponicsTable>(table)->stage = HydroponicsTable::not_planted;
+            make_lettuce(table->as_point());
+        }));
 
-    return make_shared<Job>(
-        "Plant plants",
-        clearance{ Security::ALL, Department::AGRICULTURE },
-        make_lockai(table->parent->assert_get<Item>(), script)
-        );
+        return make_shared<Job>(
+            "Harvest plants",
+            clearance{ Security::ALL, Department::AGRICULTURE },
+            make_lockai(table->parent->assert_get<item::Item>(), script)
+            );
+    }
+
+    std::shared_ptr<Job> make_plant_job(Furniture* table) {
+        auto script = std::make_shared<SequenceAI>();
+        point seeds_loc = table->as_point().city->random_point();
+        script->add_task(make_do_at(seeds_loc, 200, "Scrounging Seeds"));
+        script->add_task(make_do_at(table->as_point().as_point(), 200, "Planting Seeds"));
+        script->add_task(make_callbackai([=](AI*) {
+            assert_cast<HydroponicsTable>(table)->stage = HydroponicsTable::planted;
+        }));
+
+        return make_shared<Job>(
+            "Plant plants",
+            clearance{ Security::ALL, Department::AGRICULTURE },
+            make_lockai(table->parent->assert_get<item::Item>(), script)
+            );
+    }
+
 }

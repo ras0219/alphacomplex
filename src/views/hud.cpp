@@ -16,11 +16,10 @@ void Hud::render(Graphics& g, render_box const& pos) {
   g.drawString(pos.x, pos.y + pos.h - 1, out.str(), Graphics::DEFAULT);
   g.drawString(pos.x + pos.w - 25, pos.y + pos.h - 1, format_time(gametime), Graphics::DEFAULT);
 
-  int sz = A11s::instance.msgs.size();
+  auto sz = A11s::instance.msgs.size();
 
-  for (int x=1;x < pos.h && x <= sz;++x)
+  for (size_t x = 1; x < (size_t)pos.h && x <= sz; ++x)
     g.drawString(pos.x, pos.y + pos.h - x - 1, A11s::instance.msgs[sz - x], Graphics::DEFAULT);
-
 }
 
 void A11s::announce(const string& s) {

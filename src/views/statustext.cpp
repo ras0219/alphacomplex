@@ -33,7 +33,7 @@ void StatusText::render(Graphics& g, render_box const& pos) {
     }
 
     if (retval & EMIT) {
-      g.drawString(pos.x + pos.w - (s.text.size() + 1) - 1, pos.y, s.text, Graphics::DEFAULT);
+      g.drawString(pos.x + pos.w - ((int)s.text.size() + 1) - 1, pos.y, s.text, Graphics::DEFAULT);
       break;
     }
   }

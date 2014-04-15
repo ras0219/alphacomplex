@@ -11,12 +11,16 @@
 #include "components/ai/pathai.hpp"
 #include "components/room.hpp"
 #include "components/ai/sequenceai.hpp"
+#include "components/ai/job.hpp"
 #include "windows.hpp"
 #include "entities/workroom.hpp"
 #include "joblist.hpp"
 
 #include <cstdlib>
 #include <random>
+#include <memory>
+
+using namespace ai;
 
 point City::random_point() {
     // Try to find a point 5 times randomly.
@@ -37,47 +41,6 @@ point City::random_point() {
     std::abort();
 }
 
-template<class T>
-Overlay<T>::Overlay(int x, int y) : xsz(x), ysz(y), data(xsz*ysz) {}
-
-template<class T>
-int Overlay<T>::getXSize() const
-{
-  return xsz;
-}
-
-template<class T>
-int Overlay<T>::getYSize() const
-{
-  return ysz;
-}
-
-template <class T>
-bool Overlay<T>::check(int x, int y) const {
-  return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
-}
-
-template <class T>
-T& Overlay<T>::get(int x, int y) { return data[xsz*y + x]; }
-
-template <class T>
-const T& Overlay<T>::get(int x, int y) const
-{
-  return data[xsz*y + x];
-}
-
-template <class T>
-T& Overlay<T>::operator()(int x, int y)
-{
-  return get(x,y);
-}
-template <class T>
-const T& Overlay<T>::operator()(int x, int y) const
-{
-  return get(x,y);
-}
-
-template <class T> void Overlay<T>::resize(int x, int y) { xsz = x; ysz = y; data.resize(x*y); }
 
 int City::getXSize() const { return xsz; }
 int City::getYSize() const { return ysz; }
@@ -88,10 +51,10 @@ Tile& City::tile(int x, int y) { return tiles.data[xsz*y + x]; }
 const City::ents_t& City::ent(int x, int y) const { return ents.data[xsz*y + x]; }
 City::ents_t& City::ent(int x, int y) { return ents.data[xsz*y + x]; }
 
-void City::add_ent(int x, int y, Ent* e) {
+void City::add_ent(int x, int y, ecs::Ent* e) {
   ent(x, y).insert(e);
 }
-void City::del_ent(int x, int y, Ent* e) {
+void City::del_ent(int x, int y, ecs::Ent* e) {
   ent(x, y).erase(e);
 }
 
@@ -99,19 +62,19 @@ bool City::check(int x, int y) const {
   return (x >= 0 && x < xsz) && (y >= 0 && y < ysz);
 }
 
-City::City(int x, int y) : xsz(x), ysz(y),
-			   tiles(x,y),
-			   ents(x,y),
-			   designs(x,y),
-			   furniture(x,y){}
-City::City(struct CityProperties const& cityP) :
-  xsz(cityP.width), ysz(cityP.height),
-  tiles(xsz, ysz),
-  ents(xsz, ysz),
-  designs(xsz, ysz),
-  furniture(xsz, ysz)
-{
-  randomgen(*this, cityP);
+City::City() : xsz(0), ysz(0),
+			   tiles(xsz,ysz),
+			   ents(xsz,ysz),
+			   designs(xsz,ysz),
+			   furniture(xsz,ysz){}
+void City::generate(struct CityProperties const& cityP) {
+    xsz = cityP.width;
+    ysz = cityP.height;
+    tiles.resize(xsz, ysz);
+    ents.resize(xsz, ysz);
+    designs.resize(xsz, ysz);
+    furniture.resize(xsz, ysz);
+    randomgen(*this, cityP);
 }
 
 void City::resize(int x, int y) {
@@ -127,8 +90,8 @@ wistream& operator>>(wistream& is, City& c) {
   c.xsz = 0;
   c.ysz = 0;
 
-  int x = 0;
-  int y = 0;
+  size_t x = 0;
+  size_t y = 0;
 
   wstring s;
   while (getline(is, s)) {
@@ -138,10 +101,10 @@ wistream& operator>>(wistream& is, City& c) {
     if (y == 0)
       x = s.size();
 
-    if (s.size() != (uint)x)
+    if (s.size() != x)
       throw runtime_error("invalid c format");
 
-    for (int i = 0; i < x; ++i) {
+    for (size_t i = 0; i < x; ++i) {
       c.tile(i, y) = { (Tile::TileKind)s[i] };
       c.ent(i, y).clear();
     }
@@ -164,12 +127,12 @@ wistream& operator>>(wistream& is, City& c) {
       } else if (ch == 'E') {
         // Citizen* e = new Citizen(i,j,Security::RED, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i, j).insert(new_citizen({ &c, i, j }, Security::RED));
+        new_citizen({ &c, i, j }, Security::RED);
         c.tile(i, j).type = Tile::ground;
       } else if (ch == 'O') {
         // Citizen* e = new Citizen(i,j,Security::ORANGE, c);
         // e->insert_after(c.ent(i,j));
-        c.ent(i, j).insert(new_citizen({ &c, i, j }, Security::ORANGE));
+        new_citizen({ &c, i, j }, Security::ORANGE);
         c.tile(i, j).type = Tile::ground;
       } else if (ch == 'D') {
         // Dwarf* e = new Dwarf(i,j, c);
@@ -231,8 +194,8 @@ void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
   s2->add_task(make_shared<PathAI>(point(x1, y1)));
   s2->add_task(new_ifscript(wall_cb, s1));
 
-  std::shared_ptr<Job> job = make_shared<Job>("Dig", c, s2);
-  jobs.add_job(job);
+  auto job = std::make_shared<job::Job>("Dig", c, s2);
+  job::JobList::getJoblist().add_job(job);
 }
 
 void City::add_room(Room* r) {

@@ -4,57 +4,61 @@
 #include <vector>
 #include <memory>
 
-struct Item;
+namespace item {
 
-struct unlock_item {
-  void operator()(struct Item* i);
-};
+    struct Item;
 
-/// RAII Wrapper to cleanly manipulate item locks.
-struct ItemLock {
-  /// Construct with no item
-  ItemLock() {}
-  /// Construct with no item
-  ItemLock(std::nullptr_t) {}
-  /// Construct with item `i`. Item `i` should be locked before this is called.
-  explicit ItemLock(Item* i) : ptr(i) {}
-  /// Transfer lock ownership.
-  ItemLock(ItemLock&& i) : ptr(std::move(i.ptr)) {}
-  /// Locks cannot be assigned.
-  ItemLock& operator=(const ItemLock&) = delete;
-  /// Transfer lock ownership and release current lock (if any).
-  inline ItemLock& operator=(ItemLock&& i) {
-    std::swap(ptr, i.ptr);
-    return *this;
-  }
+    struct unlock_item {
+        void operator()(Item* i);
+    };
 
-  /// Convenience method
-  Item& operator*() { return *ptr; }
-  /// Convenience method
-  Item* operator->() { return ptr.get(); }
+    /// RAII Wrapper to cleanly manipulate item locks.
+    struct ItemLock {
+        /// Construct with no item
+        ItemLock() {}
+        /// Construct with no item
+        ItemLock(std::nullptr_t) {}
+        /// Construct with item `i`. Item `i` should be locked before this is called.
+        explicit ItemLock(Item* i) : ptr(i) {}
+        /// Transfer lock ownership.
+        ItemLock(ItemLock&& i) : ptr(std::move(i.ptr)) {}
+        /// Locks cannot be assigned.
+        ItemLock& operator=(const ItemLock&) = delete;
+        /// Transfer lock ownership and release current lock (if any).
+        inline ItemLock& operator=(ItemLock&& i) {
+            std::swap(ptr, i.ptr);
+            return *this;
+        }
 
-  /// Allow the syntax `if (itemlock) { ... }`
-  inline explicit operator bool() { return ptr.get() != nullptr; }
+        /// Convenience method
+        Item& operator*() { return *ptr; }
+        /// Convenience method
+        Item* operator->() { return ptr.get(); }
 
-  /// Retrieve the underlying Item* and release responsibility for unlocking
-  Item* release() { return ptr.release(); }
-  /// Retrieve the underlying Item*
-  Item* get() { return ptr.get(); }
-  /// Unlock the underlying Item* and release responsibility.
-  void reset() { return ptr.reset(); }
+        /// Allow the syntax `if (itemlock) { ... }`
+        inline explicit operator bool() { return ptr.get() != nullptr; }
 
-  /// Remove the item from its container and return the parent lock
-  ItemLock remove_from();
-  /// Consume another item lock and insert this item into the other.
-  void insert_into(ItemLock&& o);
-  /// Delete the underlying item object (delayed). Return the parent lock.
-  ItemLock delete_reset();
+        /// Retrieve the underlying Item* and release responsibility for unlocking
+        Item* release() { return ptr.release(); }
+        /// Retrieve the underlying Item*
+        Item* get() { return ptr.get(); }
+        /// Unlock the underlying Item* and release responsibility.
+        void reset() { return ptr.reset(); }
 
-  /// Commit all delayed deletions.
-  static void finalize_deletes();
+        /// Remove the item from its container and return the parent lock
+        ItemLock remove_from();
+        /// Consume another item lock and insert this item into the other.
+        void insert_into(ItemLock&& o);
+        /// Delete the underlying item object (delayed). Return the parent lock.
+        ItemLock delete_reset();
 
-private:
-  std::unique_ptr<struct Item, unlock_item> ptr;
+        /// Commit all delayed deletions.
+        static void finalize_deletes();
 
-  static std::vector<ItemLock> to_delete;
-};
+    private:
+        std::unique_ptr<Item, unlock_item> ptr;
+
+        static std::vector<ItemLock> to_delete;
+    };
+
+}

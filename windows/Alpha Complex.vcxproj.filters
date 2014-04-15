@@ -52,6 +52,12 @@
     <Filter Include="Source Files\hydroponics">
       <UniqueIdentifier>{fe0dd653-f601-4a3a-a973-be6587712fc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\storage">
+      <UniqueIdentifier>{3505e270-928c-4222-9d3b-66e156103e37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\storage">
+      <UniqueIdentifier>{cb78c67b-893a-4ec3-ade4-327ebe5d48db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">
@@ -125,9 +131,6 @@
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\components\furniture.hpp">
-      <Filter>Header Files\components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\components\inventory.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\components\item.hpp">
@@ -313,6 +316,21 @@
     <ClInclude Include="..\include\utilities\assert_cast.hpp">
       <Filter>Header Files\utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\storage\storageroom.hpp">
+      <Filter>Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\storage\storagesystem.hpp">
+      <Filter>Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\storage\storage.hpp">
+      <Filter>Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\overlay.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\storage\storagejob.hpp">
+      <Filter>Header Files\storage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -458,6 +476,18 @@
     </ClCompile>
     <ClCompile Include="..\src\point.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\storage\storageroom.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\storage\storagesystem.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entities\system.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\storage\storagejob.cpp">
+      <Filter>Source Files\storage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

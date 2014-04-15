@@ -2,49 +2,53 @@
 
 #include "ai.hpp"
 
-template<class F>
-struct CallbackAI : AIScript {
-  CallbackAI(const F& g, std::string d = "") : f(g), desc(d) { }
+namespace ai {
 
-  virtual AI::timer_t start(AI* ai) {
-    f(ai);
-    return ai->pop_script();
-  }
+    template<class F>
+    struct CallbackAI : AIScript {
+        CallbackAI(const F& g, std::string d = "") : f(g), desc(d) { }
 
-  virtual const std::string& description() const override {
-      return desc;
-  }
+        virtual AI::timer_t start(AI* ai) {
+            f(ai);
+            return ai->pop_script();
+        }
 
-private:
-  F f;
-  std::string desc;
-};
+        virtual const std::string& description() const override {
+            return desc;
+        }
 
-template<class F>
-inline std::shared_ptr<CallbackAI<F>> make_callbackai(const F& f) {
-  return std::make_shared<CallbackAI<F>>(f);
-}
+    private:
+        F f;
+        std::string desc;
+    };
 
-// Loop Callback
-template<class F>
-struct LoopCallbackAI : AIScript {
-  LoopCallbackAI(const F& g) : f(g) { }
+    template<class F>
+    inline std::shared_ptr<CallbackAI<F>> make_callbackai(const F& f) {
+        return std::make_shared<CallbackAI<F>>(f);
+    }
 
-  virtual int start(AI* ai) override {
-    AI::timer_t t = f(ai);
-    if (t == 0)
-      return complete(ai);
-    else
-      return t;
-  }
-  virtual int update(AI* ai) override {
-    return start(ai);
-  }
+    // Loop Callback
+    template<class F>
+    struct LoopCallbackAI : AIScript {
+        LoopCallbackAI(const F& g) : f(g) { }
 
-  F f;
-};
+        virtual int start(AI* ai) override {
+            AI::timer_t t = f(ai);
+            if (t == 0)
+                return complete(ai);
+            else
+                return t;
+        }
+        virtual int update(AI* ai) override {
+            return start(ai);
+        }
 
-template<class F>
-inline std::shared_ptr<LoopCallbackAI<F>> make_loopcallbackai(const F& f) {
-  return std::make_shared<LoopCallbackAI<F>>(f);
+        F f;
+    };
+
+    template<class F>
+    inline std::shared_ptr<LoopCallbackAI<F>> make_loopcallbackai(const F& f) {
+        return std::make_shared<LoopCallbackAI<F>>(f);
+    }
+
 }

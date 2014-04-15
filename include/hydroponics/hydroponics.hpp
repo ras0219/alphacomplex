@@ -2,4 +2,8 @@
 
 #include "point.hpp"
 
-struct Ent* make_hydroponics_room(const Rect& r);
+namespace ecs { struct Ent; }
+
+namespace hydroponics {
+    ecs::Ent* make_hydroponics_room(const Rect& r);
+}

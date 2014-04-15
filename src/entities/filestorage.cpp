@@ -13,6 +13,11 @@
 
 #include <algorithm>
 
+using namespace ecs;
+using namespace job;
+using namespace item;
+using namespace ai;
+
 extern int influence;
 
 ItemProperties filingcabinet_properties = {
@@ -105,7 +110,7 @@ Ent* make_filestorage(const Rect& r) {
   e->emplace<AI>(std::make_shared<FilestorageAI>());
   e->emplace<JobProvider>();
 
-  e->add(&AISystem::singleton());
-  e->add(&JobProviderSystem::singleton());
+  e->add(AISystem::factory.singleton());
+  e->add(JobProviderSystem::factory.singleton());
   return e;
 }

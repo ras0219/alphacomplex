@@ -1,69 +1,74 @@
 #include "components/ai/ai.hpp"
 #include "views/hud.hpp"
+#include "entities/system.hpp"
 
-bool AI::add_task(AI::script_ptr ais, AI::priority_t prior) {
-    if (prior <= current_priority())
-    return false;
-    current_script()->suspend(this);
-    {
-        task_stack t;
-        t.emplace_back(std::move(ais));
-        tasks.emplace_back(prior, std::move(t));
+namespace ai {
+    bool AI::add_task(AI::script_ptr ais, AI::priority_t prior) {
+        if (prior <= current_priority())
+            return false;
+        current_script()->suspend(this);
+        {
+            task_stack t;
+            t.emplace_back(std::move(ais));
+            tasks.emplace_back(prior, std::move(t));
+        }
+        timer = current_script()->start(this);
+        return true;
     }
-    timer = current_script()->start(this);
-  return true;
-}
 
-// These are just some inline method calls, no worries
-AI::timer_t AI::pop_script() {
-    assert(tasks.size() > 0);
-    assert(current_task().size() > 0);
-    current_task().pop_back();
-    if (current_task().size() == 0) {
-        // Resume the previous task
-        assert(tasks.size() > 1);
-        tasks.pop_back();
-        return current_script()->resume(this);
-    }
-    return current_script()->update(this);
-}
-
-void AI::update() {
-    --timer;
-
-    if (timer <= 0) timer = current_script()->update(this);
-}
-
-AI::timer_t AI::fail_script() {
-    assert(tasks.size() > 0);
-    assert(current_task().size() > 0);
-    if (current_task().size() == 1) {
-        // Resume the previous task.... but this really shouldn't happen.
-        A11s::instance.announce(std::string("A task failed: ") + current_script()->description());
+    // These are just some inline method calls, no worries
+    AI::timer_t AI::pop_script() {
+        assert(tasks.size() > 0);
+        assert(current_task().size() > 0);
         current_task().pop_back();
-
-        assert(tasks.size() > 1);
-        tasks.pop_back();
-        return current_script()->resume(this);
+        if (current_task().size() == 0) {
+            // Resume the previous task
+            assert(tasks.size() > 1);
+            tasks.pop_back();
+            return current_script()->resume(this);
+        }
+        return current_script()->update(this);
     }
-    // Transmit the failure to the parent
-    current_task().pop_back();
-    return current_script()->failure(this);
+
+    void AI::update() {
+        --timer;
+
+        if (timer <= 0) timer = current_script()->update(this);
+    }
+
+    AI::timer_t AI::fail_script() {
+        assert(tasks.size() > 0);
+        assert(current_task().size() > 0);
+        if (current_task().size() == 1) {
+            // Resume the previous task.... but this really shouldn't happen.
+            A11s::instance.announce(std::string("A task failed: ") + current_script()->description());
+            current_task().pop_back();
+
+            assert(tasks.size() > 1);
+            tasks.pop_back();
+            return current_script()->resume(this);
+        }
+        // Transmit the failure to the parent
+        current_task().pop_back();
+        return current_script()->failure(this);
+    }
+
+    AI::timer_t AI::push_script(AI::script_ptr ais) {
+        current_task().emplace_back(std::move(ais));
+        return current_script()->start(this);
+    }
+
+    AI::timer_t AIScript::start(AI* ai) { return update(ai); }
+
+    void AIScript::suspend(AI*) { }
+
+    AI::timer_t AIScript::resume(AI* ai) { return start(ai); }
+
+    AI::timer_t AIScript::update(AI* ai) { return ai->pop_script(); }
+
+    void AISystem::update_item(ecs::Ent*, AI* ai) {
+        ai->update();
+    }
+
+    ecs::CRTPSystemFactory<AISystem> AISystem::factory;
 }
-
-AI::timer_t AI::push_script(AI::script_ptr ais) {
-    current_task().emplace_back(std::move(ais));
-    return current_script()->start(this);
-}
-
-void AIScript::suspend(AI*) { }
-
-AI::timer_t AIScript::resume(AI* ai) { return start(ai); }
-
-AI::timer_t AIScript::update(AI* ai) { return ai->pop_script(); }
-
-void AISystem::update_item(Ent*, AI* ai) {
-    ai->update();
-}
-
-AISystem SubSystem<AISystem, AI>::g_singleton;

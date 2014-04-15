@@ -3,7 +3,7 @@
 #include "components/component.hpp"
 #include "point.hpp"
 
-struct Furniture : ComponentCRTP<Component::Furniture, Furniture> {
+struct Furniture : ecs::ComponentCRTP<ecs::Component::Furniture, Furniture> {
   Furniture(const Point& pos) : pos(pos) {}
 
   virtual void on_add() override;

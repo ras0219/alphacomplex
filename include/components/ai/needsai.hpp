@@ -7,19 +7,25 @@
 
 #include <string>
 
-struct Needs : ComponentCRTP<Component::Needs, Needs> {
-  int food = 100;
-  int max_food = 200;
+namespace needs {
 
-  int sleep = 200;
-  int max_sleep = 200;
+    struct Needs : ecs::ComponentCRTP<ecs::Component::Needs, Needs> {
+        int food = 100;
+        int max_food = 200;
 
-  int happy = 200;
-  int max_happy = 200;
-};
+        int sleep = 200;
+        int max_sleep = 200;
 
-struct NeedsSystem : SubSystem<NeedsSystem, Needs, AI> {
-  NeedsSystem() : SubSystem(100) { }
+        int happy = 200;
+        int max_happy = 200;
+    };
 
-  void update_item(Ent* e, Needs* nai, AI* ai);
-};
+    struct NeedsSystem : ecs::SubSystem<NeedsSystem, Needs, ai::AI> {
+        NeedsSystem() : ecs::SubSystem<NeedsSystem, Needs, ai::AI>(100) { }
+
+        void update_item(ecs::Ent* e, Needs* nai, ai::AI* ai);
+
+        static ecs::CRTPSystemFactory<NeedsSystem> factory;
+    };
+
+}

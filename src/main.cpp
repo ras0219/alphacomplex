@@ -21,13 +21,9 @@
 #include "joblist.hpp"
 #include "log.hpp"
 #include "clock.hpp"
-#include "entities/entity.hpp"
+#include "entities/system.hpp"
 #include "views/viewstack.hpp"
 #include "views/mainview.hpp"
-#include "components/ai/ai.hpp"
-#include "components/movable.hpp"
-#include "components/jobprovider.hpp"
-#include "components/ai/needsai.hpp"
 #include "components/item.hpp"
 #include "components/itemlock.hpp"
 
@@ -45,12 +41,7 @@ bool paused = false;
 
 Graphics *gfx;
 
-vector<System*> systems = {
-    &AISystem::singleton(),
-    &smsystem,
-    &JobProviderSystem::singleton(),
-    &NeedsSystem::singleton()
-};
+std::vector<ecs::System*> systems;
 
 int main(int, char **) {
   try {
@@ -58,8 +49,12 @@ int main(int, char **) {
     // this version also uses the current time a seed
     CityProperties cityP(24, 30);
 
+    City city;
+
+    systems = ecs::createSystems(&city);
+    
     // generates a city using the city properties
-    City city(cityP);
+    city.generate(cityP);
 
     srand((uint)time(NULL));
 
@@ -84,7 +79,7 @@ int main(int, char **) {
           for (auto sys : systems)
             sys->update();
 
-          ItemLock::finalize_deletes();
+          item::ItemLock::finalize_deletes();
         }
 
         ++logic_frames;

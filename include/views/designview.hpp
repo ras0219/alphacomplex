@@ -23,5 +23,5 @@ private:
   // Mode details
   unsigned int mode;
   unsigned int rtype;
-  ItemLock ilock;
+  item::ItemLock ilock;
 };

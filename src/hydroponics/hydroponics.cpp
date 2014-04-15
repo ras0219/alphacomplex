@@ -7,15 +7,23 @@
 
 #include <memory>
 
-Ent* make_hydroponics_room(const Rect& r) {
-    Ent* e = new Ent;
+using namespace ecs;
+using namespace job;
+using namespace ai;
 
-    e->emplace<Room>(r);
+namespace hydroponics {
 
-    e->emplace<JobProvider>();
-    e->emplace<AI>(std::make_shared<HydroponicsAI>());
+    Ent* make_hydroponics_room(const Rect& r) {
+        Ent* e = new Ent;
 
-    e->add(&AISystem::singleton());
-    e->add(&JobProviderSystem::singleton());
-    return e;
+        e->emplace<Room>(r);
+
+        e->emplace<JobProvider>();
+        e->emplace<AI>(std::make_shared<HydroponicsAI>());
+
+        e->emplace_system<AISystem>();
+        e->emplace_system<JobProviderSystem>();
+        return e;
+    }
+
 }

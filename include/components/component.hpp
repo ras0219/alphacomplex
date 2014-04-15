@@ -4,61 +4,65 @@
 #include <vector>
 #include <algorithm>
 
-struct Component {
-  enum Kind {
-    Skilled,
-    Renderable,
-    AI,
-    Needs,
-    Clearance,
-    Descriptable,
-    Position,
-    CitizenName,
-    Movable,
-    Inventory,
-    Room,
-    Furniture,
-    Foodstuff,
-    Pharmaceutical,
-    Item,
-    JobProvider
-  };
+namespace ecs {
 
-  Component(Kind k) : kind(k), parent(nullptr) { }
-  virtual ~Component() {}
+    struct Component {
+        enum Kind {
+            Skilled,
+            Renderable,
+            AI,
+            Needs,
+            Clearance,
+            Descriptable,
+            Position,
+            CitizenName,
+            Movable,
+            Inventory,
+            Room,
+            Furniture,
+            Foodstuff,
+            Pharmaceutical,
+            Item,
+            JobProvider,
+            Storage
+        };
 
-  virtual void on_add() {}
-  virtual void on_remove() {}
+        Component(Kind k) : kind(k), parent(nullptr) { }
+        virtual ~Component() {}
 
-  Component& operator=(const Component&) = delete;
+        virtual void on_add() {}
+        virtual void on_remove() {}
 
-  template<class T>
-  T& as() {
-    assert(kind == T::StaticKind);
-    return static_cast<T&>(*this);
-  }
-  template<class T>
-  const T& as() const {
-    assert(kind == T::StaticKind);
-    return static_cast<const T&>(*this);
-  }
+        Component& operator=(const Component&) = delete;
 
-  const Kind kind;
-  struct Ent* parent;
-};
+        template<class T>
+        T& as() {
+            assert(kind == T::StaticKind);
+            return static_cast<T&>(*this);
+        }
+        template<class T>
+        const T& as() const {
+            assert(kind == T::StaticKind);
+            return static_cast<const T&>(*this);
+        }
 
-template<Component::Kind K, class T>
-struct ComponentCRTP : Component {
-  static const Component::Kind StaticKind = K;
-  ComponentCRTP() : Component(K) {
-    instances.push_back(&this->as<T>());
-  }
-  ~ComponentCRTP() { instances.erase(std::find(instances.begin(), instances.end(), &this->as<T>())); }
+        const Kind kind;
+        struct Ent* parent;
+    };
 
-  using set_t = std::vector<T*>;
-  using iterator = typename set_t::iterator;
-  static set_t instances;
-};
-template<Component::Kind K, class T>
-typename ComponentCRTP<K, T>::set_t ComponentCRTP<K, T>::instances;
+    template<Component::Kind K, class T>
+    struct ComponentCRTP : Component {
+        static const Component::Kind StaticKind = K;
+        ComponentCRTP() : Component(K) {
+            instances.push_back(&this->as<T>());
+        }
+        ~ComponentCRTP() { instances.erase(std::find(instances.begin(), instances.end(), &this->as<T>())); }
 
+        using set_t = std::vector<T*>;
+        using iterator = typename set_t::iterator;
+        static set_t instances;
+    };
+    template<Component::Kind K, class T>
+    typename ComponentCRTP<K, T>::set_t ComponentCRTP<K, T>::instances;
+
+}

@@ -4,7 +4,7 @@
 
 #include <string>
 
-struct CitizenName : ComponentCRTP<Component::CitizenName, CitizenName> {
+struct CitizenName : ecs::ComponentCRTP<ecs::Component::CitizenName, CitizenName> {
   CitizenName(std::string n, std::string s)
     : name(n), sector(s) { }
 

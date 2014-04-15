@@ -10,11 +10,17 @@
 #include "components/movable.hpp"
 #include "components/position.hpp"
 #include "components/item.hpp"
+#include "entities/garbage.hpp"
 
 #include <sstream>
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+
+using namespace ecs;
+using namespace ai;
+using namespace job;
+using namespace item;
 
 string get_full_name(Ent* e) {
   CitizenName* cn = e->assert_get<CitizenName>();
@@ -52,12 +58,18 @@ struct IdleAI : AIScript {
 
     Clearance* c = ai->parent->assert_get<Clearance>();
 
-    job = jobs.find_job(*c);
+    job = JobList::getJoblist().find_job(*c);
     if (job) {
       job->reserve();
       return ai->add_task( job->script(), 1 );
     } else {
-      return 30;
+        // While idling around, sometimes produce garbage.
+        if (rand() % 400 == 0) {
+            // Produce garbage
+            auto p = ai->parent->assert_get<Position>()->as_point();
+            spawn_garbage(p);
+        }
+        return 30;
     }
   }
 
@@ -74,16 +86,16 @@ ItemProperties citizen_properties = {
 Ent* new_citizen(Point pos, Security::Mask sec) {
   Ent* e = new Ent;
   e->emplace<Position>(pos);
-  e->emplace<Movable>(pos);
+  e->emplace<movement::Movable>(pos);
   e->emplace<AI>(std::make_shared<IdleAI>());
   e->emplace<Clearance>(clearance{ sec, Department::random_dept() });
   e->emplace<Renderable>(Security::mask_to_dcode(sec)[0]);
   e->add(random_citizenname());
-  e->emplace<Needs>();
+  e->emplace<needs::Needs>();
   e->emplace<Item>(citizen_properties);
 
-  e->add(&AISystem::singleton());
-  e->add(&smsystem);
-  e->add(&NeedsSystem::singleton());
+  e->emplace_system<AISystem>();
+  e->emplace_system<movement::MovableSystem>();
+  e->emplace_system<needs::NeedsSystem>();
   return e;
 }

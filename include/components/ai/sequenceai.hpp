@@ -2,23 +2,27 @@
 
 #include "ai.hpp"
 
-struct SequenceAI : AIScript {
-  SequenceAI() : i(0) {}
-  SequenceAI(std::initializer_list<AI::script_ptr> il) : subs(il), i(0) { }
+namespace ai {
 
-  virtual AI::timer_t start(AI* ai);
-  virtual AI::timer_t update(AI* ai);
+    struct SequenceAI : AIScript {
+        SequenceAI() : i(0) {}
+        SequenceAI(std::initializer_list<AI::script_ptr> il) : subs(il), i(0) { }
 
-  inline void add_task(AI::script_ptr s) {
-    subs.push_back(std::move(s));
-  }
+        virtual AI::timer_t start(AI* ai);
+        virtual AI::timer_t update(AI* ai);
 
-  virtual const std::string& description() const override {
-      return desc;
-  }
+        inline void add_task(AI::script_ptr s) {
+            subs.push_back(std::move(s));
+        }
 
-private:
-  std::vector<AI::script_ptr> subs;
-  unsigned int i;
-  std::string desc;
-};
+        virtual const std::string& description() const override {
+            return desc;
+        }
+
+    private:
+        std::vector<AI::script_ptr> subs;
+        unsigned int i;
+        std::string desc;
+    };
+
+}

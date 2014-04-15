@@ -1,9 +1,16 @@
 #pragma once
 
-extern struct ItemProperties bread_properties;
-extern struct ItemProperties lettuce_properties;
+namespace item {
+    struct ItemProperties;
+}
+namespace ecs {
+    struct Ent;
+}
+
+extern item::ItemProperties bread_properties;
+extern item::ItemProperties lettuce_properties;
 
 struct Point;
 
-struct Ent* make_bread(const Point& p);
-struct Ent* make_lettuce(const Point& p);
+ecs::Ent* make_bread(const Point& p);
+ecs::Ent* make_lettuce(const Point& p);

@@ -8,29 +8,35 @@
 #include <string>
 #include <memory>
 
-using namespace std;
+namespace job {
 
-struct Job;
+    struct Job;
 
-struct JobList {
-  using list_t = list<shared_ptr<Job>>;
-  using iterator = list_t::iterator;
+    struct JobList {
+        using list_t = std::list<std::shared_ptr<Job>>;
+        using iterator = list_t::iterator;
 
-  iterator add_job(Job* j);
-  iterator add_job(const shared_ptr<Job>& j);
-  void remove_jobs();
-  Job* find_job(clearance c);
+        static JobList& getJoblist();
 
-  list_t jlist;
-};
+        iterator add_job(Job* j);
+        iterator add_job(const std::shared_ptr<Job>& j);
+        void remove_jobs();
+        Job* find_job(clearance c);
 
-struct JobListing : StaticWidget<JobListing> {
-  JobList* jlist;
-  std::string title;
+        iterator begin();
+        iterator end();
 
-  JobListing(JobList* l, const char* t) : jlist(l), title(t) { }
+    private:
+        list_t jlist;
+    };
 
-  void render(Graphics& g, render_box const& pos);
-};
+    struct JobListing : StaticWidget<JobListing> {
+        JobList* jlist;
+        std::string title;
 
-extern JobList jobs;
+        JobListing(JobList* l, const char* t) : jlist(l), title(t) { }
+
+        void render(Graphics& g, render_box const& pos);
+    };
+
+}

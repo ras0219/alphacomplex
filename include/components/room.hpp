@@ -5,9 +5,12 @@
 #include <vector>
 
 struct Furniture;
-struct ItemProperties;
 
-struct Room : ComponentCRTP<Component::Room, Room> {
+namespace item {
+    struct ItemProperties;
+}
+
+struct Room : ecs::ComponentCRTP<ecs::Component::Room, Room> {
     Room(const Rect& r);
 
   virtual void on_add() override;
@@ -15,7 +18,7 @@ struct Room : ComponentCRTP<Component::Room, Room> {
 
   bool contains(int tx, int ty) const;
 
-  std::vector<struct Furniture*> find_furniture(ItemProperties const& props);
+  std::vector<struct Furniture*> find_furniture(item::ItemProperties const& props);
   std::vector<struct Furniture*> find_furniture();
 
   Rect r;

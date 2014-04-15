@@ -1,7 +1,13 @@
 #pragma once
 
 #include <memory>
+namespace job { struct Job; }
 
-std::shared_ptr<struct Job> make_harvest_job(struct Furniture* table);
+struct Furniture;
 
-std::shared_ptr<struct Job> make_plant_job(struct Furniture* table);
+namespace hydroponics {
+
+    std::shared_ptr<job::Job> make_harvest_job(Furniture* table);
+    std::shared_ptr<job::Job> make_plant_job(Furniture* table);
+
+}

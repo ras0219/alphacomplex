@@ -5,16 +5,22 @@
 
 struct Room;
 
-struct HydroponicsAI : AIScript {
-    virtual AI::timer_t start(AI*) override;
-    virtual AI::timer_t update(AI* ai) override;
-    virtual const std::string& description() const override {
-        return desc;
-    }
+namespace hydroponics {
 
-private:
-    void update_tables(Room* r);
+    struct HydroponicsTable;
 
-    std::vector<struct HydroponicsTable*> m_tables;
-    static std::string desc;
-};
+    struct HydroponicsAI : ai::AIScript {
+        virtual timer_t start(ai::AI*) override;
+        virtual timer_t update(ai::AI* ai) override;
+        virtual const std::string& description() const override {
+            return desc;
+        }
+
+    private:
+        void update_tables(Room* r);
+
+        std::vector<HydroponicsTable*> m_tables;
+        static std::string desc;
+    };
+
+}

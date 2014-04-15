@@ -1,3 +1,5 @@
 #include "components/movable.hpp"
 
-SimpleMovableSystem smsystem;
+namespace movement {
+    ecs::CRTPSystemFactory<MovableSystem> MovableSystem::factory;
+}

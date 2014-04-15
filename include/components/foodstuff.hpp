@@ -2,7 +2,7 @@
 
 #include "entities/entity.hpp"
 
-struct Foodstuff : ComponentCRTP<Component::Foodstuff, Foodstuff> {
+struct Foodstuff : ecs::ComponentCRTP<ecs::Component::Foodstuff, Foodstuff> {
   Foodstuff(int amt) : amount(amt) { }
 
   int amount;

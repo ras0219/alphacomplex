@@ -9,32 +9,36 @@
 #include <vector>
 #include <string>
 
-struct Job {
-  Job(std::string d, clearance c, AI::script_ptr ais) : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
+namespace job {
 
-  inline const std::string& description() const {
-    return desc;
-  }
-  inline struct clearance clearance() const { return clear; }
+    struct Job {
+        Job(std::string d, clearance c, ai::AI::script_ptr ais) : desc(d), clear(c), scr(ais), state(UNRESERVED) { }
 
-  inline AI::script_ptr script() {
-    return scr;
-  }
+        inline const std::string& description() const {
+            return desc;
+        }
+        inline struct clearance clearance() const { return clear; }
 
-  inline bool available() const { return state == UNRESERVED; }
-  inline bool unavailable() const { return state != UNRESERVED; }
-  inline bool completed() const { return state == COMPLETED; }
+        inline ai::AI::script_ptr script() {
+            return scr;
+        }
 
-  inline void reserve() { assert(state == UNRESERVED); state = RESERVED; }
-  inline void complete() { assert(state == RESERVED); state = COMPLETED; }
+        inline bool available() const { return state == UNRESERVED; }
+        inline bool unavailable() const { return state != UNRESERVED; }
+        inline bool completed() const { return state == COMPLETED; }
 
-  std::string desc;
-  struct clearance clear;
-  AI::script_ptr scr;
+        inline void reserve() { assert(state == UNRESERVED); state = RESERVED; }
+        inline void complete() { assert(state == RESERVED); state = COMPLETED; }
 
-  enum State {
-    UNRESERVED,
-    RESERVED,
-    COMPLETED
-  } state;
-};
+        std::string desc;
+        struct clearance clear;
+        ai::AI::script_ptr scr;
+
+        enum State {
+            UNRESERVED,
+            RESERVED,
+            COMPLETED
+        } state;
+    };
+
+}

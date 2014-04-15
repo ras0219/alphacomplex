@@ -22,9 +22,9 @@ void AnnounceView::render_body(Graphics& g, render_box const& pos) {
   else
     advance(e, num_lines);
 
-  int r = num_lines;
+  auto r = num_lines;
   while (it != e) {
-    g.drawString(pos.x, pos.y + r - 1, *it, Graphics::DEFAULT);
+    g.drawString(pos.x, pos.y + (int)r - 1, *it, Graphics::DEFAULT);
     --r;
     ++it;
   }

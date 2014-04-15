@@ -6,30 +6,38 @@
 
 struct City;
 
-struct Movable : ComponentCRTP<Component::Movable, Movable> {
-  Movable(Point p) : pos(p) { }
+namespace ecs {
+    struct Ent;
+}
 
-  inline City& city() { return *pos.city; }
-  inline int x() const { return pos.x; }
-  inline int y() const { return pos.y; }
-  inline point as_point() const { return pos.as_point(); }
+namespace movement {
 
-  inline void set(int x, int y) {
-    pos.x = x;
-    pos.y = y;
-  }
-  inline void set(point p) {
-    pos.x = p.first;
-    pos.y = p.second;
-  }
+    struct Movable : ecs::ComponentCRTP<ecs::Component::Movable, Movable> {
+        Movable(Point p) : pos(p) { }
 
-  Point pos;
-};
+        inline City& city() { return *pos.city; }
+        inline int x() const { return pos.x; }
+        inline int y() const { return pos.y; }
+        inline point as_point() const { return pos.as_point(); }
 
-struct SimpleMovableSystem : SubSystem<SimpleMovableSystem, Movable, Position> {
-  inline void update_item(struct Ent*, Movable* m, Position* pc) {
-    pc->move(m->pos);
-  }
-};
+        inline void set(int x, int y) {
+            pos.x = x;
+            pos.y = y;
+        }
+        inline void set(point p) {
+            pos.x = p.first;
+            pos.y = p.second;
+        }
 
-extern SimpleMovableSystem smsystem;
+        Point pos;
+    };
+
+    struct MovableSystem : ecs::SubSystem<MovableSystem, Movable, Position> {
+        inline void update_item(ecs::Ent*, Movable* m, Position* pc) {
+            pc->move(m->pos);
+        }
+
+        static ecs::CRTPSystemFactory<MovableSystem> factory;
+    };
+
+}

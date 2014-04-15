@@ -2,7 +2,14 @@
 
 #include "point.hpp"
 
-extern struct ItemProperties filingcabinet_properties;
+namespace item {
+    struct ItemProperties;
+}
+namespace ecs {
+    struct Ent;
+}
 
-struct Ent* make_filestorage(const Rect& r);
-struct Ent* make_filingcabinet(const Point& p);
+extern item::ItemProperties filingcabinet_properties;
+
+ecs::Ent* make_filestorage(const Rect& r);
+ecs::Ent* make_filingcabinet(const Point& p);

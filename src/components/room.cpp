@@ -14,10 +14,10 @@ bool Room::contains(int tx, int ty) const {
     && (ty < r.y + r.h);
 }
 
-std::vector<Furniture*> Room::find_furniture(ItemProperties const& props) {
+std::vector<Furniture*> Room::find_furniture(item::ItemProperties const& props) {
   std::vector<struct Furniture*> ret = find_furniture();
   auto pred = [&props](struct Furniture* f) {
-    if (auto i = f->parent->has_get<struct Item>())
+    if (auto i = f->parent->has_get<item::Item>())
       return &i->prop == &props;
     else
         {

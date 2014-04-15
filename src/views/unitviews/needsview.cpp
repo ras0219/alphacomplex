@@ -1,6 +1,9 @@
 #include "views/unitviews/unitviewmode.hpp"
 #include "components/ai/needsai.hpp"
 
+using namespace ecs;
+using namespace needs;
+
 struct NeedsMode : UnitViewModeInstance<NeedsMode> {
   static inline string title() { return "Units Roster (Needs)"; }
   using List_t = std::array<std::string, 3>;

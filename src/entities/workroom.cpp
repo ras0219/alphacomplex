@@ -1,20 +1,24 @@
 #include "entities/workroom.hpp"
-#include "city.hpp"
-#include "components/ai/job.hpp"
 #include "entities/citizen.hpp"
-#include "windows.hpp"
+#include "components/ai/job.hpp"
 #include "components/ai/callbackai.hpp"
 #include "components/ai/sequenceai.hpp"
 #include "components/ai/pathai.hpp"
 #include "components/room.hpp"
 #include "components/jobprovider.hpp"
+#include "city.hpp"
+#include "windows.hpp"
+#include "point.hpp"
 
 #include <cstdlib>
 #include <cstdio>
 
 extern int influence;
 
-std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent* p);
+using namespace ai;
+using namespace ecs;
+
+std::shared_ptr<job::Job> make_fetch_job(int x1, int y1, int x2, int y2, ecs::Ent* p);
 
 struct MakeWorkScript : AIScript {
   virtual int start(AI*) {
@@ -22,7 +26,7 @@ struct MakeWorkScript : AIScript {
   }
   virtual int update(AI* ai) {
     Ent* room = ai->parent;
-    JobProvider* jobprov = room->assert_get<JobProvider>();
+    auto jobprov = room->assert_get<job::JobProvider>();
 
     if (rand() % 20 > 0)
       return 100;
@@ -48,32 +52,26 @@ private:
 
 std::string MakeWorkScript::desc = "Making work";
 
-Ent* make_workroom(City& c, int x, int y, int w, int h) {
-  Ent* r = new Ent;
+Ent* make_workroom(const Rect& rec) {
+    Ent* r = new Ent;
 
-  Room* room = new Room(Rect{ &c, x, y, w, h });
-  r->add(room);
+    r->emplace<Room>(rec);
+    r->emplace<AI>(std::make_shared<MakeWorkScript>());
+    r->emplace<job::JobProvider>();
 
-  r->add(new AI(make_shared<MakeWorkScript>()));
-  r->add(new JobProvider);
-
-  r->add(&AISystem::singleton());
-  r->add(&JobProviderSystem::singleton());
-  return r;
+    r->emplace_system<AISystem>();
+    r->emplace_system<job::JobProviderSystem>();
+    return r;
 }
 
-Ent* make_workroom(Rect r) {
-  return make_workroom(*r.city, r.x, r.y, r.w, r.h);
-}
-
-std::shared_ptr<Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
+std::shared_ptr<job::Job> make_fetch_job(int x1, int y1, int x2, int y2, Ent*) {
   std::shared_ptr<SequenceAI> script = make_shared<SequenceAI>();
 
   script->add_task(make_shared<PathAI>(point(x1, y1)));
   script->add_task(make_shared<PathAI>(point(x2, y2)));
   script->add_task(make_callbackai([=] (AI*) { ++influence; }));
 
-  return make_shared<Job>(
+  return std::make_shared<job::Job>(
     "Fetch Documents",
     clearance{ Security::ALL, Department::RESEARCH },
     script
