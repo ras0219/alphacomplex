@@ -24,7 +24,6 @@
 #include "entities/system.hpp"
 #include "views/viewstack.hpp"
 #include "views/mainview.hpp"
-#include "components/item.hpp"
 #include "components/itemlock.hpp"
 
 #include <map>

@@ -1,5 +1,7 @@
 #pragma once
+
 #include <cstdlib>
+#include <array>
 
 namespace Department {
   enum Mask : unsigned int {
@@ -11,7 +13,7 @@ namespace Department {
       ALL = (uint)(-1)
   };
 
-  typedef array<Mask,5> List_t;
+  using List_t = std::array<Mask,5>;
   const List_t List = {{
       INTERNAL_SECURITY,
       AGRICULTURE,

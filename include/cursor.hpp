@@ -24,6 +24,7 @@ struct CityViewport {
 };
 
 struct CityCursor {
+    CityCursor() {}
   CityCursor(City* city, int x = 1, int y = 1)
   : city(city), x(x), y(y) {}
 

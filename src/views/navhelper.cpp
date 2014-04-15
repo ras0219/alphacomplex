@@ -22,6 +22,7 @@ bool NavHelper::handle_keypress(KeyboardKey ks) {
 }
 
 void NavHelper::register_key(KeyboardKey ks, const std::string& desc, cb_t cb) {
-  nav_map.emplace(ks, std::make_tuple(desc, cb));
+    assert(nav_map.find(ks) == nav_map.end());
+    nav_map.emplace(ks, std::make_tuple(desc, cb));
 }
 

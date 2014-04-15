@@ -277,6 +277,10 @@ KeyboardKey Graphics_SDL::map_key(NativeKeyboardKey key) {
             return KEY_e;
         case SDLK_d:
             return KEY_d;
+        case SDLK_s:
+            return KEY_s;
+        case SDLK_w:
+            return KEY_w;
         case SDLK_f:
             return KEY_f;
         case SDLK_PAGEUP:

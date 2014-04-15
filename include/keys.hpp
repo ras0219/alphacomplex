@@ -18,6 +18,8 @@ enum KeyboardKey {
     KEY_e,
     KEY_d,
     KEY_f,
+    KEY_s,
+    KEY_w,
     KEY_Pageup,
     KEY_Pagedown
 };

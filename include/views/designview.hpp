@@ -23,5 +23,6 @@ private:
   // Mode details
   unsigned int mode;
   unsigned int rtype;
+  CityCursor pt1;
   item::ItemLock ilock;
 };
