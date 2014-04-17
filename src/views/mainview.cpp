@@ -28,11 +28,36 @@ MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSi
   nav.register_key(KEY_d, "[d] Designations", [this]() { vstk->push(dview); });
   nav.register_key(KEY_a, "[a] Announcements", [this]() { vstk->push(aview); });
   nav.register_key(KEY_f, "[f] Purchase Food", [this]() {
-    city->ent(1, 1).insert(make_bread({ city, 1, 1 }));
+      if (influence >= 1) {
+          influence -= 1;
+          city->ent(1, 1).insert(make_bread({ city, 1, 1 }));
+      } else {
+          announce("You must have 1 influence to purchase bread.");
+      }
   });
+
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
-  nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() { mv.next_mode(); });
+  nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() {
+      mv.next_mode();
+      announce("Changed Map Mode.");
+  });
   nav.register_key(KEY_q, "[q] Quit", [this]() { if (gfx) gfx->destroy(); });
+  nav.register_key(KEY_r, "[r] Recruit R", [this]() {
+      if (influence >= 10) {
+          influence -= 10;
+          new_citizen({ city, 1, 1 }, Security::RED);
+      } else {
+          announce("You must have 10 influence to recruit new troubleshooters.");
+      }
+  });
+  nav.register_key(KEY_e, "[e] Recruit IR", [this]() {
+      if (influence >= 5) {
+          influence -= 5;
+          new_citizen({ city, 1, 1 }, Security::INFRARED);
+      } else {
+          announce("You must have 5 influence to recruit new infrareds.");
+      }
+  });
 }
 
 job::JobListing pendinglist(&job::JobList::getJoblist(), "Pending Jobs");
@@ -46,31 +71,10 @@ void MainView::render_body(Graphics& g, render_box const& pos) {
   pos2.set_width(30, render_box::right);
   pos2.x += 30;
   pendinglist.render(g, pos2);
-  //HelpText::instance.render(g);
 }
 
 void MainView::handle_keypress(KeyboardKey ks) {
   if (nav.handle_keypress(ks)) return;
 
-  switch (ks) {
-  case KEY_r:
-    if (influence >= 0) {
-      //influence -= 15;
-      new_citizen({ city, 1, 1 }, Security::RED);
-    } else {
-      announce("You must have 15 influence to recruit new troubleshooters.");
-    }
-    break;
-  case KEY_e:
-    if (influence >= 5) {
-      influence -= 5;
-      new_citizen({ city, 1, 1 }, Security::INFRARED);
-    } else {
-      announce("You must have 5 influence to recruit new infrareds.");
-    }
-    break;
-  default:
-    cerr << ks << endl;
-    break;
-  }
+  cerr << ks << endl;
 }
