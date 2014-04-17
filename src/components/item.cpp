@@ -38,7 +38,7 @@ namespace item {
         for (auto& l : to_delete) {
             auto p = l.get();
             l.reset();
-            delete p;
+            delete p->parent;
         }
         to_delete.clear();
     }
