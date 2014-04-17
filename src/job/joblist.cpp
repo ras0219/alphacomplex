@@ -1,7 +1,7 @@
-#include "joblist.hpp"
+#include "job/joblist.hpp"
+#include "job/job.hpp"
 #include "graphics.hpp"
 #include "entities/garbage.hpp"
-#include "components/ai/job.hpp"
 
 #include <iostream>
 

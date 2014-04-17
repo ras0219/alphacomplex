@@ -7,9 +7,9 @@
 #include "components/ai/ai.hpp"
 #include "components/ai/sequenceai.hpp"
 #include "components/ai/callbackai.hpp"
-#include "components/jobprovider.hpp"
 #include "components/item.hpp"
 #include "components/ai/aidsl.hpp"
+#include "job/jobprovider.hpp"
 
 #include <algorithm>
 

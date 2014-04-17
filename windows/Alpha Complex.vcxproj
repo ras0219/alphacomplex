@@ -207,7 +207,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\ai\aidsl.hpp" />
     <ClInclude Include="..\include\components\ai\callbackai.hpp" />
     <ClInclude Include="..\include\components\ai\ifai.hpp" />
-    <ClInclude Include="..\include\components\ai\job.hpp" />
     <ClInclude Include="..\include\components\ai\lockai.hpp" />
     <ClInclude Include="..\include\components\ai\needsai.hpp" />
     <ClInclude Include="..\include\components\ai\pathai.hpp" />
@@ -222,7 +221,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\furniture.hpp" />
     <ClInclude Include="..\include\components\item.hpp" />
     <ClInclude Include="..\include\components\itemlock.hpp" />
-    <ClInclude Include="..\include\components\jobprovider.hpp" />
     <ClInclude Include="..\include\components\movable.hpp" />
     <ClInclude Include="..\include\components\position.hpp" />
     <ClInclude Include="..\include\components\renderable.hpp" />
@@ -246,7 +244,9 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\hydroponics\hydroponics.hpp" />
     <ClInclude Include="..\include\hydroponics\hydroponicsai.hpp" />
     <ClInclude Include="..\include\hydroponics\hydroponics_table.hpp" />
-    <ClInclude Include="..\include\joblist.hpp" />
+    <ClInclude Include="..\include\job\job.hpp" />
+    <ClInclude Include="..\include\job\joblist.hpp" />
+    <ClInclude Include="..\include\job\jobprovider.hpp" />
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\logger.hpp" />
@@ -295,7 +295,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\foodstuff.cpp" />
     <ClCompile Include="..\src\components\furniture.cpp" />
     <ClCompile Include="..\src\components\item.cpp" />
-    <ClCompile Include="..\src\components\jobprovider.cpp" />
     <ClCompile Include="..\src\components\movable.cpp" />
     <ClCompile Include="..\src\components\needsai.cpp" />
     <ClCompile Include="..\src\components\pathfind.cpp" />
@@ -315,7 +314,8 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\hydroponics\hydroponics.cpp" />
     <ClCompile Include="..\src\hydroponics\hydroponicsai.cpp" />
     <ClCompile Include="..\src\hydroponics\hydroponics_table.cpp" />
-    <ClCompile Include="..\src\joblist.cpp" />
+    <ClCompile Include="..\src\job\joblist.cpp" />
+    <ClCompile Include="..\src\job\jobprovider.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\point.cpp" />

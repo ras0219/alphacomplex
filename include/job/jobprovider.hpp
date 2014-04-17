@@ -2,7 +2,7 @@
 
 #include "entities/entity.hpp"
 #include "entities/subsystem.hpp"
-#include "components/ai/job.hpp"
+#include "job.hpp"
 
 #include <memory>
 #include <vector>

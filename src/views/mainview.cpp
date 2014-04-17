@@ -10,7 +10,7 @@
 
 #include "views/defaultlayout.hpp"
 
-#include "joblist.hpp"
+#include "job/joblist.hpp"
 #include "entities/citizen.hpp"
 #include "entities/foods.hpp"
 

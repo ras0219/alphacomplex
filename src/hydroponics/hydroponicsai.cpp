@@ -2,7 +2,7 @@
 #include "hydroponics/hydroponics_table.hpp"
 #include "hydroponics/hydroponicsjobs.hpp"
 #include "components/room.hpp"
-#include "components/jobprovider.hpp"
+#include "job/jobprovider.hpp"
 #include "utilities/assert_cast.hpp"
 
 using namespace ai;

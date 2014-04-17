@@ -12,9 +12,8 @@
 #include "entities/entity.hpp"
 #include "components/room.hpp"
 
-//#include "entities/citizen.hpp"
-
 extern bool paused;
+
 namespace {
   enum Mode {
     DigMode,

@@ -1,6 +1,6 @@
-#include "components/jobprovider.hpp"
-#include "components/ai/job.hpp"
-#include "joblist.hpp"
+#include "job/jobprovider.hpp"
+#include "job/job.hpp"
+#include "job/joblist.hpp"
 
 namespace job {
 

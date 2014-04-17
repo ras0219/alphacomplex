@@ -11,10 +11,10 @@
 #include "components/ai/pathai.hpp"
 #include "components/room.hpp"
 #include "components/ai/sequenceai.hpp"
-#include "components/ai/job.hpp"
+#include "job/job.hpp"
+#include "job/joblist.hpp"
 #include "windows.hpp"
 #include "entities/workroom.hpp"
-#include "joblist.hpp"
 
 #include <cstdlib>
 #include <random>

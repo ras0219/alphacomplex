@@ -2,10 +2,10 @@
 #include "graphics.hpp"
 #include "city.hpp"
 #include "clock.hpp"
-#include "joblist.hpp"
 #include "components/renderable.hpp"
 #include "components/furniture.hpp"
 #include "components/room.hpp"
+#include "entities/entity.hpp"
 
 #include <cstring>
 

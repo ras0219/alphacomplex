@@ -1,7 +1,7 @@
 #include "hydroponics/hydroponicsjobs.hpp"
 #include "hydroponics/hydroponics_table.hpp"
 #include "components/furniture.hpp"
-#include "components/jobprovider.hpp"
+#include "job/jobprovider.hpp"
 #include "components/ai/sequenceai.hpp"
 #include "components/ai/aidsl.hpp"
 #include "components/ai/callbackai.hpp"

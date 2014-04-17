@@ -1,7 +1,7 @@
 #include "point.hpp"
 #include "components/room.hpp"
 #include "components/ai/ai.hpp"
-#include "components/jobprovider.hpp"
+#include "job/jobprovider.hpp"
 #include "hydroponics/hydroponics.hpp"
 #include "hydroponics/hydroponicsai.hpp"
 

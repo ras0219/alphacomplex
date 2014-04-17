@@ -2,7 +2,7 @@
 
 #include "defs.hpp"
 #include "windows.hpp"
-#include "ai.hpp"
+#include "components/ai/ai.hpp"
 #include "components/clearance.hpp"
 
 #include <cassert>

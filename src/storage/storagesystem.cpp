@@ -4,8 +4,8 @@
 #include "components/room.hpp"
 #include "components/item.hpp"
 #include "components/foodstuff.hpp"
-#include "components/ai/job.hpp"
-#include "joblist.hpp"
+#include "job/job.hpp"
+#include "job/joblist.hpp"
 #include "city.hpp"
 
 #include <algorithm>
