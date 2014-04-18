@@ -26,7 +26,8 @@ struct DefaultLayout {
 
     pos2 = pos;
     pos2.set_width(30, render_box::right);
-    pos2.set_height(10, render_box::bottom);
+    pos2.set_height(15, render_box::bottom);
+    pos2.shrink_bottom(1);
     self->nav.render(g, pos2);
 
     pos2 = pos;
