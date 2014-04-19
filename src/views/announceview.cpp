@@ -24,7 +24,7 @@ void AnnounceView::render_body(Graphics& g, render_box const& pos) {
 
   int r = num_lines;
   while (it != e) {
-    g.drawString(pos.x, pos.y + r - 1, *it, Graphics::DEFAULT);
+	  g.drawString(pos.x, pos.y + r - 1, *it,true, Graphics::colors_to_context[Graphics::WHITE]);
     --r;
     ++it;
   }

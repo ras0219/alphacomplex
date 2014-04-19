@@ -37,13 +37,31 @@ using namespace SDL;
 
 using NativeKeyboardKey = unsigned long;
 
+
+const Graphics::Context Graphics::colors_to_context[DEFAULT + 1] =
+{
+	{ 255, 255, 255, 255 },       //white
+	{ 255, 0, 0, 255 },      //red
+	{ 0, 255, 0, 255 },	   //green
+	{ 0, 0, 255, 255 },      //blue
+	{ 255, 255, 0, 255 },    //yellow
+	{ 150, 75, 0, 255 },     //brown according to wiki
+	{ 255, 165, 0, 255 },    //orange according to wiki
+	{ 0, 0, 0, 0 },          //DEFAULT
+
+};
+
+
+
+
+
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
 
 public:
   // Graphics interface Methods
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+	void drawString(int x, int y, const std::string& str, bool must_kern = false, Context gc = colors_to_context[WHITE]);
+	void drawChar(int x, int y, char str, Context gc = colors_to_context[WHITE]);
 
   void handle_events(struct Controller*);
 
@@ -97,7 +115,7 @@ void Graphics_SDL::throw_ttf_error(const std::string& desc) {
 }
 
 Graphics_SDL::Graphics_SDL()
-  : font_color({ 0, 255, 0, 0 }), graphics_log("graphics.txt")
+  : font_color({ 255, 255, 255, 0 }), graphics_log("graphics.txt")
   , string_texture_cache(STRING_CACHE_SIZE, FreeSDLTexture)
 {
   graphics_log.Write("Initializing graphics file for SDL");
@@ -316,9 +334,17 @@ void Graphics_SDL::handle_events(Controller* c) {
   //all done with events! :)
 }
 
-void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_SDL::Context) {
-  //To-Do: give a choice to caller if he needs KERNING or CACHING.
-
+//Note: Please do NOT request kerning for short-term strings.
+//Kerning implies the string to be cached.
+void Graphics_SDL::drawString(int x, int y, const string & str,bool must_kern, const Graphics_SDL::Context color) {
+	if (must_kern == false)
+	{
+		SDL_SetTextureColorMod(ttf_texture.get(), color.red, color.green, color.blue);
+		for (auto ch : str)
+			drawChar(x++, y, ch, Graphics::colors_to_context[DEFAULT]);
+		return;
+	}
+	//else
   SDL_Texture* retr_texture;
   if (string_texture_cache.get(str, &retr_texture) == false) {
 		Surface my_font_surface = Surface(TTF_RenderText_Shaded(best_font, str.c_str(), font_color, { 0, 0, 0, 0 }));
@@ -334,21 +360,19 @@ void Graphics_SDL::drawString(int x, int y, const string & str, const Graphics_S
 	int w = 0, h = 0;
 	TTF_SizeText(best_font, str.c_str(), &w, &h);
 	SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, w, h };
-    /* for (auto ch : str)
-     * // Look at this performance
-     * drawChar(x++, y, ch, gc);
-     * // It's so good.
-     */
- 
+
+	SDL_SetTextureColorMod(retr_texture, color.red, color.green, color.blue);
     ren.RenderCopy(retr_texture, nullptr, &dstRect);
 }
 
-void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context) {
+void Graphics_SDL::drawChar(int x, int y, char ch, const Graphics_SDL::Context color) {
   SDL_Rect dstRect = { x * FONT_WIDTH, y * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT };
   int x_cord = (ch % tiles_per_row) * FONT_WIDTH;
   int y_cord = (ch / tiles_per_row) * FONT_HEIGHT;
   SDL_Rect srcRect = { x_cord, y_cord, FONT_WIDTH, FONT_HEIGHT };
 
+  if (memcmp(&color, &colors_to_context[DEFAULT], sizeof(color)))
+	    SDL_SetTextureColorMod(ttf_texture.get(), color.red, color.green, color.blue);
   ren.RenderCopy(ttf_texture.get(), &srcRect, &dstRect);
 }
 
@@ -365,8 +389,8 @@ void Graphics_SDL::repaint() {
 Graphics* new_graphics() { return new Graphics_SDL(); }
 
 //// Now for the plug functions
-void Graphics::drawString(int x, int y, const std::string& str, Context gc) {
-  return static_cast<Graphics_SDL*>(this)->drawString(x,y,str,gc);
+void Graphics::drawString(int x, int y, const std::string& str, bool must_kern, Context gc) {
+  return static_cast<Graphics_SDL*>(this)->drawString(x,y,str,must_kern,gc);
 }
 void Graphics::drawChar(int x, int y, char str, Context gc) {
   return static_cast<Graphics_SDL*>(this)->drawChar(x,y,str,gc);

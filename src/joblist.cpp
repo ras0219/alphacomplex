@@ -39,8 +39,8 @@ Job* JobList::find_job(clearance c) {
 }
 
 void JobListing::render(Graphics& g, render_box const& pos) {
-  g.drawString(pos.x, pos.y, title, Graphics::DEFAULT);
-  g.drawString(pos.x, pos.y + 1, "---------", Graphics::DEFAULT);
+	g.drawString(pos.x, pos.y, title, true, Graphics::colors_to_context[Graphics::GREEN]);
+	g.drawString(pos.x, pos.y + 1, "---------", true, Graphics::colors_to_context[Graphics::GREEN]);
 
   int yoffset = 3;
   for (auto j : jlist->jlist) {
