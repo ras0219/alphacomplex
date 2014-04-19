@@ -22,7 +22,7 @@ T* assert_cast(U* u) {
 ///@warning No multiple inheritance
 ///@warning The pointers must not require adjustment
 ///@warning std::vector must not be specialized for U* or T*
-template<class T, class U, class = std::enable_if_t<std::is_base_of<U,T>::value>>
+template<class T, class U, class = typename std::enable_if<std::is_base_of<U,T>::value>::type>
 std::vector<T*>& assert_cast(std::vector<U*>& us) {
 #ifndef NDEBUG
     if (std::any_of(us.begin(), us.end(), [](U* u) { return dynamic_cast<T*>(u) == nullptr; })) {

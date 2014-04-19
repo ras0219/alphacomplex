@@ -35,7 +35,7 @@ namespace ai {
         virtual int start(AI* ai) override {
             AI::timer_t t = f(ai);
             if (t == 0)
-                return complete(ai);
+                return ai->pop_script();
             else
                 return t;
         }

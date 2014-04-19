@@ -9,7 +9,7 @@ set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 
 include_directories(include)
 
-if (!WIN32)
+if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -std=c++11")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os -DNDEBUG")
@@ -22,11 +22,9 @@ endif()
 
 set(SOURCES
   ## Components
-  "src/components/ai.cpp"
   "src/components/citizenname.cpp"
   "src/components/foodstuff.cpp"
   "src/components/furniture.cpp"
-  "src/components/jobprovider.cpp"
   "src/components/movable.cpp"
   "src/components/needsai.cpp"
   "src/components/pathfind.cpp"
@@ -34,6 +32,9 @@ set(SOURCES
   "src/components/sequenceai.cpp"
   "src/components/skills.cpp"
   "src/components/item.cpp"
+  ## AI
+  "src/components/ai.cpp"
+  "src/components/aidsl.cpp"
   ## Entities
   "src/entities/citizen.cpp"
   "src/entities/entity.cpp"
@@ -42,6 +43,7 @@ set(SOURCES
   "src/entities/workroom.cpp"
   "src/entities/filestorage.cpp"
   "src/entities/subsystem.cpp"
+  "src/entities/system.cpp"
   ## Hydroponics
   "src/hydroponics/hydroponics.cpp"
   "src/hydroponics/hydroponicsai.cpp"
@@ -64,13 +66,19 @@ set(SOURCES
   "src/views/statustext.cpp"
   "src/views/unitview.cpp"
   "src/views/viewstack.cpp"
+  ## Jobs
+  "src/job/jobprovider.cpp"
+  "src/job/joblist.cpp"
+  ## Storage
+  "src/storage/storageroom.cpp"
+  "src/storage/storagejob.cpp"
+  "src/storage/storagesystem.cpp"
   ##
   "src/point.cpp"
   "src/city.cpp"
   "src/citygen.cpp"
   "src/clock.cpp"
   "src/cursor.cpp"
-  "src/joblist.cpp"
   "src/logger.cpp"
   "src/main.cpp"
   )

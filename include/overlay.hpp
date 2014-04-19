@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <cstring>
 #include "point.hpp"
 
 template<class T>
@@ -24,7 +25,7 @@ struct Overlay {
     void resize(int x, int y);
 
     void clear() {
-        memset(data.data(), 0, data.size() * sizeof(T));
+        std::memset(data.data(), 0, data.size() * sizeof(T));
     }
 
     iterator begin() { return data.begin(); }
