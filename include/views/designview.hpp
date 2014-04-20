@@ -1,28 +1,29 @@
 #pragma once
 
-#include "city.hpp"
+#include <memory>
 #include "view.hpp"
 #include "mapview.hpp"
 #include "navhelper.hpp"
-#include "components/itemlock.hpp"
+
+struct City;
+struct ViewStack;
+struct FurnitureDesignView;
+struct RoomsDesignView;
 
 struct DesignView : View {
-  DesignView(struct ViewStack* vs, MapView* mv, City* c);
+  DesignView(ViewStack* vs, MapView* mv, City* c);
 
   virtual void render(Graphics& g, render_box const& pos) override;
   virtual void handle_keypress(KeyboardKey ks) override;
 
   void activate();
 
-  struct ViewStack* vstk;
+  ViewStack* vstk;
   MapViewCursor mv;
   City* city;
   NavHelper nav;
 
 private:
-  // Mode details
-  unsigned int mode;
-  unsigned int rtype;
-  CityCursor pt1;
-  item::ItemLock ilock;
+    std::unique_ptr<FurnitureDesignView> fdv;
+    std::unique_ptr<RoomsDesignView> rdv;
 };

@@ -337,6 +337,12 @@
     <ClInclude Include="..\include\job\jobprovider.hpp">
       <Filter>Header Files\job</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\views\roomsview.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\views\furnitureview.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -494,6 +500,12 @@
     </ClCompile>
     <ClCompile Include="..\src\job\jobprovider.cpp">
       <Filter>Source Files\job</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\furnitureview.cpp">
+      <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\roomsview.cpp">
+      <Filter>Source Files\views</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

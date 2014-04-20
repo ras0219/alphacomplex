@@ -265,11 +265,13 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\baseview.hpp" />
     <ClInclude Include="..\include\views\defaultlayout.hpp" />
     <ClInclude Include="..\include\views\designview.hpp" />
+    <ClInclude Include="..\include\views\furnitureview.hpp" />
     <ClInclude Include="..\include\views\helpview.hpp" />
     <ClInclude Include="..\include\views\hud.hpp" />
     <ClInclude Include="..\include\views\mainview.hpp" />
     <ClInclude Include="..\include\views\mapview.hpp" />
     <ClInclude Include="..\include\views\navhelper.hpp" />
+    <ClInclude Include="..\include\views\roomsview.hpp" />
     <ClInclude Include="..\include\views\scrollable.hpp" />
     <ClInclude Include="..\include\views\statustext.hpp" />
     <ClInclude Include="..\include\views\unitview.hpp" />
@@ -325,11 +327,13 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\announceview.cpp" />
     <ClCompile Include="..\src\views\baseview.cpp" />
     <ClCompile Include="..\src\views\designview.cpp" />
+    <ClCompile Include="..\src\views\furnitureview.cpp" />
     <ClCompile Include="..\src\views\helpview.cpp" />
     <ClCompile Include="..\src\views\hud.cpp" />
     <ClCompile Include="..\src\views\mainview.cpp" />
     <ClCompile Include="..\src\views\mapview.cpp" />
     <ClCompile Include="..\src\views\navhelper.cpp" />
+    <ClCompile Include="..\src\views\roomsview.cpp" />
     <ClCompile Include="..\src\views\scrollable.cpp" />
     <ClCompile Include="..\src\views\statustext.cpp" />
     <ClCompile Include="..\src\views\unitview.cpp" />
