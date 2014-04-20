@@ -2,6 +2,7 @@
 #include <deque>
 #include <vector>
 #include <string>
+#include <stdint.h>
 #include "defs.hpp"
 
 using namespace std;
@@ -12,6 +13,7 @@ extern const char* white;
 #define FONT_WIDTH 10
 
 struct Widget;
+
 
 /// The graphics adapter is a singleton class that provides target-specific
 /// input and output services. Ideally, all I/O that is dependant on the
@@ -25,11 +27,16 @@ struct Graphics : private debug_policy_t {
   /// The graphics adapter is a singleton and should not be copied.
   Graphics& operator=(const Graphics&) = delete;
 
-  /// Used to provide color information to drawing commands.
-  ///
-  /// May be extend in the future to include things like bold, italic, underline, and font family.
-  enum Context {
-    WHITE,
+
+  struct Context {
+	  uint8_t red;
+	  uint8_t green;
+	  uint8_t blue;
+	  uint8_t alpha;
+  };
+
+  enum COLORS {
+	WHITE,
     RED,
     GREEN,
     BLUE,
@@ -38,19 +45,22 @@ struct Graphics : private debug_policy_t {
     ORANGE,
     DEFAULT
   };
+
+  static const Context colors_to_context[DEFAULT + 1];
+
+
   /// Draw a string at the given CHARACTER coordinates.
-  ///
   /// @param x,y The character coordinates to draw at
   /// @param str The string to be drawn
   /// @param gc  The context describing color/bgcolor/font/etc
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
+  void drawString(int x, int y, const std::string& str, bool must_kern = false, Context gc = colors_to_context[WHITE]);
 
   /// Draw a char at the given CHARACTER coordinates.
   ///
   /// @param x,y The character coordinates to draw at
   /// @param str The character to be drawn
   /// @param gc  The context describing color/bgcolor/font/etc
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+  void drawChar(int x, int y, char str, Context gc = colors_to_context[WHITE]);
 
   /// Iterate through all pending input events
   ///
@@ -83,3 +93,5 @@ protected:
 };
 
 Graphics* new_graphics();
+
+
