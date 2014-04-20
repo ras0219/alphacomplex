@@ -15,8 +15,9 @@ struct Graphics_Ncurses : Graphics {
   Graphics_Ncurses();
 
   // Methods
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+  void drawString(int x, int y, const std::string& str,
+                  bool must_kern, Context gc = Context::WHITE);
+  void drawChar(int x, int y, char str, Context gc = Context::WHITE);
 
   KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
@@ -135,7 +136,8 @@ void Graphics_Ncurses::drawString(
   int x,
   int y,
   const string & str,
-  const Graphics_Ncurses::Context /* context */)
+  bool /*must_kern*/,
+  Graphics_Ncurses::Context /* context */)
 {
   for (const char ch : str)
   {
@@ -151,7 +153,7 @@ void Graphics_Ncurses::drawChar(
   int x,
   int y,
   char ch,
-  const Graphics_Ncurses::Context /* context */)
+  Graphics_Ncurses::Context /* context */)
 {
   updateBuffer(x, y, ch);
 }
@@ -203,16 +205,17 @@ void Graphics::drawString(
   int x,
   int y,
   const std::string& str,
-  Context gc)
+  bool must_kern,
+  Graphics::Context gc)
 {
-  return static_cast<Graphics_Ncurses*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_Ncurses*>(this)->drawString(x,y,str,must_kern,gc);
 }
 
 void Graphics::drawChar(
   int x,
   int y,
   char str,
-  Context gc)
+  Graphics::Context gc)
 {
   return static_cast<Graphics_Ncurses*>(this)->drawChar(x,y,str,gc);
 }

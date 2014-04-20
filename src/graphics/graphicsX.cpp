@@ -23,8 +23,8 @@ struct Graphics_X : Graphics {
   Graphics_X();
 
   // Methods
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+  void drawString(int x, int y, const std::string& str, Context gc = Context::WHITE);
+  void drawChar(int x, int y, char str, Context gc = Context::WHITE);
 
   KeyboardKey map_key(KeySym key);
   void handle_events(struct Controller*);
@@ -155,16 +155,17 @@ void Graphics_X::handle_events(Controller* c) {
     events = XPending(display);
   }
 }
-void Graphics_X::drawString(int x, int y, const string & str, const Graphics_X::Context gc) {
+void Graphics_X::drawString(int x, int y, const string & str, const Graphics_X::Context) {
   GC* t;
-  switch (gc) {
-  case WHITE:
-    t = &white_gc;
-    break;
-  default:
-    t = &DefaultGC(display, s);
-    break;
-  }
+  // if (gc == WHITE) {
+  // switch (gc) {
+  // case WHITE:
+     t = &white_gc;
+  //   break;
+  // default:
+  //  t = &DefaultGC(display, s);
+  //  break;
+  //}
   XDrawString(display,
               window,
               *t,
@@ -174,16 +175,16 @@ void Graphics_X::drawString(int x, int y, const string & str, const Graphics_X::
               str.length());
 }
 
-void Graphics_X::drawChar(int x, int y, char ch, const Graphics_X::Context gc) {
+void Graphics_X::drawChar(int x, int y, char ch, const Graphics_X::Context) {
   GC* t;
-  switch (gc) {
-  case WHITE:
+  //switch (gc) {
+  //case WHITE:
     t = &white_gc;
-    break;
-  default:
-    t = &DefaultGC(display, s);
-    break;
-  }
+    //  break;
+    //default:
+    // t = &DefaultGC(display, s);
+    // break;
+    // }
   XDrawString(display,
               window,
               *t,
@@ -209,7 +210,7 @@ void Graphics_X::destroy() {
 Graphics* new_graphics() { return new Graphics_X(); }
 
 //// Now for the plug functions
-void Graphics::drawString(int x, int y, const std::string& str, Context gc) {
+void Graphics::drawString(int x, int y, const std::string& str, bool, Context gc) {
   return static_cast<Graphics_X*>(this)->drawString(x,y,str,gc);
 }
 void Graphics::drawChar(int x, int y, char str, Context gc) {

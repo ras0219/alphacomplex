@@ -15,7 +15,7 @@
 extern bool paused;
 
 DesignView::DesignView(ViewStack* vs, MapView* mapv, City* c)
-: vstk(vs), mv(mapv), city(c), rdv(std::make_unique<RoomsDesignView>(this)), fdv(std::make_unique<FurnitureDesignView>(this))
+: vstk(vs), mv(mapv), city(c), fdv(new FurnitureDesignView(this)), rdv(new RoomsDesignView(this))
 {
   nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });

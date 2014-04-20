@@ -57,6 +57,8 @@ set(SOURCES
   "src/views/announceview.cpp"
   "src/views/baseview.cpp"
   "src/views/designview.cpp"
+  "src/views/roomsview.cpp"
+  "src/views/furnitureview.cpp"
   "src/views/helpview.cpp"
   "src/views/hud.cpp"
   "src/views/mainview.cpp"
@@ -73,6 +75,8 @@ set(SOURCES
   "src/storage/storageroom.cpp"
   "src/storage/storagejob.cpp"
   "src/storage/storagesystem.cpp"
+  ## Graphics
+  "src/graphics/graphics.cpp"
   ##
   "src/point.cpp"
   "src/city.cpp"

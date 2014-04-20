@@ -62,7 +62,7 @@ namespace storage {
     std::string StorageRoomAI::desc = "Requesting items for storage";
 
     struct StoreItemAI : AIScript {
-        StoreItemAI(const Point& p, StorageRoomAI* sr) : dest(p), storageroomai(sr) { assert(sr); }
+        StoreItemAI(const Point& p, StorageRoomAI* sr) : dest(p) { assert(sr); }
 
         virtual AI::timer_t update(AI* ai) {
             // Have we located an item to transport?
@@ -142,7 +142,6 @@ namespace storage {
 
     private:
         Point dest;
-        StorageRoomAI* storageroomai;
         ItemLock item;
 
         static std::string desc;

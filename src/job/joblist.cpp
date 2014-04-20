@@ -44,22 +44,22 @@ Job* JobList::find_job(clearance c) {
 }
 
 void JobListing::render(Graphics& g, render_box const& pos) {
-	g.drawString(pos.x, pos.y, title, true, Graphics::colors_to_context[Graphics::GREEN]);
-	g.drawString(pos.x, pos.y + 1, "---------", true, Graphics::colors_to_context[Graphics::GREEN]);
+    g.drawString(pos.x, pos.y, title, true, Graphics::Context::GREEN);
+    g.drawString(pos.x, pos.y + 1, "---------", true, Graphics::Context::GREEN);
 
-  int yoffset = 3;
-        for (auto j : *jlist) {
-    if (j->completed())
-      continue;
+    int yoffset = 3;
+    for (auto j : *jlist) {
+        if (j->completed())
+            continue;
 
-    // Mark in-progress jobs
-    if (j->unavailable())
-      g.drawChar(pos.x, pos.y + yoffset, '~');
+        // Mark in-progress jobs
+        if (j->unavailable())
+            g.drawChar(pos.x, pos.y + yoffset, '~');
 
-    auto desc = j->description();
-    g.drawString(pos.x + 1, pos.y + yoffset, desc);
-    yoffset++;
-  }
+        auto desc = j->description();
+        g.drawString(pos.x + 1, pos.y + yoffset, desc);
+        yoffset++;
+    }
 }
 
 JobList jobs;

@@ -29,38 +29,33 @@ struct Graphics : private debug_policy_t {
 
 
   struct Context {
-	  uint8_t red;
-	  uint8_t green;
-	  uint8_t blue;
-	  uint8_t alpha;
+      uint8_t red;
+      uint8_t green;
+      uint8_t blue;
+      uint8_t alpha;
+
+      static const Context WHITE;
+      static const Context RED;
+      static const Context GREEN;
+      static const Context BLUE;
+      static const Context YELLOW;
+      static const Context BROWN;
+      static const Context ORANGE;
+      static const Context DEFAULT;
   };
-
-  enum COLORS {
-	WHITE,
-    RED,
-    GREEN,
-    BLUE,
-    YELLOW,
-    BROWN,
-    ORANGE,
-    DEFAULT
-  };
-
-  static const Context colors_to_context[DEFAULT + 1];
-
 
   /// Draw a string at the given CHARACTER coordinates.
   /// @param x,y The character coordinates to draw at
   /// @param str The string to be drawn
   /// @param gc  The context describing color/bgcolor/font/etc
-  void drawString(int x, int y, const std::string& str, bool must_kern = false, Context gc = colors_to_context[WHITE]);
+  void drawString(int x, int y, const std::string& str, bool must_kern = false, Context gc = Context::WHITE);
 
   /// Draw a char at the given CHARACTER coordinates.
   ///
   /// @param x,y The character coordinates to draw at
   /// @param str The character to be drawn
   /// @param gc  The context describing color/bgcolor/font/etc
-  void drawChar(int x, int y, char str, Context gc = colors_to_context[WHITE]);
+  void drawChar(int x, int y, char str, Context gc = Context::WHITE);
 
   /// Iterate through all pending input events
   ///

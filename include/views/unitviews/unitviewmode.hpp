@@ -87,7 +87,8 @@ struct UnitViewModeInstance : UnitViewMode {
     Scrollable::render(g, pos2);
 
     // Render cursor
-    g.drawString(pos.x + left + 2 + 5 + csr_col*col_off, pos.y, "VV", false, Graphics::colors_to_context[Graphics::YELLOW]);
+    g.drawString(pos.x + left + 2 + 5 + csr_col*col_off, pos.y, "VV",
+                 false, Graphics::Context::YELLOW);
 
   }
 };

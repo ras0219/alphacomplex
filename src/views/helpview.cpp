@@ -32,7 +32,8 @@ vector<string> help_prgh = {
 struct HelpInfo : StaticWidget<HelpInfo> {
   void render(Graphics& g, render_box const& pos) {
     for (uint x=0; x<help_prgh.size(); ++x) {
-		g.drawString(pos.x, pos.y + x, help_prgh[x], true, Graphics::colors_to_context[Graphics::BROWN]);
+        g.drawString(pos.x, pos.y + x, help_prgh[x],
+                     true, Graphics::Context::BROWN);
     }
   }
   static HelpInfo instance;

@@ -185,8 +185,8 @@ struct Graphics_Web : Graphics {
   Graphics_Web();
 
   // Methods
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+  void drawString(int x, int y, const std::string& str, bool, Context gc);
+  void drawChar(int x, int y, char str, Context gc);
 
   KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
@@ -323,6 +323,7 @@ void Graphics_Web::drawString(
   int x,
   int y,
   const string & str,
+  bool,
   const Graphics_Web::Context /* context */)
 {
   for (const char ch : str)
@@ -380,9 +381,10 @@ void Graphics::drawString(
   int x,
   int y,
   const std::string& str,
+  bool k,
   Context gc)
 {
-  return static_cast<Graphics_Web*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_Web*>(this)->drawString(x,y,str,k,gc);
 }
 
 void Graphics::drawChar(

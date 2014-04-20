@@ -33,8 +33,9 @@ void StatusText::render(Graphics& g, render_box const& pos) {
     }
 
     if (retval & EMIT) {
-		g.drawString(pos.x + pos.w - ((int)s.text.size() + 1) - 1, pos.y, s.text, true, Graphics::colors_to_context[Graphics::RED]);
-      break;
+        g.drawString(pos.x + pos.w - ((int)s.text.size() + 1) - 1, pos.y, s.text,
+                     true, Graphics::Context::RED);
+        break;
     }
   }
 
