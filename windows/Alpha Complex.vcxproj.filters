@@ -507,5 +507,8 @@
     <ClCompile Include="..\src\views\roomsview.cpp">
       <Filter>Source Files\views</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\graphics\graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
