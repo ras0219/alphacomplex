@@ -56,6 +56,7 @@ set(SOURCES
   "src/views/unitview.cpp"
   "src/views/viewstack.cpp"
   ## 
+  "src/graphics/graphics.cpp"
   "src/city.cpp"
   "src/citygen.cpp"
   "src/clock.cpp"
