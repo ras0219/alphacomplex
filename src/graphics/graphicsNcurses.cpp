@@ -15,8 +15,8 @@ struct Graphics_Ncurses : Graphics {
   Graphics_Ncurses();
 
   // Methods
-  void drawString(int x, int y, const std::string& str, Context gc = DEFAULT);
-  void drawChar(int x, int y, char str, Context gc = DEFAULT);
+  void drawString(int x, int y, const std::string& str, bool must_kem = false, Context gc = colors_to_context[DEFAULT]);
+  void drawChar(int x, int y, char str, Context gc = colors_to_context[DEFAULT]);
 
   KeyboardKey map_key(NativeKeyboardKey key);
   void handle_events(struct Controller*);
@@ -135,8 +135,11 @@ void Graphics_Ncurses::drawString(
   int x,
   int y,
   const string & str,
+  bool must_kem,
   const Graphics_Ncurses::Context /* context */)
 {
+  // Must touch the bool so that we don't get error.
+  must_kem = false;
   for (const char ch : str)
   {
     if (x >= 0 && y >= 0 && x < width && y < height)
@@ -203,9 +206,10 @@ void Graphics::drawString(
   int x,
   int y,
   const std::string& str,
+  bool must_kem,
   Context gc)
 {
-  return static_cast<Graphics_Ncurses*>(this)->drawString(x,y,str,gc);
+  return static_cast<Graphics_Ncurses*>(this)->drawString(x,y,str,must_kem,gc);
 }
 
 void Graphics::drawChar(
