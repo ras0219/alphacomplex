@@ -19,7 +19,7 @@
 #include <memory>
 
 #include "SDL.h"
-#include "SDL_ttf.h" //XXX- REMOVE ASAP
+#include "SDL_ttf.h"
 #include "LRUCache.hpp"
 
 #include "Surface.hpp"

@@ -83,6 +83,7 @@
     <None Include="..\Doxyfile">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\city.hpp">
@@ -343,6 +344,9 @@
     <ClInclude Include="..\include\views\furnitureview.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\data_inteface.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -508,6 +512,9 @@
       <Filter>Source Files\views</Filter>
     </ClCompile>
     <ClCompile Include="..\src\graphics\graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\data_inteface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -197,6 +197,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <None Include="..\cmake\Modules\FindSDL2_ttf.cmake" />
     <None Include="..\Doxyfile" />
     <None Include="..\README.md" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\city.hpp" />
@@ -229,6 +230,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\skills.hpp" />
     <ClInclude Include="..\include\controller.hpp" />
     <ClInclude Include="..\include\cursor.hpp" />
+    <ClInclude Include="..\include\data_inteface.hpp" />
     <ClInclude Include="..\include\debug_policy.hpp" />
     <ClInclude Include="..\include\defs.hpp" />
     <ClInclude Include="..\include\entities\citizen.hpp" />
@@ -304,6 +306,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\sequenceai.cpp" />
     <ClCompile Include="..\src\components\skills.cpp" />
     <ClCompile Include="..\src\cursor.cpp" />
+    <ClCompile Include="..\src\data_inteface.cpp" />
     <ClCompile Include="..\src\entities\citizen.cpp" />
     <ClCompile Include="..\src\entities\entity.cpp" />
     <ClCompile Include="..\src\entities\filestorage.cpp" />
