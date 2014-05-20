@@ -347,6 +347,9 @@
     <ClInclude Include="..\include\data_inteface.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\triple_buffering_strategy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -515,6 +518,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\data_inteface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\triple_buffering_strategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

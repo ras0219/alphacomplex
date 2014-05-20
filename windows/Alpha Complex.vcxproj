@@ -259,6 +259,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\storage\storageroom.hpp" />
     <ClInclude Include="..\include\storage\storagesystem.hpp" />
     <ClInclude Include="..\include\tile.hpp" />
+    <ClInclude Include="..\include\triple_buffering_strategy.hpp" />
     <ClInclude Include="..\include\utilities\apply_tuple.hpp" />
     <ClInclude Include="..\include\utilities\assert_cast.hpp" />
     <ClInclude Include="..\include\utilities\global_set.hpp" />
@@ -328,6 +329,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\storage\storagejob.cpp" />
     <ClCompile Include="..\src\storage\storageroom.cpp" />
     <ClCompile Include="..\src\storage\storagesystem.cpp" />
+    <ClCompile Include="..\src\triple_buffering_strategy.cpp" />
     <ClCompile Include="..\src\views\announceview.cpp" />
     <ClCompile Include="..\src\views\baseview.cpp" />
     <ClCompile Include="..\src\views\designview.cpp" />
