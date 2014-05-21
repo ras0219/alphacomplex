@@ -34,5 +34,15 @@ struct LogicDataInterface{
 	queue<string> announce_messages;
 	float fps_current;
 	float influence;
+	~LogicDataInterface()
+	{
+		delete CityPtr;
+		delete JobListPtr;
+	}
 };
 
+LogicDataInterface* CurrentGfxInterface = nullptr;
+
+//Friendly link for actual game.
+void logic_ended_loop();
+void gfx_start_loop();

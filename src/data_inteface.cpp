@@ -1,6 +1,6 @@
 #include "data_inteface.hpp"
 #include <ctime>
-
+#include "city.hpp" 
 
 
 /* Note: currently we have 1 reader 1 writer. Keep that in mind for atomic things
@@ -31,6 +31,7 @@ InternalIntefaceBuffer* get_first_ownership(Game_Process ownership_needed)
 	return nullptr;
 }
 
+//takes the pointer and stores it in store.
 template <class data_type>
 int send_accross(Game_Process sent_from, Game_Process send_to, data_type* data_to_send)
 {
@@ -65,4 +66,25 @@ data_type* recieve_across(Game_Process my_proces, Game_Process recv_from)
 		return recv_ptr;
 	}
 	
+}
+
+
+
+void logic_ended_loop(City* the_real_city)
+{
+	LogicDataInterface* newInterface = new LogicDataInterface();
+	newInterface->CityPtr = *the_real_city; //need to add a copy constructor
+	newInterface->JobListPtr = 
+}
+
+void gfx_start_loop()
+{
+	LogicDataInterface* t_ptr = recieve_across<LogicDataInterface>(GRAPHICS, LOGIC);
+	if (t_ptr == nullptr) return;
+	else
+	{
+		delete CurrentGfxInterface;
+		CurrentGfxInterface = t_ptr;
+		return;
+	}
 }
