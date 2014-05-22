@@ -10,6 +10,8 @@ Alpha Complex
 | Ncurses    | No       | Yes   | ???  |
 | Websockets | ? (cyg?) | Yes   | Yes? |
 
+(Note: if the build fails, try an older commit)
+
 ### Compilation
 
 A recent C++11 compiler is required.
