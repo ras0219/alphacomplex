@@ -207,6 +207,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\entities\garbage.cpp" />
     <ClCompile Include="..\src\entities\hydroponics.cpp" />
     <ClCompile Include="..\src\entities\workroom.cpp" />
+    <ClCompile Include="..\src\graphics\graphics.cpp" />
     <ClCompile Include="..\src\joblist.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
