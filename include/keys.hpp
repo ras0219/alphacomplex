@@ -9,6 +9,7 @@ enum KeyboardKey {
     KEY_Up,
     KEY_Down,
     KEY_Return,
+    KEY_Delete,
     KEY_Tab,
     KEY_h,
     KEY_u,

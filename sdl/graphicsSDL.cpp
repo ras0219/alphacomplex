@@ -37,12 +37,6 @@ using namespace SDL;
 
 using NativeKeyboardKey = unsigned long;
 
-
-
-
-
-
-
 struct Graphics_SDL : Graphics {
   Graphics_SDL();
 
@@ -267,6 +261,8 @@ KeyboardKey Graphics_SDL::map_key(NativeKeyboardKey key) {
             return KEY_Down;
         case SDLK_RETURN:
             return KEY_Return;
+        case SDLK_DELETE:
+            return KEY_Delete;
         case SDLK_TAB:
             return KEY_Tab;
         case SDLK_h:

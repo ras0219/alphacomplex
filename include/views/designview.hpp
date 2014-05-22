@@ -16,7 +16,8 @@ struct DesignView : View {
   virtual void render(Graphics& g, render_box const& pos) override;
   virtual void handle_keypress(KeyboardKey ks) override;
 
-  void activate();
+  void build_wall();
+  void remove_wall();
 
   ViewStack* vstk;
   MapViewCursor mv;

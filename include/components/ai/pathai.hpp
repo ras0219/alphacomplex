@@ -42,7 +42,11 @@ namespace ai {
 
             if (pathp != path.rend()) {
                 auto mov = c->assert_get<movement::Movable>();
-                assert(mov->pos.city->tile(pathp->first, pathp->second).walkable());
+                if (!mov->pos.city->tile(pathp->first, pathp->second).walkable())
+                {
+                    // An obstacle has appeared since we did a pathfind...
+                    return ai->fail_script();
+                }
                 mov->set(*pathp);
                 ++pathp;
 

@@ -22,6 +22,12 @@
 
 using namespace ai;
 
+enum Designations : char
+{
+    D_DIG = 1,
+    D_BUILD = 2
+};
+
 point City::random_point() {
     // Try to find a point 5 times randomly.
     for (int x = 0; x < 5; ++x) {
@@ -180,22 +186,66 @@ wistream& operator>>(wistream& is, City& c) {
 }
 
 void add_wall_dig_job(City* city, int x1, int y1, int digx, int digy) {
-  clearance c = { Security::ALL, Department::ALL };
-  auto wall_cb = [=](AI*) {
-    return city->designs(digx, digy) & 1 && city->tile(digx, digy).type == Tile::wall;
-  };
-  auto dig_cb = [=](AI*) { city->remove_wall(digx, digy); };
+    clearance c = { Security::ALL, Department::ALL };
+    auto wall_cb = [=](AI*) {
+        return city->designs(digx, digy) & D_DIG && city->tile(digx, digy).type == Tile::wall;
+    };
+    auto dig_cb = [=](AI*) { city->remove_wall(digx, digy); };
 
-  auto s1 = make_shared<SequenceAI>();
-  s1->add_task(make_shared<ActivityAI>(100));
-  s1->add_task(new_ifscript(wall_cb, make_callbackai(dig_cb)));
+    auto s1 = make_shared<SequenceAI>();
+    s1->add_task(make_shared<ActivityAI>(100));
+    s1->add_task(new_ifscript(wall_cb, make_callbackai(dig_cb)));
 
-  auto s2 = make_shared<SequenceAI>();
-  s2->add_task(make_shared<PathAI>(point(x1, y1)));
-  s2->add_task(new_ifscript(wall_cb, s1));
+    auto s2 = make_shared<SequenceAI>();
+    s2->add_task(make_shared<PathAI>(point(x1, y1)));
+    s2->add_task(new_ifscript(wall_cb, s1));
 
-  auto job = std::make_shared<job::Job>("Dig", c, s2);
-  job::JobList::getJoblist().add_job(job);
+    auto job = std::make_shared<job::Job>("Dig", c, s2);
+    job::JobList::getJoblist().add_job(job);
+}
+
+void add_wall_build_job(City* city, int x1, int y1, int digx, int digy) {
+    clearance c = { Security::ALL, Department::ALL };
+    auto wall_cb = [=](AI*) {
+        return city->designs(digx, digy) & D_BUILD && city->tile(digx, digy).type == Tile::ground;
+    };
+    struct BuildWallAI : AIScript {
+        BuildWallAI(City* city, int digx, int digy) : m_city(city), m_x(digx), m_y(digy), desc("Building Wall") { }
+
+        virtual AI::timer_t start(AI* ai) {
+            // If there are entities at the target location, we can't build a wall.
+            if (m_city->ent(m_x, m_y).size() > 0) {
+                return ai->fail_script();
+            }
+            // Same for furniture
+            if (m_city->furniture(m_x, m_y) != nullptr) {
+                return ai->fail_script();
+            }
+            m_city->add_wall(m_x, m_y);
+            return ai->pop_script();
+        }
+
+        virtual const std::string& description() const override {
+            return desc;
+        }
+
+    private:
+        City* m_city;
+        int m_x;
+        int m_y;
+        std::string desc;
+    };
+
+    auto s1 = make_shared<SequenceAI>();
+    s1->add_task(make_shared<ActivityAI>(100));
+    s1->add_task(new_ifscript(wall_cb, make_shared<BuildWallAI>(city, digx, digy)));
+
+    auto s2 = make_shared<SequenceAI>();
+    s2->add_task(make_shared<PathAI>(point(x1, y1)));
+    s2->add_task(new_ifscript(wall_cb, s1));
+
+    auto job = std::make_shared<job::Job>("Build Wall", c, s2);
+    job::JobList::getJoblist().add_job(job);
 }
 
 void City::add_room(Room* r) {
@@ -246,8 +296,8 @@ std::vector<Furniture*> City::find_furniture(Rect r) {
 
 void City::toggle_dig_wall(int x, int y) {
   if (tile(x, y).type == Tile::wall) {
-    designs(x, y) ^= 1; // Mark for digging
-    if (designs(x, y) & 1) {
+    designs(x, y) ^= D_DIG; // Mark for digging
+    if (designs(x, y) & D_DIG) {
       for (auto o : offs) {
         if (tile(x + o.first, y + o.second).walkable()) {
           add_wall_dig_job(this, x + o.first, y + o.second, x, y);
@@ -257,20 +307,58 @@ void City::toggle_dig_wall(int x, int y) {
     }
   }
 }
-void City::remove_wall(int x, int y) {
-  if (tile(x, y).type != Tile::wall)
-    return;
-  designs(x, y) &= ~1;
-  tile(x, y).type = Tile::ground;
 
-  for (auto o : offs) {
-    if (!(designs(x + o.first, y + o.second) & 1))
-      continue;
-    int facings = 0;
-    for (auto o2 : offs)
-    if (tile(x + o.first + o2.first, y + o.second + o2.second).walkable())
-      ++facings;
-    if (facings == 1)
-      add_wall_dig_job(this, x, y, x + o.first, y + o.second);
-  }
+void City::toggle_build_wall(int x, int y) {
+    if (tile(x, y).type == Tile::ground) {
+        designs(x, y) ^= D_BUILD; // Mark for digging
+        if (designs(x, y) & D_BUILD) {
+            for (auto o : offs) {
+                if (tile(x + o.first, y + o.second).walkable()) {
+                    add_wall_build_job(this, x + o.first, y + o.second, x, y);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void City::remove_wall(int x, int y) {
+    if (tile(x, y).type != Tile::wall)
+    {
+        return;
+    }
+    designs(x, y) &= ~D_DIG;
+    tile(x, y).type = Tile::ground;
+
+    // For each adjacent tile
+    for (auto o : offs) {
+        // If the adjacent tile does not have a pending dig or build
+        if (!(designs(x + o.first, y + o.second) & (D_DIG | D_BUILD))) {
+            // Skip this adjacent tile
+            continue;
+        }
+        // Count the number of walkable tiles adjacent to the target
+        int facings = 0;
+        for (auto o2 : offs) {
+            if (tile(x + o.first + o2.first, y + o.second + o2.second).walkable()) {
+                ++facings;
+            }
+        }
+        // If this change has created the only walkable tile, add a job to complete the desired designation.
+        if (facings == 1) {
+            if (designs(x + o.first, y + o.second) & D_DIG) {
+                add_wall_dig_job(this, x, y, x + o.first, y + o.second);
+            }
+            if (designs(x + o.first, y + o.second) & D_BUILD) {
+                add_wall_build_job(this, x, y, x + o.first, y + o.second);
+            }
+        }
+    }
+}
+
+void City::add_wall(int x, int y) {
+    if (tile(x, y).type != Tile::ground)
+        return;
+    designs(x, y) &= ~D_BUILD;
+    tile(x, y).type = Tile::wall;
 }

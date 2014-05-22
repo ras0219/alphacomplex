@@ -82,8 +82,12 @@ void MapView::prepare_buffer() {
   for (int y = vp.tly; y < vp.tly + vp.ysz; ++y) {
     for (int x = vp.tlx; x < vp.tlx + vp.xsz; ++x) {
       if (city->designs(x, y) & 1) {
-        putChar(x, y, '%', Z_WALLS);
+        putChar(x, y, 'X', Z_WALLS);
         continue;
+      }
+      if (city->designs(x, y) & 2) {
+          putChar(x, y, '%', Z_WALLS);
+          continue;
       }
 
       if (mode == ENTCOUNT) {

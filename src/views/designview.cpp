@@ -19,7 +19,8 @@ DesignView::DesignView(ViewStack* vs, MapView* mapv, City* c)
 {
   nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
-  nav.register_key(KEY_Return, "[Ent] Dig Wall", [this]() { activate(); });
+  nav.register_key(KEY_Return, "[Ent] Build Wall", [this]() { build_wall(); });
+  nav.register_key(KEY_Delete, "[Del] Remove Wall", [this]() { remove_wall(); });
 
   nav.register_key(KEY_r, "[r] Construct Room", [this]() { vstk->push(rdv.get()); });
   nav.register_key(KEY_f, "[f] Place Furniture", [this]() { vstk->push(fdv.get()); });
@@ -32,7 +33,11 @@ void DesignView::render(Graphics& g, render_box const& pos) {
   mv.render(g, pos2);
 }
 
-void DesignView::activate() {
+void DesignView::build_wall() {
+    city->toggle_build_wall(mv.csr.x, mv.csr.y);
+}
+
+void DesignView::remove_wall() {
     city->toggle_dig_wall(mv.csr.x, mv.csr.y);
 }
 

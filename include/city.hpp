@@ -79,8 +79,14 @@ struct City {
   /// Toggle whether the wall at (x, y) should have a dig job.
   void toggle_dig_wall(int x, int y);
 
+  /// Toggle whether the wall at (x, y) should have a construct job.
+  void toggle_build_wall(int x, int y);
+
   /// Replace a wall at (x, y) with empty ground.
   void remove_wall(int x, int y);
+
+  /// Replace the ground at (x, y) with a wall.
+  void add_wall(int x, int y);
 
   /// Resize the city. This should not be called after initialization.
   void resize(int x, int y);
