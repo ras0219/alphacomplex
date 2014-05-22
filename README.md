@@ -7,8 +7,8 @@ Alpha Complex
 |------------|----------|-------|------|
 | SDL        | Yes      | Yes   | Yes  |
 | X11        | Cygwin   | Yes   | Yes  |
-| Ncurses    | No       | Yes   | ???  |
-| Websockets | ? (cyg?) | Yes   | Yes? |
+| Ncurses    | Cygwin   | Yes   | Yes  |
+| Websockets | Cygwin   | Yes   | Yes  |
 
 (Note: if the build fails, try an older commit)
 
