@@ -140,7 +140,6 @@ void Graphics_Ncurses::drawString(
   Graphics_Ncurses::Context /* context */)
 {
   // Must touch the bool so that we don't get error.
-  must_kern = false;
   for (const char ch : str)
   {
     if (x >= 0 && y >= 0 && x < width && y < height)
