@@ -1,10 +1,20 @@
 Alpha Complex
 =============
 
+### Platform Matrix
+
+|            | Windows  | Linux | OSX  |
+|------------|----------|-------|------|
+| SDL        | Yes      | Yes   | Yes  |
+| X11        | Cygwin   | Yes   | Yes  |
+| Ncurses    | No       | Yes   | ???  |
+| Websockets | ? (cyg?) | Yes   | Yes? |
+
 ### Compilation
 
-C++11 compiler required.
-Needs X11 or SDL.
+A recent C++11 compiler is required.
+
+
 Compile in a separate directory.
 
     $ mkdir build
@@ -14,10 +24,9 @@ Compile in a separate directory.
 
 ### Execution
 
-Currently, cities are read from stdin or from a file.
+Currently, cities are automagically seeded with a fractal city generator (Thanks Karthik!).
 
-    $ ./alphacomplex < ../cities/city02.txt
-    $ ./alphacomplex ../cities/city02.txt
+    $ ./alphacomplex
 
 ### Inspiration
 
