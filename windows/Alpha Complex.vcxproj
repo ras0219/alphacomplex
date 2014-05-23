@@ -208,7 +208,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\components\ai\callbackai.hpp" />
     <ClInclude Include="..\include\components\ai\ifai.hpp" />
     <ClInclude Include="..\include\components\ai\lockai.hpp" />
-    <ClInclude Include="..\include\components\ai\needsai.hpp" />
     <ClInclude Include="..\include\components\ai\pathai.hpp" />
     <ClInclude Include="..\include\components\ai\pathfind.hpp" />
     <ClInclude Include="..\include\components\ai\sequenceai.hpp" />
@@ -250,6 +249,9 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\keys.hpp" />
     <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\logger.hpp" />
+    <ClInclude Include="..\include\needs\needs.hpp" />
+    <ClInclude Include="..\include\needs\needssystem.hpp" />
+    <ClInclude Include="..\include\needs\seekfoodai.hpp" />
     <ClInclude Include="..\include\overlay.hpp" />
     <ClInclude Include="..\include\point.hpp" />
     <ClInclude Include="..\include\storage\storage.hpp" />
@@ -298,7 +300,6 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\components\furniture.cpp" />
     <ClCompile Include="..\src\components\item.cpp" />
     <ClCompile Include="..\src\components\movable.cpp" />
-    <ClCompile Include="..\src\components\needsai.cpp" />
     <ClCompile Include="..\src\components\pathfind.cpp" />
     <ClCompile Include="..\src\components\room.cpp" />
     <ClCompile Include="..\src\components\sequenceai.cpp" />
@@ -321,6 +322,8 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\job\jobprovider.cpp" />
     <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\needs\needssystem.cpp" />
+    <ClCompile Include="..\src\needs\seekfoodai.cpp" />
     <ClCompile Include="..\src\point.cpp" />
     <ClCompile Include="..\src\storage\storagejob.cpp" />
     <ClCompile Include="..\src\storage\storageroom.cpp" />

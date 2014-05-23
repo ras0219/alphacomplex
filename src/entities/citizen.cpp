@@ -4,7 +4,7 @@
 #include "city.hpp"
 #include "clock.hpp"
 #include "components/ai/ai.hpp"
-#include "components/ai/needsai.hpp"
+#include "needs/needssystem.hpp"
 #include "components/renderable.hpp"
 #include "components/citizenname.hpp"
 #include "components/movable.hpp"

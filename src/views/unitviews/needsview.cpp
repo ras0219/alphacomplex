@@ -1,5 +1,5 @@
 #include "views/unitviews/unitviewmode.hpp"
-#include "components/ai/needsai.hpp"
+#include "needs/needssystem.hpp"
 
 using namespace ecs;
 using namespace needs;

@@ -64,6 +64,12 @@
     <Filter Include="Header Files\job">
       <UniqueIdentifier>{bc38cfe7-eaba-4be9-b007-40149e933509}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\needs">
+      <UniqueIdentifier>{e9985c67-9f4e-4bd5-a4b3-dc99cb6f7007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\needs">
+      <UniqueIdentifier>{aa6d0333-80a1-40e9-9785-ad553cc8fde4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">
@@ -217,9 +223,6 @@
     <ClInclude Include="..\include\components\ai\ifai.hpp">
       <Filter>Header Files\components\ai</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\components\ai\needsai.hpp">
-      <Filter>Header Files\components\ai</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\components\ai\pathai.hpp">
       <Filter>Header Files\components\ai</Filter>
     </ClInclude>
@@ -343,6 +346,15 @@
     <ClInclude Include="..\include\views\furnitureview.hpp">
       <Filter>Header Files\views</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\needs\needssystem.hpp">
+      <Filter>Header Files\needs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\needs\needs.hpp">
+      <Filter>Header Files\needs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\needs\seekfoodai.hpp">
+      <Filter>Header Files\needs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -416,9 +428,6 @@
     </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\components\needsai.cpp">
-      <Filter>Source Files\components</Filter>
     </ClCompile>
     <ClCompile Include="..\src\components\sequenceai.cpp">
       <Filter>Source Files\components</Filter>
@@ -509,6 +518,12 @@
     </ClCompile>
     <ClCompile Include="..\src\graphics\graphics.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\needs\seekfoodai.cpp">
+      <Filter>Source Files\needs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\needs\needssystem.cpp">
+      <Filter>Source Files\needs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

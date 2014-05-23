@@ -26,7 +26,6 @@ set(SOURCES
   "src/components/foodstuff.cpp"
   "src/components/furniture.cpp"
   "src/components/movable.cpp"
-  "src/components/needsai.cpp"
   "src/components/pathfind.cpp"
   "src/components/room.cpp"
   "src/components/sequenceai.cpp"
@@ -44,6 +43,9 @@ set(SOURCES
   "src/entities/filestorage.cpp"
   "src/entities/subsystem.cpp"
   "src/entities/system.cpp"
+  ## Needs
+  "src/needs/needssystem.cpp"
+  "src/needs/seekfoodai.cpp"
   ## Hydroponics
   "src/hydroponics/hydroponics.cpp"
   "src/hydroponics/hydroponicsai.cpp"
