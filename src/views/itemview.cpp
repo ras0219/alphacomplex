@@ -16,7 +16,7 @@
 extern bool paused;
 
 ItemView::ItemView(ViewStack* vs, MapView* mapv, City* c)
-    : vstk(vs), mv(mapv), city(c), ilist(std::make_unique<ItemList>(mv.csr))
+    : vstk(vs), mv(mapv), city(c), ilist(new ItemList(mv.csr))
 {
     nav.register_key(KEY_Escape, "[Esc] Back", [this]() { vstk->pop(); });
     nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });

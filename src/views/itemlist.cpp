@@ -6,6 +6,7 @@
 #include "entities/entity.hpp"
 #include "components/item.hpp"
 #include "components/citizenname.hpp"
+#include "components/clearance.hpp"
 #include "entities/citizen.hpp"
 #include "components/furniture.hpp"
 
@@ -34,7 +35,7 @@ void ItemList::render(Graphics& g, render_box const& pos) {
     }
 
     for (auto ent : ents) {
-        if (auto cname = ent->has_get<CitizenName>()) {
+        if (ent->has<CitizenName>() && ent->has<Clearance>()) {
             g.drawString(pos.x, y, get_full_name(ent));
             ++y;
             continue;
