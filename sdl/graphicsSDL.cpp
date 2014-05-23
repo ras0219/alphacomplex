@@ -267,6 +267,8 @@ KeyboardKey Graphics_SDL::map_key(NativeKeyboardKey key) {
             return KEY_Tab;
         case SDLK_h:
             return KEY_h;
+        case SDLK_i:
+            return KEY_i;
         case SDLK_u:
             return KEY_u;
         case SDLK_r:

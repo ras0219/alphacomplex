@@ -83,11 +83,13 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>SDL2-2.0.1\lib\x86\SDL2.lib;SDL2-2.0.1\lib\x86\SDL2main.lib;SDL2_ttf-2.0.12\lib\x86\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
@@ -103,7 +105,8 @@ xcopy /Y SDL2_ttf-2.0.12\lib\x86\zlib1.dll "$(TargetDir)"
 xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     </PostBuildEvent>
     <Bscmake>
-      <PreserveSbr>true</PreserveSbr>
+      <PreserveSbr>false</PreserveSbr>
+      <AdditionalOptions>/Iu %(AdditionalOptions)</AdditionalOptions>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,6 +121,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -148,6 +152,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -173,6 +178,7 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\include;SDL2-2.0.1\include;SDL2_ttf-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -270,6 +276,8 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClInclude Include="..\include\views\furnitureview.hpp" />
     <ClInclude Include="..\include\views\helpview.hpp" />
     <ClInclude Include="..\include\views\hud.hpp" />
+    <ClInclude Include="..\include\views\itemlist.hpp" />
+    <ClInclude Include="..\include\views\itemview.hpp" />
     <ClInclude Include="..\include\views\mainview.hpp" />
     <ClInclude Include="..\include\views\mapview.hpp" />
     <ClInclude Include="..\include\views\navhelper.hpp" />
@@ -334,6 +342,8 @@ xcopy /Y ..\resources\font\Anonymous_Pro.ttf "$(TargetDir)"</Command>
     <ClCompile Include="..\src\views\furnitureview.cpp" />
     <ClCompile Include="..\src\views\helpview.cpp" />
     <ClCompile Include="..\src\views\hud.cpp" />
+    <ClCompile Include="..\src\views\itemlist.cpp" />
+    <ClCompile Include="..\src\views\itemview.cpp" />
     <ClCompile Include="..\src\views\mainview.cpp" />
     <ClCompile Include="..\src\views\mapview.cpp" />
     <ClCompile Include="..\src\views\navhelper.cpp" />

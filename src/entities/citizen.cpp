@@ -22,7 +22,7 @@ using namespace ai;
 using namespace job;
 using namespace item;
 
-string get_full_name(Ent* e) {
+std::string get_full_name(Ent* e) {
   CitizenName* cn = e->assert_get<CitizenName>();
   Clearance* cc = e->assert_get<Clearance>();
 

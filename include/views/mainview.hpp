@@ -13,6 +13,7 @@ struct MainView : BaseView {
   struct UnitView* uview;
   struct AnnounceView* aview;
   struct DesignView* dview;
+  struct ItemView* iview;
 
   struct City* city;
   MapView mv;

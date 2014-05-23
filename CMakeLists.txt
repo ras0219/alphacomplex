@@ -70,6 +70,8 @@ set(SOURCES
   "src/views/statustext.cpp"
   "src/views/unitview.cpp"
   "src/views/viewstack.cpp"
+  "src/views/itemlist.cpp"
+  "src/views/itemview.cpp"
   ## Jobs
   "src/job/jobprovider.cpp"
   "src/job/joblist.cpp"

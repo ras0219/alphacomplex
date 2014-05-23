@@ -355,6 +355,12 @@
     <ClInclude Include="..\include\needs\seekfoodai.hpp">
       <Filter>Header Files\needs</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\views\itemview.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\views\itemlist.hpp">
+      <Filter>Header Files\views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\components\ai.cpp">
@@ -524,6 +530,12 @@
     </ClCompile>
     <ClCompile Include="..\src\needs\needssystem.cpp">
       <Filter>Source Files\needs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\itemview.cpp">
+      <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\views\itemlist.cpp">
+      <Filter>Source Files\views</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

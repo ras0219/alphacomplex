@@ -12,6 +12,7 @@ enum KeyboardKey {
     KEY_Delete,
     KEY_Tab,
     KEY_h,
+    KEY_i,
     KEY_u,
     KEY_r,
     KEY_a,

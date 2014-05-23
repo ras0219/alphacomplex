@@ -7,6 +7,7 @@
 #include "views/unitview.hpp"
 #include "views/announceview.hpp"
 #include "views/designview.hpp"
+#include "views/itemview.hpp"
 
 #include "views/defaultlayout.hpp"
 
@@ -22,6 +23,7 @@ MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSi
   uview = new UnitView(vs);
   aview = new AnnounceView(vs);
   dview = new DesignView(vs, &mv, c);
+  iview = new ItemView(vs, &mv, c);
 
   nav.register_key(KEY_h, "[h] Help", [this]() { vstk->push(hview); });
   nav.register_key(KEY_u, "[u] Unit View", [this]() { vstk->push(uview); });
@@ -35,7 +37,7 @@ MainView::MainView(ViewStack* vs, City* c) : BaseView(vs), city(c), mv(c->getXSi
           announce("You must have 1 influence to purchase bread.");
       }
   });
-
+  nav.register_key(KEY_i, "[i] Inspect Items", [this]() { vstk->push(iview); });
   nav.register_key(KEY_space, "[Spc] Pause", [this]() { paused = !paused; });
   nav.register_key(KEY_Tab, "[Tab] Map Mode", [this]() {
       mv.next_mode();

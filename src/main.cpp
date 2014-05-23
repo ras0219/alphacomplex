@@ -25,6 +25,10 @@
 #include "views/mainview.hpp"
 #include "components/itemlock.hpp"
 
+#ifdef GRAPHICS_SDL
+#include "SDL.h"
+#endif
+
 #include <map>
 
 
@@ -40,8 +44,7 @@ bool paused = false;
 Graphics *gfx;
 
 std::vector<ecs::System*> systems;
-
-int main(int, char **) {
+int main(int, char *[]) {
   try {
     // creates a city of size 24 unit width and 30 unit height
     // this version also uses the current time a seed
