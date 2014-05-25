@@ -1,0 +1,3 @@
+[submodule "windows/msbuildtasks"]
+	path = windows/msbuildtasks
+	url = https://github.com/loresoft/msbuildtasks.git
