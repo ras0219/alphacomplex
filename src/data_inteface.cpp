@@ -1,26 +1,28 @@
 #include "data_inteface.hpp"
 #include <ctime>
 #include "city.hpp" 
-
+#include "triple_buffering_strategy.hpp"
 
 /* Note: currently we have 1 reader 1 writer. Keep that in mind for atomic things
 	Some information on this page is not needed... but will help for debugging.
 	to-do: allocate buffers on the stack instead of the heap.
 */
 
+Game_Process my_process = Game_Process::NOT_USED;
+
 template <class data_type>
-volatile struct InternalIntefaceBuffer
+struct InternalIntefaceBuffer
 {
-	data_type* data_ptr;
-	Game_Process sent_from;
-	Game_Process sent_to;
-	Game_Process current_ownership;
-	time_t time_sent;
+	volatile data_type* data_ptr;
+	volatile Game_Process sent_from;
+	volatile Game_Process sent_to;
+	volatile Game_Process current_ownership;
+	volatile time_t time_sent;
 };
 
 //this will be useful with multiple send-recv
 template <class data_type>
-InternalIntefaceBuffer* get_first_ownership(Game_Process ownership_needed)
+InternalIntefaceBuffer<data_type>* get_first_ownership(Game_Process ownership_needed)
 {
 	for (int i = 0; i < NUM_OF_INTERFACE_BUFFERS; i++)
 	{
@@ -55,14 +57,14 @@ int send_accross(Game_Process sent_from, Game_Process send_to, data_type* data_t
 template <class data_type>
 data_type* recieve_across(Game_Process my_proces, Game_Process recv_from)
 {
-	dat_type* recv_ptr;
-	recv_ptr = triple_buffer_recieve();
+	data_type* recv_ptr;
+	recv_ptr = triple_buffer_recieve<data_type>();
 	if (recv_ptr == nullptr) return nullptr;
 	else
 	{
-		if (my_process != Game_Process.GRAPHICS) throw new exception("Not implemented yet to retrieve info from not Graphics");
-		if (recv_from != Game_Process.LOGIC) throw new exception("Not implemented yet to retrive info not from logic yet.");
-		recv_ptr->current_ownership = Game_Process.GRAPHICS;
+		if (my_process != Game_Process::GRAPHICS) throw new exception("Not implemented yet to retrieve info from not Graphics");
+		if (recv_from != Game_Process::LOGIC) throw new exception("Not implemented yet to retrive info not from logic yet.");
+		recv_ptr->current_ownership = Game_Process::GRAPHICS;
 		return recv_ptr;
 	}
 	
@@ -70,21 +72,21 @@ data_type* recieve_across(Game_Process my_proces, Game_Process recv_from)
 
 
 
-void logic_ended_loop(City* the_real_city)
+void logic_ended_loop(void)
 {
-	LogicDataInterface* newInterface = new LogicDataInterface();
-	newInterface->CityPtr = *the_real_city; //need to add a copy constructor
-	newInterface->JobListPtr = 
+	//LogicDataInterface* newInterface = new LogicDataInterface();
+
+	//magick!
 }
 
 void gfx_start_loop()
 {
-	LogicDataInterface* t_ptr = recieve_across<LogicDataInterface>(GRAPHICS, LOGIC);
-	if (t_ptr == nullptr) return;
-	else
+	//LogicDataInterface* t_ptr = recieve_across<LogicDataInterface>(Game_Process::GRAPHICS, Game_Process::LOGIC);
+	//if (t_ptr == nullptr) return;
+	//else
 	{
-		delete CurrentGfxInterface;
-		CurrentGfxInterface = t_ptr;
+		//delete CurrentGfxInterface;
+		//CurrentGfxInterface = t_ptr;
 		return;
 	}
 }

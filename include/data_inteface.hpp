@@ -5,13 +5,13 @@
 #include <string>
 #include <queue>
 
-enum Game_Process {
+enum class Game_Process {
 	NOT_USED,   //empty
 	STORAGE,    //currently waiting in-flight
 	LOGIC,
 	GRAPHICS,
 	/*Could add more if desired. physics is a popular one.*/
-} state;
+};
 
 //will change the return later to include different conditions
 //Fill in sent_from and send_to at this moment.
@@ -26,7 +26,7 @@ int send_accross(Game_Process sent_from, Game_Process send_to, data_type* data_t
 template <class data_type>
 data_type* recieve_across(Game_Process my_proces, Game_Process recv_from);
 
-
+/*
 ///neccessary data from game_logic
 struct LogicDataInterface{
 	City* CityPtr;
@@ -42,7 +42,7 @@ struct LogicDataInterface{
 };
 
 LogicDataInterface* CurrentGfxInterface = nullptr;
-
+*/
 //Friendly link for actual game.
 void logic_ended_loop();
 void gfx_start_loop();

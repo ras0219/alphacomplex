@@ -5,8 +5,20 @@
 //although do we care about portability?
 std::mutex tripl_buf_mutex;  // protects ptr_new/ptr_old.
 
-template <class data_type>
-data_type* ptr_new=nullptr, ptr_old=nullptr;
+template <typename data_type>
+struct ptr_new {
+	static data_type* value;
+};
+
+template <typename data_type>
+struct ptr_old {
+	static data_type * value;
+};
+
+template<class T>
+T* ptr_new<T>::value = nullptr;
+template<class T>
+T* ptr_old<T>::value = nullptr;
 
 //everything comes into new
 //second frame gets pushed to old
